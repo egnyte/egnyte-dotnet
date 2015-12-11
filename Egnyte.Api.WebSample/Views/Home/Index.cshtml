@@ -1,0 +1,16 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="jumbotron">
+    <h1>Egnyte API test page</h1>
+    
+    <br />
+    <br />
+    <br />
+    @using (Html.BeginForm("RequestToken", "Token", FormMethod.Post))
+    {
+        <input type="submit" class="btn btn-primary btn-lg" value="Get token" />
+    }
+
+</div>
