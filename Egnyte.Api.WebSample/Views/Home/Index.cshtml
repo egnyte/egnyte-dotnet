@@ -8,9 +8,17 @@
     <br />
     <br />
     <br />
-    @using (Html.BeginForm("RequestToken", "Token", FormMethod.Post))
+    @using (Html.BeginForm("RequestTokenCode", "Token", FormMethod.Post))
     {
-        <input type="submit" class="btn btn-primary btn-lg" value="Get token" />
+        <input type="submit" class="btn btn-primary btn-lg" value="Get token, code flow" />
+    }
+    
+    <br />
+    <br />
+    @using (Html.BeginForm("RequestTokenImplicitGrant", "Token", FormMethod.Post))
+    {
+        <input type="hidden" id="urlhash" />
+        <input type="submit" class="btn btn-primary btn-lg" value="Get token, implicit grant flow" />
     }
 
 </div>

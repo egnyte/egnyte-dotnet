@@ -12,5 +12,11 @@
 
         [JsonProperty(PropertyName = "expires_in")]
         public string ExpiresIn { get; set; }
+
+        [JsonProperty(PropertyName = "state")]
+        public string State { get; set; }
+
+        [JsonProperty(PropertyName = "error")]
+        public string Error { get; set; }
     }
 }

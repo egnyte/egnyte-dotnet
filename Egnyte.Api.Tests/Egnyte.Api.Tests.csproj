@@ -50,6 +50,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EgnyteClientTests.cs" />
+    <Compile Include="HttpMessageHandlerMock.cs" />
     <Compile Include="OAuthHelperTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

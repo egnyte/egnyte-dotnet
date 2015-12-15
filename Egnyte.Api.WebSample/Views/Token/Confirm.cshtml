@@ -1,0 +1,17 @@
+﻿@{
+    ViewBag.Title = "Token confirmation - Implicit Grant flow";
+}
+
+<div class="jumbotron">
+    <h1>Token confirmation - Implicit Grant flow</h1>
+    
+
+    <br />
+    <br />
+    @using (Html.BeginForm("AuthorizeImplicitGrant", "Token", FormMethod.Post))
+    {
+        @Html.Hidden("urlhash")
+        <input type="submit" class="btn btn-primary btn-lg" value="Confirm implicit grant flow" />
+    }
+
+</div>
