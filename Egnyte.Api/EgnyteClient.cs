@@ -47,5 +47,27 @@
 
             return JsonConvert.DeserializeObject<TokenResponse>(rawContent);
         }
+
+        public static async Task<TokenResponse> GetTokenResourceOwnerFlow(
+            string userDomain,
+            string clientId,
+            string username,
+            string password,
+            HttpClient httpClient = null)
+        {
+            httpClient = httpClient ?? new HttpClient();
+            var tokenRequesrUri = OAuthHelper.GetAuthorizationUriResourceOwnerFlow(
+                userDomain,
+                clientId,
+                username,
+                password);
+
+            var content = new FormUrlEncodedContent(tokenRequesrUri.QueryParameters);
+            var result = await httpClient.PostAsync(tokenRequesrUri.BaseAddress, content).ConfigureAwait(false);
+
+            var rawContent = await result.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+            return JsonConvert.DeserializeObject<TokenResponse>(rawContent);
+        }
     }
 }

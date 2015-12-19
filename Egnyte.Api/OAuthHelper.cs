@@ -136,6 +136,62 @@ namespace Egnyte.Api
         }
 
         /// <summary>
+        /// Gets the URI used to initiate the OAuth2.0 resuorce owner flow for internal applications.
+        /// </summary>
+        /// <param name="userDomain">
+        /// This is the user's Egnyte domain. An example domain name is "acme".
+        /// Note that initially your API key will only work with the single Egnyte domain you told us you would use for testing.
+        /// When we approve your completed app, we will issue you a new key that works with any Egnyte domain.
+        /// </param>
+        /// <param name="clientId">
+        /// This is the API key that was provided to you when you registered your application.
+        /// E.g. "cba97f3apst9eqzdr5hskggx".
+        /// </param>
+        /// <param name="username">This is the Egnyte username of the user on whose behalf you are acting.</param>
+        /// <param name="password">his is the Egnyte password of the user.</param>
+        /// <returns>Uri to get a token</returns>
+        public static TokenRequestParameters GetAuthorizationUriResourceOwnerFlow(
+            string userDomain,
+            string clientId,
+            string username,
+            string password)
+        {
+            if (string.IsNullOrWhiteSpace(userDomain))
+            {
+                throw new ArgumentNullException("userDomain");
+            }
+
+            if (string.IsNullOrWhiteSpace(clientId))
+            {
+                throw new ArgumentNullException("clientId");
+            }
+
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                throw new ArgumentNullException("username");
+            }
+
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                throw new ArgumentNullException("password");
+            }
+
+            var queryParameters = new Dictionary<string, string>
+                {
+                    { "client_id", clientId },
+                    { "username", username },
+                    { "password", password },
+                    { "grant_type", "password" }
+                };
+
+            return new TokenRequestParameters
+                {
+                    BaseAddress = new Uri(string.Format(EgnyteBaseUrl, userDomain)),
+                    QueryParameters = queryParameters
+                };
+        }
+
+        /// <summary>
         /// Gets the URI used for exchanging the code for a token
         /// </summary>
         /// <param name="userDomain">This is the user's Egnyte domain. An example domain name is "acme".

@@ -75,8 +75,8 @@
                 "Egnyte.filesystem",
                 "apidemo123",
                 true);
-            const string ExpectedUri = "https://acme.egnyte.com/puboauth/token?client_id=Client123&client_secret=MyOwnSecret&redirect_uri=https://myapp.com/oauth&response_type=code&scope=Egnyte.filesystem&state=apidemo123&mobile=1";
-            Assert.AreEqual(ExpectedUri, uri.ToString());
+            const string ExpectedUrl = "https://acme.egnyte.com/puboauth/token?client_id=Client123&client_secret=MyOwnSecret&redirect_uri=https://myapp.com/oauth&response_type=code&scope=Egnyte.filesystem&state=apidemo123&mobile=1";
+            Assert.AreEqual(ExpectedUrl, uri.ToString());
         }
 
         [Test]
@@ -88,8 +88,8 @@
                 "Client123",
                 new Uri("https://myapp.com/oauth"),
                 "MyOwnSecret");
-            const string ExpectedUri = "https://acme.egnyte.com/puboauth/token?client_id=Client123&client_secret=MyOwnSecret&redirect_uri=https://myapp.com/oauth&response_type=code";
-            Assert.AreEqual(ExpectedUri, uri.ToString());
+            const string ExpectedUrl = "https://acme.egnyte.com/puboauth/token?client_id=Client123&client_secret=MyOwnSecret&redirect_uri=https://myapp.com/oauth&response_type=code";
+            Assert.AreEqual(ExpectedUrl, uri.ToString());
         }
 
         [Test]
@@ -100,8 +100,80 @@
                 "acme",
                 "Client123",
                 new Uri("https://myapp.com/oauth"));
-            const string ExpectedUri = "https://acme.egnyte.com/puboauth/token?client_id=Client123&redirect_uri=https://myapp.com/oauth&response_type=token";
-            Assert.AreEqual(ExpectedUri, uri.ToString());
+            const string ExpectedUrl = "https://acme.egnyte.com/puboauth/token?client_id=Client123&redirect_uri=https://myapp.com/oauth&response_type=token";
+            Assert.AreEqual(ExpectedUrl, uri.ToString());
+        }
+
+        [Test]
+        public void GetAuthorizationUriResourceOwnerFlow_ReturnsUrl_WhenCorrectParameters()
+        {
+            var uri = OAuthHelper.GetAuthorizationUriResourceOwnerFlow(
+                "acme",
+                "Client123",
+                "user123",
+                "password123");
+
+            Assert.AreEqual("https://acme.egnyte.com/puboauth/token", uri.BaseAddress.ToString());
+            Assert.AreEqual("Client123", uri.QueryParameters["client_id"]);
+            Assert.AreEqual("user123", uri.QueryParameters["username"]);
+            Assert.AreEqual("password123", uri.QueryParameters["password"]);
+            Assert.AreEqual("password", uri.QueryParameters["grant_type"]);
+        }
+
+        [Test]
+        public void GetAuthorizationUriResourceOwnerFlow_ThrowsArgumentNullException_WhenDomainIsEmpty()
+        {
+            var exception = Assert.Throws<ArgumentNullException>(
+                    () =>
+                    OAuthHelper.GetAuthorizationUriResourceOwnerFlow(
+                        string.Empty,
+                        "Client123",
+                        "user123",
+                        "password123"));
+
+            Assert.IsTrue(exception.Message.Contains("userDomain"));
+        }
+
+        [Test]
+        public void GetAuthorizationUriResourceOwnerFlow_ThrowsArgumentNullException_WhenClientIdIsEmpty()
+        {
+            var exception = Assert.Throws<ArgumentNullException>(
+                    () =>
+                    OAuthHelper.GetAuthorizationUriResourceOwnerFlow(
+                        "acme",
+                        string.Empty,
+                        "user123",
+                        "password123"));
+
+            Assert.IsTrue(exception.Message.Contains("clientId"));
+        }
+
+        [Test]
+        public void GetAuthorizationUriResourceOwnerFlow_ThrowsArgumentNullException_WhenUsernameIsEmpty()
+        {
+            var exception = Assert.Throws<ArgumentNullException>(
+                    () =>
+                    OAuthHelper.GetAuthorizationUriResourceOwnerFlow(
+                        "acme",
+                        "Client123",
+                        null,
+                        "password123"));
+
+            Assert.IsTrue(exception.Message.Contains("username"));
+        }
+
+        [Test]
+        public void GetAuthorizationUriResourceOwnerFlow_ThrowsArgumentNullException_WhenPasswordIsEmpty()
+        {
+            var exception = Assert.Throws<ArgumentNullException>(
+                    () =>
+                    OAuthHelper.GetAuthorizationUriResourceOwnerFlow(
+                        "acme",
+                        "Client123",
+                        "Username",
+                        string.Empty));
+
+            Assert.IsTrue(exception.Message.Contains("password"));
         }
 
         [Test]
@@ -193,7 +265,7 @@
         }
 
         [Test]
-        public void ParseTokeenFromUrlResponse_ReturnsToken_WhenCorrectUrl()
+        public void ParseTokenFromUrlResponse_ReturnsToken_WhenCorrectUrl()
         {
             var token = OAuthHelper.ParseTokenFromUrlResponse("#access_token=OAUTH_CODE&token_type=bearer&state=apidemo123");
 
@@ -205,7 +277,7 @@
         }
 
         [Test]
-        public void ParseTokeenFromUrlResponse_ReturnsCorrectErrorResponse_WhenAuthorizationFailed()
+        public void ParseTokenFromUrlResponse_ReturnsCorrectErrorResponse_WhenAuthorizationFailed()
         {
             var token = OAuthHelper.ParseTokenFromUrlResponse("#error=access_denied&state=apidemo123");
 
