@@ -39,7 +39,22 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\EgnyteApiException.cs" />
+    <Compile Include="Common\ServiceHandler.cs" />
     <Compile Include="EgnyteClient.cs" />
+    <Compile Include="EgnyteClientHelper.cs" />
+    <Compile Include="Files\FileBasicMetadata.cs" />
+    <Compile Include="Files\FileMetadata.cs" />
+    <Compile Include="Files\FileMetadataResponse.cs" />
+    <Compile Include="Files\FileVersionMetadata.cs" />
+    <Compile Include="Files\FileVersionMetadataResponse.cs" />
+    <Compile Include="Files\FilesClient.cs" />
+    <Compile Include="Files\FileOrFolderMetadata.cs" />
+    <Compile Include="Files\FilesHelper.cs" />
+    <Compile Include="Files\FolderMetadata.cs" />
+    <Compile Include="Files\FolderMetadataResponse.cs" />
+    <Compile Include="Files\FolderExtendedMetadata.cs" />
+    <Compile Include="Files\ListFileOrFolderResponse.cs" />
     <Compile Include="OAuthHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TokenResponse.cs" />

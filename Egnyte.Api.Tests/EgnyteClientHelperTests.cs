@@ -8,7 +8,7 @@
     using NUnit.Framework;
 
     [TestFixture]
-    public class EgnyteClientTests
+    public class EgnyteClientHelperTests
     {
         [Test]
         public async void GetTokenFromCode_ReturnsCorrectToken()
@@ -35,7 +35,7 @@
                     Content = new StringContent(tokenResponse)
                 });
 
-            var tokenResult = await EgnyteClient.GetTokenFromCode(
+            var tokenResult = await EgnyteClientHelper.GetTokenFromCode(
                 "acme",
                 "Client123",
                 "MyOwnSecret",
@@ -74,7 +74,7 @@
                     Content = new StringContent(tokenResponse)
                 });
 
-            var tokenResult = await EgnyteClient.GetTokenResourceOwnerFlow(
+            var tokenResult = await EgnyteClientHelper.GetTokenResourceOwnerFlow(
                 "acme",
                 "Client123",
                 "username",
