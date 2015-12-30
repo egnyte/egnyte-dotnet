@@ -36,6 +36,12 @@
         [JsonProperty(PropertyName = "public_links")]
         public string PublicLinks { get; set; }
 
+        [JsonProperty(PropertyName = "allowed_file_link_types")]
+        public string[] AllowedFileLinkTypes { get; set; }
+
+        [JsonProperty(PropertyName = "allowed_folder_link_types")]
+        public string[] AllowedFolderLinkTypes { get; set; }
+
         [JsonProperty(PropertyName = "folders")]
         public List<FolderMetadataResponse> Folders { get; set; }
 

@@ -13,9 +13,11 @@
             int totalCount,
             bool restrictMoveDelete,
             string publicLinks,
+            string[] allowedFileLinkTypes,
+            string[] allowedFolderLinkTypes,
             List<FolderMetadata> folders,
             List<FileBasicMetadata> files)
-            : base(name, path, folderId)
+            : base(name, path, folderId, allowedFileLinkTypes, allowedFolderLinkTypes)
         {
             Count = count;
             Offset = offset;

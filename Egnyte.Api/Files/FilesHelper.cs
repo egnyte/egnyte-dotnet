@@ -20,6 +20,8 @@
                         response.TotalCount,
                         response.RestrictMoveDelete,
                         response.PublicLinks,
+                        response.AllowedFileLinkTypes,
+                        response.AllowedFolderLinkTypes,
                         MapChildFoldersResponse(response.Folders),
                         MapChildFilesResponse(response.Files)));
             }
@@ -43,6 +45,11 @@
 
         private static List<FileBasicMetadata> MapChildFilesResponse(IEnumerable<FileMetadataResponse> files)
         {
+            if (files == null)
+            {
+                return new List<FileBasicMetadata>();
+            }
+
             return files.Select(
                 f => new FileBasicMetadata(
                     f.Checksum,
@@ -59,11 +66,28 @@
 
         private static List<FolderMetadata> MapChildFoldersResponse(IEnumerable<FolderMetadataResponse> folders)
         {
-            return folders.Select(f => new FolderMetadata(f.Name, f.Path, f.FolderId)).ToList();
+            if (folders == null)
+            {
+                return new List<FolderMetadata>();
+            }
+
+            return folders.Select(
+                f => new FolderMetadata(
+                    f.Name,
+                    f.Path,
+                    f.FolderId,
+                    f.AllowedFileLinkTypes,
+                    f.AllowedFolderLinkTypes))
+                    .ToList();
         }
 
         private static List<FileVersionMetadata> MapFileVersions(IEnumerable<FileVersionMetadataResponse> versions)
         {
+            if (versions == null)
+            {
+                return new List<FileVersionMetadata>();
+            }
+
             return
                 versions.Select(
                     v => new FileVersionMetadata(v.Checksum, v.Size, v.EntryId, v.LastModified, v.UploadedBy))

@@ -23,6 +23,8 @@
             ""is_folder"": true,
             ""public_links"": ""files_folders"",
             ""restrict_move_delete"": true,
+            ""allowed_file_link_types"" : [""domain"", ""recipients""],
+            ""allowed_folder_link_types"" : [""anyone"", ""password""],
             ""files"":
                 [{
                     ""checksum"": ""checksum1"",
@@ -42,13 +44,17 @@
                     ""name"": ""Test"",
                     ""path"": ""/Shared/Documents/Test"",
                     ""folder_id"": ""6a1c7f21-874e-44d0-9360-ca09eacf8553"",
-                    ""is_folder"": true
+                    ""is_folder"": true,
+                    ""allowed_file_link_types"" : [""domain"", ""recipients""],
+                    ""allowed_folder_link_types"" : [""anyone"", ""password""]
                 },
                 {
                     ""name"": ""Articles"",
                     ""path"": ""/Shared/Documents/Articles"",
                     ""folder_id"": ""429b22bf-a111-4f7d-8460-58223db92817"",
-                    ""is_folder"": true
+                    ""is_folder"": true,
+                    ""allowed_file_link_types"" : [""domain"", ""recipients""],
+                    ""allowed_folder_link_types"" : [""anyone"", ""password""]
                 }]
             }";
 
@@ -113,6 +119,12 @@
             Assert.AreEqual(18, folderMetadata.TotalCount);
             Assert.AreEqual("files_folders", folderMetadata.PublicLinks);
             Assert.AreEqual(true, folderMetadata.RestrictMoveDelete);
+            Assert.AreEqual(2, folderMetadata.AllowedFileLinkTypes.Length);
+            Assert.AreEqual("domain", folderMetadata.AllowedFileLinkTypes[0]);
+            Assert.AreEqual("recipients", folderMetadata.AllowedFileLinkTypes[1]);
+            Assert.AreEqual(2, folderMetadata.AllowedFolderLinkTypes.Length);
+            Assert.AreEqual("anyone", folderMetadata.AllowedFolderLinkTypes[0]);
+            Assert.AreEqual("password", folderMetadata.AllowedFolderLinkTypes[1]);
             
             Assert.AreEqual(1, folderMetadata.Files.Count);
             Assert.AreEqual("checksum1", folderMetadata.Files[0].Checksum);
@@ -129,9 +141,22 @@
             Assert.AreEqual("Test", folderMetadata.Folders[0].Name);
             Assert.AreEqual("/Shared/Documents/Test", folderMetadata.Folders[0].Path);
             Assert.AreEqual("6a1c7f21-874e-44d0-9360-ca09eacf8553", folderMetadata.Folders[0].FolderId);
+            Assert.AreEqual(2, folderMetadata.Folders[0].AllowedFileLinkTypes.Length);
+            Assert.AreEqual("domain", folderMetadata.Folders[0].AllowedFileLinkTypes[0]);
+            Assert.AreEqual("recipients", folderMetadata.Folders[0].AllowedFileLinkTypes[1]);
+            Assert.AreEqual(2, folderMetadata.Folders[0].AllowedFolderLinkTypes.Length);
+            Assert.AreEqual("anyone", folderMetadata.Folders[0].AllowedFolderLinkTypes[0]);
+            Assert.AreEqual("password", folderMetadata.Folders[0].AllowedFolderLinkTypes[1]);
+
             Assert.AreEqual("Articles", folderMetadata.Folders[1].Name);
             Assert.AreEqual("/Shared/Documents/Articles", folderMetadata.Folders[1].Path);
             Assert.AreEqual("429b22bf-a111-4f7d-8460-58223db92817", folderMetadata.Folders[1].FolderId);
+            Assert.AreEqual(2, folderMetadata.Folders[1].AllowedFileLinkTypes.Length);
+            Assert.AreEqual("domain", folderMetadata.Folders[1].AllowedFileLinkTypes[0]);
+            Assert.AreEqual("recipients", folderMetadata.Folders[1].AllowedFileLinkTypes[1]);
+            Assert.AreEqual(2, folderMetadata.Folders[1].AllowedFolderLinkTypes.Length);
+            Assert.AreEqual("anyone", folderMetadata.Folders[1].AllowedFolderLinkTypes[0]);
+            Assert.AreEqual("password", folderMetadata.Folders[1].AllowedFolderLinkTypes[1]);
         }
 
         [Test]

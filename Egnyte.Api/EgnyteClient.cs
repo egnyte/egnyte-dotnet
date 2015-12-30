@@ -15,6 +15,10 @@
             Files = new FilesClient(httpClient, domain);
         }
 
+        /// <summary>
+        /// Files allows you to perform the normal file system actions: create, update, move, copy, delete,
+        /// download, and list information about files and folders.
+        /// </summary>
         public FilesClient Files { get; private set; }
     }
 }

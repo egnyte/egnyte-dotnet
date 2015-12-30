@@ -15,5 +15,11 @@
 
         [JsonProperty(PropertyName = "is_folder")]
         public bool IsFolder { get; set; }
+
+        [JsonProperty(PropertyName = "allowed_file_link_types")]
+        public string[] AllowedFileLinkTypes { get; set; }
+
+        [JsonProperty(PropertyName = "allowed_folder_link_types")]
+        public string[] AllowedFolderLinkTypes { get; set; }
     }
 }
