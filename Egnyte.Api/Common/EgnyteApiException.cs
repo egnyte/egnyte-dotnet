@@ -12,6 +12,9 @@ namespace Egnyte.Api.Common
             StatusCode = statusCode;
         }
 
+        /// <summary>
+        /// Status code of response from Egnyte API
+        /// </summary>
         public HttpStatusCode StatusCode { get; private set; }
     }
 }

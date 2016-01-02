@@ -20,17 +20,24 @@
             var response = await this.httpClient.SendAsync(request);
             var rawContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-            try
+            if (response.IsSuccessStatusCode)
             {
-                return JsonConvert.DeserializeObject<T>(rawContent);
+                try
+                {
+                    return JsonConvert.DeserializeObject<T>(rawContent);
+                }
+                catch (Exception e)
+                {
+                    throw new EgnyteApiException(
+                        rawContent,
+                        response.StatusCode,
+                        e);
+                }
             }
-            catch (Exception e)
-            {
-                throw new EgnyteApiException(
+
+            throw new EgnyteApiException(
                     rawContent,
-                    response.StatusCode,
-                    e);
-            }
+                    response.StatusCode);
         }
     }
 }

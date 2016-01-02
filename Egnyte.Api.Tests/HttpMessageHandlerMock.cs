@@ -9,10 +9,22 @@
     {
         public Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> SendAsyncFunc { get; set; }
 
+        private Exception exception;
+
+        public void SetException(Exception exceptionArg)
+        {
+            exception = exceptionArg;
+        }
+
         protected override Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request,
             CancellationToken cancellationToken)
         {
+            if (this.exception != null)
+            {
+                throw this.exception;
+            }
+
             return SendAsyncFunc(request, cancellationToken);
         }
     }

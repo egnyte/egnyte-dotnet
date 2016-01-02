@@ -1,7 +1,9 @@
 ﻿namespace Egnyte.Api.Files
 {
     using System;
+    using System.IO;
     using System.Net.Http;
+    using System.Text;
     using System.Threading.Tasks;
 
     using Egnyte.Api.Common;
@@ -9,6 +11,8 @@
     public class FilesClient
     {
         private const string FilesBasePath = "https://{0}.egnyte.com/pubapi/v1/fs/";
+
+        private const string FilesContentBasePath = "https://{0}.egnyte.com/pubapi/v1/fs-content/";
 
         private readonly HttpClient httpClient;
 
@@ -40,6 +44,61 @@
             var response = await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
 
             return FilesHelper.MapResponseToMetadata(response);
+        }
+
+        /// <summary>
+        /// Creates a folder for specified path
+        /// </summary>
+        /// <param name="path">Full path to the new folder</param>
+        /// <returns>Returns true if creating of a folder succeeded</returns>
+        public async Task<bool> CreateFolder(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                throw new ArgumentNullException("path");
+            }
+
+            var uriBuilder = new UriBuilder(string.Format(FilesBasePath, domain) + path);
+            var httpRequest = new HttpRequestMessage(HttpMethod.Post, uriBuilder.Uri)
+            {
+                Content = new StringContent(@"{""action"": ""add_folder""}", Encoding.UTF8, "application/json")
+            };
+            
+            var serviceHandler = new ServiceHandler<string>(httpClient);
+            await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Creates or updates a file.
+        /// </summary>
+        /// <param name="path">Full path to the file</param>
+        /// <param name="file">Content of a file in a memory stream</param>
+        /// <returns>Response with checksum and ids.
+        /// Checksum is a SHA512 hash of entire file that can be used for validating upload integrity.</returns>
+        public async Task<CreateOrUpdateFile> CreateOrUpdateFile(string path, Stream file)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                throw new ArgumentNullException("path");
+            }
+
+            if (file.Length == 0)
+            {
+                throw new ArgumentNullException("file");
+            }
+
+            var uriBuilder = new UriBuilder(string.Format(FilesContentBasePath, domain) + path);
+            var httpRequest = new HttpRequestMessage(HttpMethod.Post, uriBuilder.Uri)
+            {
+                Content = new StreamContent(file)
+            };
+
+            var serviceHandler = new ServiceHandler<CreateOrUpdateFileResponse>(httpClient);
+            var response = await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
+
+            return new CreateOrUpdateFile(response.Checksum, response.GroupId, response.EntryId);
         }
 
         private Uri PrepareListFileOrFolderUri(string path, bool listContent, bool allowedLinkTypes)

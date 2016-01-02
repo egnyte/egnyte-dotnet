@@ -10,7 +10,7 @@
     using NUnit.Framework;
 
     [TestFixture]
-    public class FilesClientTests
+    public class ListFileOrFolderTests
     {
         private const string ListFolderResponse = @"
             {    
@@ -206,11 +206,11 @@
         }
 
         [Test]
-        public async void ListFileOrFolder_WhenNotWellFormedAnswerIsReturned_ThrowsException()
+        public async void ListFileOrFolder_ThrowsException_WhenInternalServerError()
         {
             var httpHandlerMock = new HttpMessageHandlerMock();
             var httpClient = new HttpClient(httpHandlerMock);
-            const string Content = "not well formed content";
+            const string Content = "Something went wrong";
 
             httpHandlerMock.SendAsyncFunc =
                 (request, cancellationToken) =>
@@ -227,8 +227,51 @@
                 () => egnyteClient.Files.ListFileOrFolder("path"));
 
             Assert.AreEqual(HttpStatusCode.InternalServerError, exception.StatusCode);
+            Assert.IsNull(exception.InnerException);
+            Assert.AreEqual(Content, exception.Message);
+        }
+
+        [Test]
+        public async void ListFileOrFolder_ThrowsException_WhenNotWellFormedAnswerIsReturned()
+        {
+            var httpHandlerMock = new HttpMessageHandlerMock();
+            var httpClient = new HttpClient(httpHandlerMock);
+            const string Content = "Not well formed content";
+
+            httpHandlerMock.SendAsyncFunc =
+                (request, cancellationToken) =>
+                Task.FromResult(
+                    new HttpResponseMessage
+                    {
+                        StatusCode = HttpStatusCode.OK,
+                        Content = new StringContent(Content)
+                    });
+
+            var egnyteClient = new EgnyteClient("token", "acme", httpClient);
+
+            var exception = await AssertExtensions.ThrowsAsync<EgnyteApiException>(
+                () => egnyteClient.Files.ListFileOrFolder("path"));
+
+            Assert.AreEqual(HttpStatusCode.OK, exception.StatusCode);
             Assert.IsNotNull(exception.InnerException);
             Assert.AreEqual(Content, exception.Message);
+        }
+
+        [Test]
+        public async void ListFileOrFolder_ThrowsException_WhenErrorOccursWithSendingRequest()
+        {
+            const string ErrorMessage = "Something went wrong";
+            var httpHandlerMock = new HttpMessageHandlerMock();
+            httpHandlerMock.SetException(new Exception(ErrorMessage));
+            var httpClient = new HttpClient(httpHandlerMock);
+            
+            var egnyteClient = new EgnyteClient("token", "acme", httpClient);
+
+            var exception = await AssertExtensions.ThrowsAsync<Exception>(
+                () => egnyteClient.Files.ListFileOrFolder("path"));
+
+            Assert.AreEqual(ErrorMessage, exception.Message);
+            Assert.IsNull(exception.InnerException);
         }
     }
 }
