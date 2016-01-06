@@ -12,7 +12,7 @@ namespace Egnyte.Api.Tests.Files
     public class CreateFolderTests
     {
         [Test]
-        public async void CreateFolder_WhenCouldNotConnect_ThrowsException()
+        public async void CreateFolder_ReturnsSuccess()
         {
             var httpHandlerMock = new HttpMessageHandlerMock();
             var httpClient = new HttpClient(httpHandlerMock);

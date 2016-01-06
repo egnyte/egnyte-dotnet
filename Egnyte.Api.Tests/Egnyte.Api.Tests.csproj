@@ -55,6 +55,7 @@
     <Compile Include="Files\CreateOrUpdateFileTests.cs" />
     <Compile Include="Files\CreateFolderTests.cs" />
     <Compile Include="Files\ListFileOrFolderTests.cs" />
+    <Compile Include="Files\MoveFileOrFolderTests.cs" />
     <Compile Include="HttpMessageHandlerMock.cs" />
     <Compile Include="OAuthHelperTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

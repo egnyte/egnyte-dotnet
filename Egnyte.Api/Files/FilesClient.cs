@@ -1,8 +1,10 @@
 ﻿namespace Egnyte.Api.Files
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Net.Http;
+    using System.Runtime.CompilerServices;
     using System.Text;
     using System.Threading.Tasks;
 
@@ -77,7 +79,7 @@
         /// <param name="file">Content of a file in a memory stream</param>
         /// <returns>Response with checksum and ids.
         /// Checksum is a SHA512 hash of entire file that can be used for validating upload integrity.</returns>
-        public async Task<CreateOrUpdateFile> CreateOrUpdateFile(string path, Stream file)
+        public async Task<CreateOrUpdateFile> CreateOrUpdateFile(string path, MemoryStream file)
         {
             if (string.IsNullOrWhiteSpace(path))
             {
@@ -99,6 +101,44 @@
             var response = await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
 
             return new CreateOrUpdateFile(response.Checksum, response.GroupId, response.EntryId);
+        }
+
+        /// <summary>
+        /// Copies a file or folder
+        /// </summary>
+        /// <param name="path">Path to file or folder to copy</param>
+        /// <param name="destination">Full path where file/folder will be copied</param>
+        /// <returns>Returns true if moving file or folder succeeded</returns>
+        public async Task<bool> MoveFileOrFolder(string path, string destination)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                throw new ArgumentNullException("path");
+            }
+
+            if (string.IsNullOrWhiteSpace(destination))
+            {
+                throw new ArgumentNullException("destination");
+            }
+
+            if (!destination.StartsWith("/"))
+            {
+                destination = "/" + destination;
+            }
+
+            var uriBuilder = new UriBuilder(string.Format(FilesBasePath, domain) + path);
+            var httpRequest = new HttpRequestMessage(HttpMethod.Post, uriBuilder.Uri)
+            {
+                Content = new StringContent(
+                    string.Format(@"{{""action"": ""move"", ""destination"": ""{0}""}}", destination),
+                    Encoding.UTF8,
+                    "application/json")
+            };
+
+            var serviceHandler = new ServiceHandler<string>(httpClient);
+            await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
+
+            return true;
         }
 
         private Uri PrepareListFileOrFolderUri(string path, bool listContent, bool allowedLinkTypes)

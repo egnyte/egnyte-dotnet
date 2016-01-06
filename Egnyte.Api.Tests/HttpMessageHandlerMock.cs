@@ -11,15 +11,24 @@
 
         private Exception exception;
 
+        private HttpRequestMessage requestMessage;
+
         public void SetException(Exception exceptionArg)
         {
             exception = exceptionArg;
+        }
+
+        public HttpRequestMessage GetHttpRequestMessage()
+        {
+            return requestMessage;
         }
 
         protected override Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request,
             CancellationToken cancellationToken)
         {
+            requestMessage = request;
+
             if (this.exception != null)
             {
                 throw this.exception;
