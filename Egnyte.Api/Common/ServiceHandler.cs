@@ -1,6 +1,8 @@
 ﻿namespace Egnyte.Api.Common
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Net.Http;
     using System.Threading.Tasks;
 
@@ -38,6 +40,29 @@
             throw new EgnyteApiException(
                     rawContent,
                     response.StatusCode);
+        }
+
+        public async Task<ServiceResponse<byte[]>> GetFileToDownload(HttpRequestMessage request)
+        {
+            var response = await this.httpClient.SendAsync(request);
+            var bytes = await response.Content.ReadAsByteArrayAsync();
+            return new ServiceResponse<byte[]>
+                       {
+                           Data = bytes,
+                           Headers = GetResponseHeaders(response)
+                       };
+        }
+
+        public Dictionary<string, string> GetResponseHeaders(HttpResponseMessage message)
+        {
+            var headers = message.Headers.ToDictionary(k => k.Key, v => v.Value.Last());
+
+            foreach (var httpContentHeader in message.Content.Headers)
+            {
+                headers.Add(httpContentHeader.Key, httpContentHeader.Value.Last());
+            }
+
+            return headers;
         }
     }
 }

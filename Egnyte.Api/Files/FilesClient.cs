@@ -1,10 +1,8 @@
 ﻿namespace Egnyte.Api.Files
 {
     using System;
-    using System.Collections.Generic;
     using System.IO;
     using System.Net.Http;
-    using System.Runtime.CompilerServices;
     using System.Text;
     using System.Threading.Tasks;
 
@@ -141,10 +139,58 @@
             return true;
         }
 
+        public async Task<DownloadedFile> DownloadFile(string path)
+        {
+            var listFilesUri = PrepareDownloadFileUri(path);
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, listFilesUri);
+            var serviceHandler = new ServiceHandler<string>(httpClient);
+
+            var response = await serviceHandler.GetFileToDownload(httpRequest).ConfigureAwait(false);
+
+            return MapResponseToDownloadedFile(response);
+        }
+
+        private DownloadedFile MapResponseToDownloadedFile(ServiceResponse<byte[]> response)
+        {
+            return new DownloadedFile
+                       {
+                           Data = response.Data,
+                           Checksum = 
+                               response.Headers.ContainsKey("X-Sha512-Checksum")
+                                   ? response.Headers["X-Sha512-Checksum"]
+                                   : string.Empty,
+                           LastModified =
+                               response.Headers.ContainsKey("Last-Modified")
+                                   ? DateTime.Parse(response.Headers["Last-Modified"])
+                                   : DateTime.Now,
+                           ETag = 
+                               response.Headers.ContainsKey("ETag")
+                                   ? response.Headers["ETag"]
+                                   : string.Empty,
+                           ContentType = 
+                               response.Headers.ContainsKey("Content-Type")
+                                   ? response.Headers["Content-Type"]
+                                   : string.Empty,
+                           ContentLength =
+                               response.Headers.ContainsKey("Content-Length")
+                                   ? int.Parse(response.Headers["Content-Length"])
+                                   : 0
+                       };
+        }
+
         private Uri PrepareListFileOrFolderUri(string path, bool listContent, bool allowedLinkTypes)
         {
             var query = "list_content=" + listContent + "&allowed_link_types=" + allowedLinkTypes;
             var uriBuilder = new UriBuilder(string.Format(FilesBasePath, domain) + path) { Query = query };
+
+            return uriBuilder.Uri;
+        }
+
+        private Uri PrepareDownloadFileUri(string path)
+        {
+            var query = string.Empty;
+            //var query = "list_content=" + listContent + "&allowed_link_types=" + allowedLinkTypes;
+            var uriBuilder = new UriBuilder(string.Format(FilesContentBasePath, domain) + path) { Query = query };
 
             return uriBuilder.Uri;
         }
