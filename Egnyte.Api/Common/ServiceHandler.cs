@@ -19,6 +19,7 @@
 
         public async Task<T> SendRequestAsync(HttpRequestMessage request)
         {
+            request.RequestUri = ApplyAdditionalUrlMapping(request.RequestUri);
             var response = await this.httpClient.SendAsync(request);
             var rawContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
@@ -42,8 +43,17 @@
                     response.StatusCode);
         }
 
+        private Uri ApplyAdditionalUrlMapping(Uri requestUri)
+        {
+            var url = requestUri.ToString();
+            url = url.Replace("[", "%5B")
+                     .Replace("]", "%5D");
+            return new Uri(url);
+        }
+
         public async Task<ServiceResponse<byte[]>> GetFileToDownload(HttpRequestMessage request)
         {
+            request.RequestUri = ApplyAdditionalUrlMapping(request.RequestUri);
             var response = await this.httpClient.SendAsync(request);
             var bytes = await response.Content.ReadAsByteArrayAsync();
             return new ServiceResponse<byte[]>
