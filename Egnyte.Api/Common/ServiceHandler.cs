@@ -17,7 +17,7 @@
             this.httpClient = httpClient;
         }
 
-        public async Task<T> SendRequestAsync(HttpRequestMessage request)
+        public async Task<ServiceResponse<T>> SendRequestAsync(HttpRequestMessage request)
         {
             request.RequestUri = ApplyAdditionalUrlMapping(request.RequestUri);
             var response = await this.httpClient.SendAsync(request);
@@ -27,7 +27,11 @@
             {
                 try
                 {
-                    return JsonConvert.DeserializeObject<T>(rawContent);
+                    return new ServiceResponse<T>
+                               {
+                                   Data = JsonConvert.DeserializeObject<T>(rawContent),
+                                   Headers = GetResponseHeaders(response)
+                               };
                 }
                 catch (Exception e)
                 {
@@ -41,14 +45,6 @@
             throw new EgnyteApiException(
                     rawContent,
                     response.StatusCode);
-        }
-
-        private Uri ApplyAdditionalUrlMapping(Uri requestUri)
-        {
-            var url = requestUri.ToString();
-            url = url.Replace("[", "%5B")
-                     .Replace("]", "%5D");
-            return new Uri(url);
         }
 
         public async Task<ServiceResponse<byte[]>> GetFileToDownload(HttpRequestMessage request)
@@ -73,6 +69,14 @@
             }
 
             return headers;
+        }
+
+        private Uri ApplyAdditionalUrlMapping(Uri requestUri)
+        {
+            var url = requestUri.ToString();
+            url = url.Replace("[", "%5B")
+                     .Replace("]", "%5D");
+            return new Uri(url);
         }
     }
 }

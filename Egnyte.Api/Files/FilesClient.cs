@@ -43,7 +43,7 @@
 
             var response = await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
 
-            return FilesHelper.MapResponseToMetadata(response);
+            return FilesHelper.MapResponseToMetadata(response.Data);
         }
 
         /// <summary>
@@ -98,7 +98,16 @@
             var serviceHandler = new ServiceHandler<CreateOrUpdateFileResponse>(httpClient);
             var response = await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
 
-            return new CreateOrUpdateFile(response.Checksum, response.GroupId, response.EntryId);
+            return new CreateOrUpdateFile(
+                response.Headers.ContainsKey("X-Sha512-Checksum")
+                    ? response.Headers["X-Sha512-Checksum"]
+                    : response.Data.Checksum,
+                response.Headers.ContainsKey("Last-Modified")
+                    ? DateTime.Parse(response.Headers["Last-Modified"])
+                    : DateTime.Now,
+                response.Headers.ContainsKey("ETag")
+                    ? response.Headers["ETag"]
+                    : response.Data.EntryId);
         }
 
         /// <summary>

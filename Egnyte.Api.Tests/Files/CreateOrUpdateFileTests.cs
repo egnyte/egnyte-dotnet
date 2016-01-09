@@ -13,11 +13,14 @@ namespace Egnyte.Api.Tests.Files
     [TestFixture]
     public class CreateOrUpdateFileTests
     {
+        private const string Checksum = "6cb2785692b05c5eff397109457031bde7ab236982364cc7b51e319c67c463d7721c82c024ef3f74b9dff d388be6dc8120edc214e7d0eadaaf2c5e0eb44845a3";
+        private const string ETag = "\"9c4c2443-5dbc-4afa-8d04-5620a778093c\"";
+
         private const string CreateFileResponse = @"
         {
-            ""checksum"":""cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"",
+            ""checksum"":""6cb2785692b05c5eff397109457031bde7ab236982364cc7b51e319c67c463d7721c82c024ef3f74b9dff d388be6dc8120edc214e7d0eadaaf2c5e0eb44845a3"",
             ""group_id"":""a915703e-25f7-4905-9f46-2dbdcc94c681"",
-            ""entry_id"":""e305a490-f869-402b-8efb-7fc3f5c146e7""
+            ""entry_id"":""9c4c2443-5dbc-4afa-8d04-5620a778093c""
         }";
 
         [Test]
@@ -56,21 +59,30 @@ namespace Egnyte.Api.Tests.Files
             var httpHandlerMock = new HttpMessageHandlerMock();
             var httpClient = new HttpClient(httpHandlerMock);
 
-            httpHandlerMock.SendAsyncFunc = (request, cancellationToken) => Task.FromResult(
-                new HttpResponseMessage
-                {
-                    StatusCode = HttpStatusCode.OK,
-                    Content = new StringContent(CreateFileResponse)
-                });
+            httpHandlerMock.SendAsyncFunc = (request, cancellationToken) => Task.FromResult(this.GetResponseMessage());
 
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
             var result = await egnyteClient.Files.CreateOrUpdateFile(
                 "path",
                 new MemoryStream(Encoding.UTF8.GetBytes("file")));
 
-            Assert.AreEqual("cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e", result.Checksum);
-            Assert.AreEqual("a915703e-25f7-4905-9f46-2dbdcc94c681", result.GroupId);
-            Assert.AreEqual("e305a490-f869-402b-8efb-7fc3f5c146e7", result.EntryId);
+            Assert.AreEqual(Checksum, result.Checksum);
+            Assert.AreEqual(ETag, result.EntryId);
+            Assert.AreEqual(new DateTime(2012, 08, 26, 5, 55, 29), result.LastModified);
+        }
+
+        private HttpResponseMessage GetResponseMessage()
+        {
+            var responseMessage = new HttpResponseMessage
+            {
+                StatusCode = HttpStatusCode.OK,
+                Content = new StringContent(CreateFileResponse)
+            };
+            responseMessage.Headers.Add("X-Sha512-Checksum", Checksum);
+            responseMessage.Headers.ETag = new System.Net.Http.Headers.EntityTagHeaderValue(ETag);
+            responseMessage.Content.Headers.Add("Last-Modified", "Sun, 26 Aug 2012 03:55:29 GMT");
+
+            return responseMessage;
         }
     }
 }

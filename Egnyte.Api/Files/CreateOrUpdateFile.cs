@@ -1,11 +1,13 @@
 ﻿namespace Egnyte.Api.Files
 {
+    using System;
+
     public class CreateOrUpdateFile
     {
-        public CreateOrUpdateFile(string checksum, string groupId, string entryId)
+        public CreateOrUpdateFile(string checksum, DateTime lastModified, string entryId)
         {
             Checksum = checksum;
-            GroupId = groupId;
+            LastModified = lastModified;
             EntryId = entryId;
         }
 
@@ -15,9 +17,9 @@
         public string Checksum { get; private set; }
 
         /// <summary>
-        /// Current value of the group tag.
+        /// Indicates last modified date for file.
         /// </summary>
-        public string GroupId { get; private set; }
+        public DateTime LastModified { get; private set; }
 
         /// <summary>
         /// Current value of the entity tag that can be used to compare whether two versions of a resource are the same.
