@@ -93,11 +93,6 @@ namespace Egnyte.Api
                 throw new ArgumentNullException("clientId");
             }
 
-            if (oAuthFlow == OAuthAuthorizationFlow.Code && string.IsNullOrWhiteSpace(clientSecret))
-            {
-                throw new ArgumentNullException("clientSecret", "In Code authorization flow you must provide client shared secret.");
-            }
-
             if (redirectUri == null || string.IsNullOrWhiteSpace(Uri.EscapeDataString(redirectUri.ToString())))
             {
                 throw new ArgumentNullException("redirectUri");
@@ -105,12 +100,6 @@ namespace Egnyte.Api
 
             var queryBuilder = new StringBuilder();
             queryBuilder.Append("client_id=").Append(clientId);
-
-            if (oAuthFlow == OAuthAuthorizationFlow.Code)
-            {
-                queryBuilder.Append("&client_secret=").Append(clientSecret);
-            }
-            
             queryBuilder.Append("&redirect_uri=").Append(redirectUri);
             queryBuilder.Append("&response_type=").Append(oAuthFlow == OAuthAuthorizationFlow.Code ? "code" : "token");
 

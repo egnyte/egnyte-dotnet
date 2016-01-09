@@ -37,19 +37,6 @@
         }
 
         [Test]
-        public void GetAuthorizeUri_CodeFlow_ThrowsArgumentNullException_WhenClientSecretIsEmpty()
-        {
-            var exception = Assert.Throws<ArgumentNullException>(
-                () => OAuthHelper.GetAuthorizeUri(
-                    OAuthAuthorizationFlow.Code,
-                    "domain",
-                    "id",
-                    new Uri("https://myapp.com")));
-
-            Assert.IsTrue(exception.Message.Contains("clientSecret"));
-        }
-
-        [Test]
         public void GetAuthorizeUri_ThrowsArgumentNullException_WhenRedirectUriIsEmpty()
         {
             var exception = Assert.Throws<ArgumentNullException>(
@@ -75,7 +62,7 @@
                 "Egnyte.filesystem",
                 "apidemo123",
                 true);
-            const string ExpectedUrl = "https://acme.egnyte.com/puboauth/token?client_id=Client123&client_secret=MyOwnSecret&redirect_uri=https://myapp.com/oauth&response_type=code&scope=Egnyte.filesystem&state=apidemo123&mobile=1";
+            const string ExpectedUrl = "https://acme.egnyte.com/puboauth/token?client_id=Client123&redirect_uri=https://myapp.com/oauth&response_type=code&scope=Egnyte.filesystem&state=apidemo123&mobile=1";
             Assert.AreEqual(ExpectedUrl, uri.ToString());
         }
 
@@ -88,7 +75,7 @@
                 "Client123",
                 new Uri("https://myapp.com/oauth"),
                 "MyOwnSecret");
-            const string ExpectedUrl = "https://acme.egnyte.com/puboauth/token?client_id=Client123&client_secret=MyOwnSecret&redirect_uri=https://myapp.com/oauth&response_type=code";
+            const string ExpectedUrl = "https://acme.egnyte.com/puboauth/token?client_id=Client123&redirect_uri=https://myapp.com/oauth&response_type=code";
             Assert.AreEqual(ExpectedUrl, uri.ToString());
         }
 
