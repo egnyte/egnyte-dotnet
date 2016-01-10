@@ -148,12 +148,28 @@
             return true;
         }
 
-        public async Task<DownloadedFile> DownloadFile(string path)
+        /// <summary>
+        /// Downloads a file (note that this method supports ranged downloads).
+        /// </summary>
+        /// <param name="path">Full path to the file</param>
+        /// <param name="rangeOfBytes">The range of bytes to download, use of this header is optional</param>
+        /// <param name="entryId">Specifies the entry ID of the file version to download.
+        /// Entry IDs are shown in the detail listing for a file.</param>
+        /// <returns>File download information with data in bytes</returns>
+        public async Task<DownloadedFile> DownloadFile(
+            string path,
+            Range rangeOfBytes = null,
+            string entryId = null)
         {
-            var listFilesUri = PrepareDownloadFileUri(path);
+            var listFilesUri = PrepareDownloadFileUri(path, entryId);
             var httpRequest = new HttpRequestMessage(HttpMethod.Get, listFilesUri);
-            var serviceHandler = new ServiceHandler<string>(httpClient);
 
+            if (rangeOfBytes != null)
+            {
+                httpRequest.Headers.Add("Range", string.Format("bytes={0}-{1}", rangeOfBytes.From, rangeOfBytes.To));
+            }
+            
+            var serviceHandler = new ServiceHandler<string>(httpClient);
             var response = await serviceHandler.GetFileToDownload(httpRequest).ConfigureAwait(false);
 
             return MapResponseToDownloadedFile(response);
@@ -161,30 +177,38 @@
 
         private DownloadedFile MapResponseToDownloadedFile(ServiceResponse<byte[]> response)
         {
-            return new DownloadedFile
-                       {
-                           Data = response.Data,
-                           Checksum = 
-                               response.Headers.ContainsKey("X-Sha512-Checksum")
+            return new DownloadedFile(
+                           response.Data,
+                           response.Headers.ContainsKey("X-Sha512-Checksum")
                                    ? response.Headers["X-Sha512-Checksum"]
                                    : string.Empty,
-                           LastModified =
-                               response.Headers.ContainsKey("Last-Modified")
+                           response.Headers.ContainsKey("Last-Modified")
                                    ? DateTime.Parse(response.Headers["Last-Modified"])
                                    : DateTime.Now,
-                           ETag = 
-                               response.Headers.ContainsKey("ETag")
+                           response.Headers.ContainsKey("ETag")
                                    ? response.Headers["ETag"]
                                    : string.Empty,
-                           ContentType = 
-                               response.Headers.ContainsKey("Content-Type")
+                           response.Headers.ContainsKey("Content-Type")
                                    ? response.Headers["Content-Type"]
                                    : string.Empty,
-                           ContentLength =
-                               response.Headers.ContainsKey("Content-Length")
+                           response.Headers.ContainsKey("Content-Length")
                                    ? int.Parse(response.Headers["Content-Length"])
-                                   : 0
-                       };
+                                   : 0,
+                           GetFullFileLengthFromRange(response));
+        }
+
+        private int GetFullFileLengthFromRange(ServiceResponse<byte[]> response)
+        {
+            if (response.Headers.ContainsKey("Content-Range"))
+            {
+                var rangeParts = response.Headers["Content-Range"].Split('/');
+                if (rangeParts.Length == 2)
+                {
+                    return int.Parse(rangeParts[1]);
+                }
+            }
+
+            return 0;
         }
 
         private Uri PrepareListFileOrFolderUri(string path, bool listContent, bool allowedLinkTypes)
@@ -195,10 +219,15 @@
             return uriBuilder.Uri;
         }
 
-        private Uri PrepareDownloadFileUri(string path)
+        private Uri PrepareDownloadFileUri(string path, string entryId)
         {
             var query = string.Empty;
-            //var query = "list_content=" + listContent + "&allowed_link_types=" + allowedLinkTypes;
+
+            if (!string.IsNullOrWhiteSpace(entryId))
+            {
+                query += "entry_id=" + entryId;
+            }
+            
             var uriBuilder = new UriBuilder(string.Format(FilesContentBasePath, domain) + path) { Query = query };
 
             return uriBuilder.Uri;

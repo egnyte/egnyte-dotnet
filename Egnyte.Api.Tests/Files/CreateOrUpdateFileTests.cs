@@ -14,7 +14,7 @@ namespace Egnyte.Api.Tests.Files
     public class CreateOrUpdateFileTests
     {
         private const string Checksum = "6cb2785692b05c5eff397109457031bde7ab236982364cc7b51e319c67c463d7721c82c024ef3f74b9dff d388be6dc8120edc214e7d0eadaaf2c5e0eb44845a3";
-        private const string ETag = "\"9c4c2443-5dbc-4afa-8d04-5620a778093c\"";
+        private const string ETag = "9c4c2443-5dbc-4afa-8d04-5620a778093c";
 
         private const string CreateFileResponse = @"
         {
@@ -67,7 +67,7 @@ namespace Egnyte.Api.Tests.Files
                 new MemoryStream(Encoding.UTF8.GetBytes("file")));
 
             Assert.AreEqual(Checksum, result.Checksum);
-            Assert.AreEqual(ETag, result.EntryId);
+            Assert.AreEqual("\"" + ETag + "\"", result.EntryId);
             Assert.AreEqual(new DateTime(2012, 08, 26, 5, 55, 29), result.LastModified);
         }
 
@@ -79,7 +79,7 @@ namespace Egnyte.Api.Tests.Files
                 Content = new StringContent(CreateFileResponse)
             };
             responseMessage.Headers.Add("X-Sha512-Checksum", Checksum);
-            responseMessage.Headers.ETag = new System.Net.Http.Headers.EntityTagHeaderValue(ETag);
+            responseMessage.Headers.ETag = new System.Net.Http.Headers.EntityTagHeaderValue("\"" + ETag + "\"");
             responseMessage.Content.Headers.Add("Last-Modified", "Sun, 26 Aug 2012 03:55:29 GMT");
 
             return responseMessage;

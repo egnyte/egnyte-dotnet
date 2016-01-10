@@ -59,6 +59,7 @@
     <Compile Include="Files\FolderMetadataResponse.cs" />
     <Compile Include="Files\FolderExtendedMetadata.cs" />
     <Compile Include="Files\ListFileOrFolderResponse.cs" />
+    <Compile Include="Files\Range.cs" />
     <Compile Include="OAuthHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TokenResponse.cs" />
