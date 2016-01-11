@@ -19,7 +19,7 @@
         private const int ContentLength = 126;
 
         [Test]
-        public async void DownloadFile_ReturnsCorrectFile()
+        public async Task DownloadFile_ReturnsCorrectFile()
         {
             var httpHandlerMock = new HttpMessageHandlerMock();
             var httpClient = new HttpClient(httpHandlerMock);
@@ -29,6 +29,7 @@
 
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
             var result = await egnyteClient.Files.DownloadFile("myFile").ConfigureAwait(false);
+            var requestMessage = httpHandlerMock.GetHttpRequestMessage();
 
             Assert.AreEqual(3, result.Data.Length);
             Assert.AreEqual(0x20, result.Data[0]);
@@ -39,10 +40,11 @@
             Assert.AreEqual("\"" + ETag + "\"", result.ETag);
             Assert.AreEqual(ContentType, result.ContentType);
             Assert.AreEqual(ContentLength, result.ContentLength);
+            Assert.AreEqual("https://acme.egnyte.com/pubapi/v1/fs-content/myFile", requestMessage.RequestUri.ToString());
         }
 
         [Test]
-        public async void DownloadFile_WithWrongRange_ThrowsArgumentOutOfRangeException()
+        public async Task DownloadFile_WithWrongRange_ThrowsArgumentOutOfRangeException()
         {
             var httpHandlerMock = new HttpMessageHandlerMock();
             var httpClient = new HttpClient(httpHandlerMock);
@@ -60,7 +62,7 @@
         }
 
         [Test]
-        public async void DownloadFile_WithRange_ReturnsCorrectFile()
+        public async Task DownloadFile_WithRange_ReturnsCorrectFile()
         {
             var httpHandlerMock = new HttpMessageHandlerMock();
             var httpClient = new HttpClient(httpHandlerMock);
@@ -85,7 +87,7 @@
 
 
         [Test]
-        public async void DownloadFile_WithEntryId_ReturnsCorrectFile()
+        public async Task DownloadFile_WithEntryId_ReturnsCorrectFile()
         {
             var httpHandlerMock = new HttpMessageHandlerMock();
             var httpClient = new HttpClient(httpHandlerMock);

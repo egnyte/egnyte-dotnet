@@ -8,10 +8,10 @@
     using NUnit.Framework;
 
     [TestFixture]
-    public class MoveFileOrFolderTests
+    public class CopyFileOrFolderTests
     {
         [Test]
-        public async Task MoveFile_ReturnsSuccess()
+        public async Task CopyFile_ReturnsSuccess()
         {
             var httpHandlerMock = new HttpMessageHandlerMock();
             var httpClient = new HttpClient(httpHandlerMock);
@@ -26,17 +26,17 @@
                     });
 
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
-            var isSucccess = await egnyteClient.Files.MoveFileOrFolder("pathFrom", "pathTo");
+            var isSucccess = await egnyteClient.Files.CopyFileOrFolder("pathFrom", "pathTo");
 
             var requestMessage = httpHandlerMock.GetHttpRequestMessage();
             var content = httpHandlerMock.GetRequestContentAsString();
             Assert.IsTrue(isSucccess);
             Assert.AreEqual("https://acme.egnyte.com/pubapi/v1/fs/pathFrom", requestMessage.RequestUri.ToString());
-            Assert.AreEqual("{\"action\": \"move\", \"destination\": \"/pathTo\"}", content);
+            Assert.AreEqual("{\"action\": \"copy\", \"destination\": \"/pathTo\"}", content);
         }
 
         [Test]
-        public async Task MoveFile_WhenNoPathSpecified_ThrowsArgumentNullException()
+        public async Task CopyFile_WhenNoPathSpecified_ThrowsArgumentNullException()
         {
             var httpClient = new HttpClient(new HttpMessageHandlerMock());
 
@@ -50,7 +50,7 @@
         }
 
         [Test]
-        public async Task MoveFile_WhenNoDestinationSpecified_ThrowsArgumentNullException()
+        public async Task CopyFile_WhenNoDestinationSpecified_ThrowsArgumentNullException()
         {
             var httpClient = new HttpClient(new HttpMessageHandlerMock());
 

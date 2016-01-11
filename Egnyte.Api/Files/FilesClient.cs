@@ -111,10 +111,10 @@
         }
 
         /// <summary>
-        /// Copies a file or folder
+        /// Moves a file or folder
         /// </summary>
-        /// <param name="path">Path to file or folder to copy</param>
-        /// <param name="destination">Full path where file/folder will be copied</param>
+        /// <param name="path">Path to file or folder to move</param>
+        /// <param name="destination">Full path where file/folder will be moved</param>
         /// <returns>Returns true if moving file or folder succeeded</returns>
         public async Task<bool> MoveFileOrFolder(string path, string destination)
         {
@@ -138,6 +138,44 @@
             {
                 Content = new StringContent(
                     string.Format(@"{{""action"": ""move"", ""destination"": ""{0}""}}", destination),
+                    Encoding.UTF8,
+                    "application/json")
+            };
+
+            var serviceHandler = new ServiceHandler<string>(httpClient);
+            await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Copies a file or folder
+        /// </summary>
+        /// <param name="path">Path to file or folder to copy</param>
+        /// <param name="destination">Full path where file/folder will be copied</param>
+        /// <returns>Returns true if copying file or folder succeeded</returns>
+        public async Task<bool> CopyFileOrFolder(string path, string destination)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                throw new ArgumentNullException("path");
+            }
+
+            if (string.IsNullOrWhiteSpace(destination))
+            {
+                throw new ArgumentNullException("destination");
+            }
+
+            if (!destination.StartsWith("/"))
+            {
+                destination = "/" + destination;
+            }
+
+            var uriBuilder = new UriBuilder(string.Format(FilesBasePath, domain) + path);
+            var httpRequest = new HttpRequestMessage(HttpMethod.Post, uriBuilder.Uri)
+            {
+                Content = new StringContent(
+                    string.Format(@"{{""action"": ""copy"", ""destination"": ""{0}""}}", destination),
                     Encoding.UTF8,
                     "application/json")
             };

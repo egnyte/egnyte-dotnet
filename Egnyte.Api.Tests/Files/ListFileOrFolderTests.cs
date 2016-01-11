@@ -91,7 +91,7 @@
         }";
 
         [Test]
-        public async void ListFileOrFolder_ReturnsCorrectFolder()
+        public async Task ListFileOrFolder_ReturnsCorrectFolder()
         {
             var httpHandlerMock = new HttpMessageHandlerMock();
             var httpClient = new HttpClient(httpHandlerMock);
@@ -157,10 +157,15 @@
             Assert.AreEqual(2, folderMetadata.Folders[1].AllowedFolderLinkTypes.Length);
             Assert.AreEqual("anyone", folderMetadata.Folders[1].AllowedFolderLinkTypes[0]);
             Assert.AreEqual("password", folderMetadata.Folders[1].AllowedFolderLinkTypes[1]);
+
+            var requestMessage = httpHandlerMock.GetHttpRequestMessage();
+            Assert.AreEqual(
+                "https://acme.egnyte.com/pubapi/v1/fs/path?list_content=True&allowed_link_types=False",
+                requestMessage.RequestUri.ToString());
         }
 
         [Test]
-        public async void ListFileOrFolder_ReturnsCorrectFile()
+        public async Task ListFileOrFolder_ReturnsCorrectFile()
         {
             var httpHandlerMock = new HttpMessageHandlerMock();
             var httpClient = new HttpClient(httpHandlerMock);
@@ -206,7 +211,7 @@
         }
 
         [Test]
-        public async void ListFileOrFolder_ThrowsException_WhenInternalServerError()
+        public async Task ListFileOrFolder_ThrowsException_WhenInternalServerError()
         {
             var httpHandlerMock = new HttpMessageHandlerMock();
             var httpClient = new HttpClient(httpHandlerMock);
@@ -232,7 +237,7 @@
         }
 
         [Test]
-        public async void ListFileOrFolder_ThrowsException_WhenNotWellFormedAnswerIsReturned()
+        public async Task ListFileOrFolder_ThrowsException_WhenNotWellFormedAnswerIsReturned()
         {
             var httpHandlerMock = new HttpMessageHandlerMock();
             var httpClient = new HttpClient(httpHandlerMock);
@@ -258,7 +263,7 @@
         }
 
         [Test]
-        public async void ListFileOrFolder_ThrowsException_WhenErrorOccursWithSendingRequest()
+        public async Task ListFileOrFolder_ThrowsException_WhenErrorOccursWithSendingRequest()
         {
             const string ErrorMessage = "Something went wrong";
             var httpHandlerMock = new HttpMessageHandlerMock();

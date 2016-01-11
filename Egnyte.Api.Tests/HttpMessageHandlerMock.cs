@@ -13,6 +13,8 @@
 
         private HttpRequestMessage requestMessage;
 
+        private string content;
+
         public void SetException(Exception exceptionArg)
         {
             exception = exceptionArg;
@@ -23,10 +25,21 @@
             return requestMessage;
         }
 
+        public string GetRequestContentAsString()
+        {
+            return content;
+        }
+
         protected override Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request,
             CancellationToken cancellationToken)
         {
+            try
+            {
+                content = request.Content.ReadAsStringAsync().Result;
+            }
+            catch (Exception) {}
+            
             requestMessage = request;
 
             if (this.exception != null)

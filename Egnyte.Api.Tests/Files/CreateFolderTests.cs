@@ -12,7 +12,7 @@ namespace Egnyte.Api.Tests.Files
     public class CreateFolderTests
     {
         [Test]
-        public async void CreateFolder_ReturnsSuccess()
+        public async Task CreateFolder_ReturnsSuccess()
         {
             var httpHandlerMock = new HttpMessageHandlerMock();
             var httpClient = new HttpClient(httpHandlerMock);
@@ -29,11 +29,15 @@ namespace Egnyte.Api.Tests.Files
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
             var isSucccess = await egnyteClient.Files.CreateFolder("path");
 
+            var requestMessage = httpHandlerMock.GetHttpRequestMessage();
+            var content = httpHandlerMock.GetRequestContentAsString();
             Assert.IsTrue(isSucccess);
+            Assert.AreEqual("https://acme.egnyte.com/pubapi/v1/fs/path", requestMessage.RequestUri.ToString());
+            Assert.AreEqual("{\"action\": \"add_folder\"}", content);
         }
 
         [Test]
-        public async void CreateFolder_WhenLanguageSpecificCharactersAreInUrl_ReturnsSuccess()
+        public async Task CreateFolder_WhenLanguageSpecificCharactersAreInUrl_ReturnsSuccess()
         {
             var httpHandlerMock = new HttpMessageHandlerMock();
             var httpClient = new HttpClient(httpHandlerMock);
@@ -58,7 +62,7 @@ namespace Egnyte.Api.Tests.Files
         }
 
         [Test]
-        public async void CreateFolder_WhenNoPathSpecified_ThrowsArgumentNullException()
+        public async Task CreateFolder_WhenNoPathSpecified_ThrowsArgumentNullException()
         {
             var httpClient = new HttpClient(new HttpMessageHandlerMock());
 
@@ -67,7 +71,7 @@ namespace Egnyte.Api.Tests.Files
             var exception = await AssertExtensions.ThrowsAsync<ArgumentNullException>(
                 () => egnyteClient.Files.CreateFolder(string.Empty));
 
-            Assert.IsTrue(exception.Message.Contains("Parameter name: path"));
+            Assert.IsTrue(exception.Message.Contains("path"));
             Assert.IsNull(exception.InnerException);
         }
     }

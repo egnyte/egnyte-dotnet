@@ -24,7 +24,7 @@ namespace Egnyte.Api.Tests.Files
         }";
 
         [Test]
-        public async void CreateOrUpdateFile_ThrowsArgumentNullException_WhenNoPathSpecified()
+        public async Task CreateOrUpdateFile_ThrowsArgumentNullException_WhenNoPathSpecified()
         {
             var httpClient = new HttpClient(new HttpMessageHandlerMock());
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
@@ -34,12 +34,12 @@ namespace Egnyte.Api.Tests.Files
                     string.Empty,
                     new MemoryStream(Encoding.UTF8.GetBytes("file"))));
 
-            Assert.IsTrue(exception.Message.Contains("Parameter name: path"));
+            Assert.IsTrue(exception.Message.Contains("path"));
             Assert.IsNull(exception.InnerException);
         }
 
         [Test]
-        public async void CreateOrUpdateFile_ThrowsArgumentNullException_WhenStreamIsEmpty()
+        public async Task CreateOrUpdateFile_ThrowsArgumentNullException_WhenStreamIsEmpty()
         {
             var httpClient = new HttpClient(new HttpMessageHandlerMock());
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
@@ -49,12 +49,12 @@ namespace Egnyte.Api.Tests.Files
                     "path",
                     new MemoryStream()));
 
-            Assert.IsTrue(exception.Message.Contains("Parameter name: file"));
+            Assert.IsTrue(exception.Message.Contains("file"));
             Assert.IsNull(exception.InnerException);
         }
 
         [Test]
-        public async void CreateOrUpdateFile_ReturnsCorrectResponse()
+        public async Task CreateOrUpdateFile_ReturnsCorrectResponse()
         {
             var httpHandlerMock = new HttpMessageHandlerMock();
             var httpClient = new HttpClient(httpHandlerMock);
@@ -66,9 +66,13 @@ namespace Egnyte.Api.Tests.Files
                 "path",
                 new MemoryStream(Encoding.UTF8.GetBytes("file")));
 
+            var requestMessage = httpHandlerMock.GetHttpRequestMessage();
+            var content = httpHandlerMock.GetRequestContentAsString();
             Assert.AreEqual(Checksum, result.Checksum);
             Assert.AreEqual("\"" + ETag + "\"", result.EntryId);
             Assert.AreEqual(new DateTime(2012, 08, 26, 5, 55, 29), result.LastModified);
+            Assert.AreEqual("https://acme.egnyte.com/pubapi/v1/fs-content/path", requestMessage.RequestUri.ToString());
+            Assert.AreEqual("file", content);
         }
 
         private HttpResponseMessage GetResponseMessage()

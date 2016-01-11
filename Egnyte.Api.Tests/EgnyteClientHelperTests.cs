@@ -11,7 +11,7 @@
     public class EgnyteClientHelperTests
     {
         [Test]
-        public async void GetTokenFromCode_ReturnsCorrectToken()
+        public async Task GetTokenFromCode_ReturnsCorrectToken()
         {
             const string Token = "e8gdxt5ypf3pfn25a9kdzcac";
             const string TokenType = "bearer";
@@ -50,7 +50,7 @@
         }
 
         [Test]
-        public async void GetTokenResourceOwnerFlow_ReturnsCorrectToken()
+        public async Task GetTokenResourceOwnerFlow_ReturnsCorrectToken()
         {
             const string Token = "e8gdxt5ypf3pfn25a9kdzcac";
             const string TokenType = "bearer";
