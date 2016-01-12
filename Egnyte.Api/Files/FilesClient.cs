@@ -25,28 +25,6 @@
         }
 
         /// <summary>
-        /// List information about a file or folder (including folder contents).
-        /// </summary>
-        /// <param name="path">Full path to folder or file</param>
-        /// <param name="listContent">If false, then do not include contents of folder in response</param>
-        /// <param name="allowedLinkTypes">If true, then show allowed_file_link_types,
-        /// allowed_folder_link_types fields, and allow_upload_links fields.</param>
-        /// <returns>Metadata info about file or folder</returns>
-        public async Task<FileOrFolderMetadata> ListFileOrFolder(
-            string path,
-            bool listContent = true,
-            bool allowedLinkTypes = false)
-        {
-            var listFilesUri = PrepareListFileOrFolderUri(path, listContent, allowedLinkTypes);
-            var httpRequest = new HttpRequestMessage(HttpMethod.Get, listFilesUri);
-            var serviceHandler = new ServiceHandler<ListFileOrFolderResponse>(httpClient);
-
-            var response = await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
-
-            return FilesHelper.MapResponseToMetadata(response.Data);
-        }
-
-        /// <summary>
         /// Creates a folder for specified path
         /// </summary>
         /// <param name="path">Full path to the new folder</param>
@@ -211,6 +189,59 @@
             var response = await serviceHandler.GetFileToDownload(httpRequest).ConfigureAwait(false);
 
             return MapResponseToDownloadedFile(response);
+        }
+
+        /// <summary>
+        /// List information about a file or folder (including folder contents).
+        /// </summary>
+        /// <param name="path">Full path to folder or file</param>
+        /// <param name="listContent">If false, then do not include contents of folder in response</param>
+        /// <param name="allowedLinkTypes">If true, then show allowed_file_link_types,
+        /// allowed_folder_link_types fields, and allow_upload_links fields.</param>
+        /// <returns>Metadata info about file or folder</returns>
+        public async Task<FileOrFolderMetadata> ListFileOrFolder(
+            string path,
+            bool listContent = true,
+            bool allowedLinkTypes = false)
+        {
+            var listFilesUri = PrepareListFileOrFolderUri(path, listContent, allowedLinkTypes);
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, listFilesUri);
+            var serviceHandler = new ServiceHandler<ListFileOrFolderResponse>(httpClient);
+
+            var response = await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
+
+            return FilesHelper.MapResponseToMetadata(response.Data);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="path">Full path to folder or file</param>
+        /// <param name="entryId">Optional, entry id to a file</param>
+        /// <returns>Returns true if deleting file or folder succeeded</returns>
+        public async Task<bool> DeleteFileOrFolder(string path, string entryId = null)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                throw new ArgumentNullException("path");
+            }
+
+            var query = string.Empty;
+            if (!string.IsNullOrWhiteSpace(entryId))
+            {
+                query = "entry_id=" + entryId;
+            }
+
+            var uriBuilder = new UriBuilder(string.Format(FilesBasePath, domain) + path)
+            {
+                Query = query
+            };
+            var httpRequest = new HttpRequestMessage(HttpMethod.Delete, uriBuilder.Uri);
+
+            var serviceHandler = new ServiceHandler<string>(httpClient);
+            await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
+
+            return true;
         }
 
         private DownloadedFile MapResponseToDownloadedFile(ServiceResponse<byte[]> response)
