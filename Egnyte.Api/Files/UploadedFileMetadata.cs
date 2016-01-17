@@ -2,9 +2,9 @@
 {
     using System;
 
-    public class CreateOrUpdateFile
+    public class UploadedFileMetadata
     {
-        public CreateOrUpdateFile(string checksum, DateTime lastModified, string entryId)
+        public UploadedFileMetadata(string checksum, DateTime lastModified, string entryId)
         {
             Checksum = checksum;
             LastModified = lastModified;

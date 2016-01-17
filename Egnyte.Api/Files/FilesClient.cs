@@ -14,6 +14,8 @@
 
         private const string FilesContentBasePath = "https://{0}.egnyte.com/pubapi/v1/fs-content/";
 
+        private const string FilesChunkedContentBasePath = "https://{0}.egnyte.com/pubapi/v1/fs-content-chunked/";
+
         private readonly HttpClient httpClient;
 
         private readonly string domain;
@@ -49,13 +51,13 @@
         }
 
         /// <summary>
-        /// Creates or updates a file.
+        /// Creates or updates a file. To upload files larger than 100 MB, use the ChunkedUpload method.
         /// </summary>
         /// <param name="path">Full path to the file</param>
         /// <param name="file">Content of a file in a memory stream</param>
         /// <returns>Response with checksum and ids.
         /// Checksum is a SHA512 hash of entire file that can be used for validating upload integrity.</returns>
-        public async Task<CreateOrUpdateFile> CreateOrUpdateFile(string path, MemoryStream file)
+        public async Task<UploadedFileMetadata> CreateOrUpdateFile(string path, MemoryStream file)
         {
             if (string.IsNullOrWhiteSpace(path))
             {
@@ -76,7 +78,7 @@
             var serviceHandler = new ServiceHandler<CreateOrUpdateFileResponse>(httpClient);
             var response = await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
 
-            return new CreateOrUpdateFile(
+            return new UploadedFileMetadata(
                 response.Headers.ContainsKey("X-Sha512-Checksum")
                     ? response.Headers["X-Sha512-Checksum"]
                     : response.Data.Checksum,
@@ -242,6 +244,163 @@
             await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
 
             return true;
+        }
+
+        /// <summary>
+        /// The chunked upload flow provides a mechanism to upload large files—we recommend only using this flow
+        /// for files larger than 100 MB. To upload files of smaller sizes, you can use the CreateOrUpdateFile method.
+        /// </summary>
+        /// <param name="path">Full path to file</param>
+        /// <param name="file">Stream with the file content</param>
+        /// <returns>Uploaded chunk metadata</returns>
+        public async Task<ChunkUploadedMetadata> ChunkedUploadFirstChunk(string path, MemoryStream file)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                throw new ArgumentNullException("path");
+            }
+
+            if (file.Length == 0)
+            {
+                throw new ArgumentNullException("file");
+            }
+
+            var uri = new UriBuilder(string.Format(FilesChunkedContentBasePath, domain) + path).Uri;
+            var httpRequest = new HttpRequestMessage(HttpMethod.Post, uri)
+            {
+                Content = new StreamContent(file)
+            };
+            httpRequest.Headers.Add("X-Egnyte-Chunk-Num", "1");
+
+            var serviceHandler = new ServiceHandler<CreateOrUpdateFileResponse>(httpClient);
+            var response = await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
+
+            return new ChunkUploadedMetadata(
+                response.Headers.ContainsKey("X-Egnyte-Upload-Id")
+                    ? response.Headers["X-Egnyte-Upload-Id"]
+                    : string.Empty,
+                response.Headers.ContainsKey("X-Egnyte-Chunk-Num")
+                    ? int.Parse(response.Headers["X-Egnyte-Chunk-Num"])
+                    : -1,
+                response.Headers.ContainsKey("X-Egnyte-Chunk-Sha512-Checksum")
+                    ? response.Headers["X-Egnyte-Chunk-Sha512-Checksum"]
+                    : string.Empty);
+        }
+
+        /// <summary>
+        /// Method for uploading second and consecutive chunks of file. To upload first chunk use ChunkedUploadFirstChunk.
+        /// </summary>
+        /// <param name="path">Full path to file</param>
+        /// <param name="chunkNumber">Chunk number. First should be 1, others 2, 3, etc.</param>
+        /// <param name="chunkUploadId">Chunk upload id from response after uploading first chunk.</param>
+        /// <param name="file">Stream with part of file content</param>
+        /// <returns>Uploaded chunk metadata</returns>
+        public async Task<ChunkUploadedMetadata> ChunkedUploadNextChunk(
+            string path,
+            int chunkNumber,
+            string chunkUploadId,
+            MemoryStream file)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                throw new ArgumentNullException("path");
+            }
+
+            if (chunkNumber <= 1)
+            {
+                throw new ArgumentOutOfRangeException("chunkNumber", "Chunk number must start with 1 and next chunks should be 2, 3, etc.");
+            }
+
+            if (string.IsNullOrWhiteSpace(chunkUploadId))
+            {
+                throw new ArgumentNullException("chunkUploadId");
+            }
+
+            if (file.Length == 0)
+            {
+                throw new ArgumentNullException("file");
+            }
+            
+            var uri = new UriBuilder(string.Format(FilesChunkedContentBasePath, domain) + path).Uri;
+            var httpRequest = new HttpRequestMessage(HttpMethod.Post, uri)
+            {
+                Content = new StreamContent(file)
+            };
+            httpRequest.Headers.Add("X-Egnyte-Chunk-Num", chunkNumber.ToString());
+            httpRequest.Headers.Add("X-Egnyte-Upload-Id", chunkUploadId);
+
+            var serviceHandler = new ServiceHandler<CreateOrUpdateFileResponse>(httpClient);
+            var response = await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
+
+            return new ChunkUploadedMetadata(
+                response.Headers.ContainsKey("X-Egnyte-Upload-Id")
+                    ? response.Headers["X-Egnyte-Upload-Id"]
+                    : string.Empty,
+                response.Headers.ContainsKey("X-Egnyte-Chunk-Num")
+                    ? int.Parse(response.Headers["X-Egnyte-Chunk-Num"])
+                    : -1,
+                response.Headers.ContainsKey("X-Egnyte-Chunk-Sha512-Checksum")
+                    ? response.Headers["X-Egnyte-Chunk-Sha512-Checksum"]
+                    : string.Empty);
+        }
+
+        /// <summary>
+        /// Method for uploading last chunk of file. To upload previous chunks use
+        /// ChunkedUploadFirstChunk or ChunkedUploadNextChunk.
+        /// </summary>
+        /// <param name="path">Full path to file</param>
+        /// <param name="chunkNumber">Chunk number. First should be 1, others 2, 3, etc.</param>
+        /// <param name="chunkUploadId">Chunk upload id from response after uploading first chunk.</param>
+        /// <param name="file">Stream with part of file content</param>
+        /// <returns>Uploaded file metadata</returns>
+        public async Task<UploadedFileMetadata> ChunkedUploadLastChunk(
+            string path,
+            int chunkNumber,
+            string chunkUploadId,
+            MemoryStream file)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                throw new ArgumentNullException("path");
+            }
+
+            if (chunkNumber <= 1)
+            {
+                throw new ArgumentOutOfRangeException("chunkNumber", "Chunk number must start with 1 and next chunks should be 2, 3, etc.");
+            }
+
+            if (string.IsNullOrWhiteSpace(chunkUploadId))
+            {
+                throw new ArgumentNullException("chunkUploadId");
+            }
+
+            if (file.Length == 0)
+            {
+                throw new ArgumentNullException("file");
+            }
+
+            var uri = new UriBuilder(string.Format(FilesChunkedContentBasePath, domain) + path).Uri;
+            var httpRequest = new HttpRequestMessage(HttpMethod.Post, uri)
+            {
+                Content = new StreamContent(file)
+            };
+            httpRequest.Headers.Add("X-Egnyte-Chunk-Num", chunkNumber.ToString());
+            httpRequest.Headers.Add("X-Egnyte-Upload-Id", chunkUploadId);
+            httpRequest.Headers.Add("X-Egnyte-Last-Chunk", "true");
+
+            var serviceHandler = new ServiceHandler<CreateOrUpdateFileResponse>(httpClient);
+            var response = await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
+
+            return new UploadedFileMetadata(
+                response.Headers.ContainsKey("X-Sha512-Checksum")
+                    ? response.Headers["X-Sha512-Checksum"]
+                    : response.Data.Checksum,
+                response.Headers.ContainsKey("Last-Modified")
+                    ? DateTime.Parse(response.Headers["Last-Modified"])
+                    : DateTime.Now,
+                response.Headers.ContainsKey("ETag")
+                    ? response.Headers["ETag"]
+                    : response.Data.EntryId);
         }
 
         private DownloadedFile MapResponseToDownloadedFile(ServiceResponse<byte[]> response)

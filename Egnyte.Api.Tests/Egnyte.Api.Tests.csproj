@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="AssertExtensions.cs" />
     <Compile Include="EgnyteClientHelperTests.cs" />
+    <Compile Include="Files\ChunkedUploadTests.cs" />
     <Compile Include="Files\DeleteFileOrFolderTests.cs" />
     <Compile Include="Files\CreateOrUpdateFileTests.cs" />
     <Compile Include="Files\CreateFolderTests.cs" />

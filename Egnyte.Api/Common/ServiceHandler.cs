@@ -20,7 +20,7 @@
         public async Task<ServiceResponse<T>> SendRequestAsync(HttpRequestMessage request)
         {
             request.RequestUri = ApplyAdditionalUrlMapping(request.RequestUri);
-            var response = await this.httpClient.SendAsync(request);
+            var response = await this.httpClient.SendAsync(request).ConfigureAwait(false);
             var rawContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
             if (response.IsSuccessStatusCode)

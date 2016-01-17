@@ -44,7 +44,8 @@
     <Compile Include="Common\ServiceResponse.cs" />
     <Compile Include="EgnyteClient.cs" />
     <Compile Include="EgnyteClientHelper.cs" />
-    <Compile Include="Files\CreateOrUpdateFile.cs" />
+    <Compile Include="Files\ChunkUploadedMetadata.cs" />
+    <Compile Include="Files\UploadedFileMetadata.cs" />
     <Compile Include="Files\CreateOrUpdateFileResponse.cs" />
     <Compile Include="Files\DownloadedFile.cs" />
     <Compile Include="Files\FileBasicMetadata.cs" />
