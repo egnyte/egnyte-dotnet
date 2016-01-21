@@ -5,7 +5,7 @@
 
     using Egnyte.Api.Files;
     using System;
-
+    using Users;
     public class EgnyteClient
     {
         public EgnyteClient(
@@ -25,6 +25,7 @@
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             
             Files = new FilesClient(httpClient, domain);
+            Users = new UsersClient(httpClient, domain);
         }
 
         /// <summary>
@@ -32,5 +33,12 @@
         /// download, and list information about files and folders.
         /// </summary>
         public FilesClient Files { get; private set; }
+
+        /// <summary>
+        /// Users allows you to create, update, get information about, and delete users.
+        /// You can customize settings like user role or authentication type and even control whether a new user
+        /// receives an invitation email.
+        /// </summary>
+        public UsersClient Users { get; private set; }
     }
 }

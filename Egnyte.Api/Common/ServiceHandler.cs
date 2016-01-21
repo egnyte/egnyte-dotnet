@@ -10,7 +10,7 @@
 
     public class ServiceHandler<T> where T : class 
     {
-        private readonly HttpClient httpClient;
+        readonly HttpClient httpClient;
 
         public ServiceHandler(HttpClient httpClient)
         {
@@ -20,7 +20,7 @@
         public async Task<ServiceResponse<T>> SendRequestAsync(HttpRequestMessage request)
         {
             request.RequestUri = ApplyAdditionalUrlMapping(request.RequestUri);
-            var response = await this.httpClient.SendAsync(request).ConfigureAwait(false);
+            var response = await httpClient.SendAsync(request).ConfigureAwait(false);
             var rawContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
             if (response.IsSuccessStatusCode)
@@ -71,7 +71,7 @@
             return headers;
         }
 
-        private Uri ApplyAdditionalUrlMapping(Uri requestUri)
+        Uri ApplyAdditionalUrlMapping(Uri requestUri)
         {
             var url = requestUri.ToString();
             url = url.Replace("[", "%5B")
