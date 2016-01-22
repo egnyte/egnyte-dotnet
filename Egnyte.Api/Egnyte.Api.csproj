@@ -76,6 +76,7 @@
     <Compile Include="Users\UserType.cs" />
     <Compile Include="Users\UserAuthType.cs" />
     <Compile Include="Users\UsersClient.cs" />
+    <Compile Include="Users\UserUpdate.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Threading.Tasks">

@@ -1,5 +1,6 @@
 ﻿using Egnyte.Api.Common;
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,12 +21,41 @@ namespace Egnyte.Api.Users
             this.domain = domain;
         }
 
+        /// <summary>
+        /// Creates single user
+        /// </summary>
+        /// <param name="user">User</param>
+        /// <returns>Created user with Id</returns>
         public async Task<ExistingUser> CreateUser(NewUser user)
         {
-            ThrowExceptionsIfUserIsInvalid(user);
+            ThrowExceptionsIfNewUserIsInvalid(user);
 
             var uriBuilder = new UriBuilder(string.Format(UsersBasePath, domain));
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, uriBuilder.Uri)
+            {
+                Content = new StringContent(MapUserForRequest(user), Encoding.UTF8, "application/json")
+            };
+
+            var serviceHandler = new ServiceHandler<ExistingUserFlat>(httpClient);
+            var response = await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
+
+            return MapFlatUserToUser(response.Data);
+        }
+
+        /// <summary>
+        /// Updates user
+        /// </summary>
+        /// <param name="user">User with fields you want to update</param>
+        /// <returns>Updated user</returns>
+        public async Task<ExistingUser> UpdateUser(UserUpdate user)
+        {
+            if (user.Id < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(user.Id));
+            }
+
+            var uriBuilder = new UriBuilder(string.Format(UsersBasePath, domain) + "/" + user.Id);
+            var httpRequest = new HttpRequestMessage(new HttpMethod("PATCH"), uriBuilder.Uri)
             {
                 Content = new StringContent(MapUserForRequest(user), Encoding.UTF8, "application/json")
             };
@@ -56,7 +86,7 @@ namespace Egnyte.Api.Users
             };
         }
 
-        void ThrowExceptionsIfUserIsInvalid(User user)
+        void ThrowExceptionsIfNewUserIsInvalid(User user)
         {
             if (string.IsNullOrWhiteSpace(user.UserName))
             {
@@ -119,6 +149,60 @@ namespace Egnyte.Api.Users
             builder.Append("}");
 
             return builder.ToString();
+        }
+
+        string MapUserForRequest(UserUpdate user)
+        {
+            var parameters = new List<string>();
+
+            if (!string.IsNullOrWhiteSpace(user.Email))
+            {
+                parameters.Add("\"email\" : \"" + user.Email + "\"");
+            }
+
+            if (!string.IsNullOrWhiteSpace(user.FamilyName))
+            {
+                parameters.Add("\"familyName\" : \"" + user.FamilyName + "\"");
+            }
+
+            if (!string.IsNullOrWhiteSpace(user.GivenName))
+            {
+                parameters.Add("\"givenName\" : \"" + user.GivenName + "\"");
+            }
+
+            if (user.Active.HasValue)
+            {
+                parameters.Add(string.Format(@"""active"" : ""{0}""", user.Active.Value ? "true" : "false"));
+            }
+
+            if (user.SendInvite.HasValue)
+            {
+                parameters.Add(string.Format(@"""sendInvite"" : ""{0}""", user.SendInvite.Value ? "true" : "false"));
+            }
+
+            if (user.AuthType.HasValue)
+            {
+                parameters.Add("\"authType\" : \"" + MapAuthType(user.AuthType.Value) + "\"");
+            }
+
+            if (user.UserType.HasValue)
+            {
+                parameters.Add("\"userType\" : \"" + MapUserType(user.UserType.Value) + "\"");
+            }
+
+            if (!string.IsNullOrWhiteSpace(user.IdpUserId))
+            {
+                parameters.Add("\"idpUserId\" : \"" + user.IdpUserId + "\"");
+            }
+
+            if (!string.IsNullOrWhiteSpace(user.UserPrincipalName))
+            {
+                parameters.Add("\"userPrincipalName\" : \"" + user.UserPrincipalName + "\"");
+            }
+
+            var content = "{" + string.Join(",", parameters) + "}";
+
+            return content;
         }
 
         string MapAuthType(UserAuthType authType)
