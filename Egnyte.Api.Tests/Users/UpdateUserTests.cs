@@ -38,8 +38,11 @@ namespace Egnyte.Api.Tests.Files
         const string UpdateUserRequestContent = @"
             {
                 ""email"" : ""mik@egnyte.com"",
-                ""familyName"" : ""Caine"",
-                ""givenName"" : ""Michael"",
+                ""name"":
+                {
+                    ""familyName"" : ""Caine"",
+                    ""givenName"" : ""Michael""
+                },
                 ""active"" : ""true"",
                 ""sendInvite"" : ""true"",
                 ""authType"" : ""egnyte"",

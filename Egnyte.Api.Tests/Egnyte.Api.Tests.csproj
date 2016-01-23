@@ -63,6 +63,7 @@
     <Compile Include="HttpMessageHandlerMock.cs" />
     <Compile Include="OAuthHelperTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Users\GetUserTests.cs" />
     <Compile Include="Users\UpdateUserTests.cs" />
     <Compile Include="Users\CreateUserTests.cs" />
   </ItemGroup>
