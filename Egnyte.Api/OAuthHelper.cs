@@ -85,17 +85,17 @@ namespace Egnyte.Api
         {
             if (string.IsNullOrWhiteSpace(userDomain))
             {
-                throw new ArgumentNullException("userDomain");
+                throw new ArgumentNullException(nameof(userDomain));
             }
 
             if (string.IsNullOrWhiteSpace(clientId))
             {
-                throw new ArgumentNullException("clientId");
+                throw new ArgumentNullException(nameof(clientId));
             }
 
             if (redirectUri == null || string.IsNullOrWhiteSpace(Uri.EscapeDataString(redirectUri.ToString())))
             {
-                throw new ArgumentNullException("redirectUri");
+                throw new ArgumentNullException(nameof(redirectUri));
             }
 
             var queryBuilder = new StringBuilder();
@@ -147,22 +147,22 @@ namespace Egnyte.Api
         {
             if (string.IsNullOrWhiteSpace(userDomain))
             {
-                throw new ArgumentNullException("userDomain");
+                throw new ArgumentNullException(nameof(userDomain));
             }
 
             if (string.IsNullOrWhiteSpace(clientId))
             {
-                throw new ArgumentNullException("clientId");
+                throw new ArgumentNullException(nameof(clientId));
             }
 
             if (string.IsNullOrWhiteSpace(username))
             {
-                throw new ArgumentNullException("username");
+                throw new ArgumentNullException(nameof(username));
             }
 
             if (string.IsNullOrWhiteSpace(password))
             {
-                throw new ArgumentNullException("password");
+                throw new ArgumentNullException(nameof(password));
             }
 
             var queryParameters = new Dictionary<string, string>
@@ -205,27 +205,27 @@ namespace Egnyte.Api
         {
             if (string.IsNullOrWhiteSpace(userDomain))
             {
-                throw new ArgumentNullException("userDomain");
+                throw new ArgumentNullException(nameof(userDomain));
             }
 
             if (string.IsNullOrWhiteSpace(clientId))
             {
-                throw new ArgumentNullException("clientId");
+                throw new ArgumentNullException(nameof(clientId));
             }
 
             if (string.IsNullOrWhiteSpace(clientSecret))
             {
-                throw new ArgumentNullException("clientSecret");
+                throw new ArgumentNullException(nameof(clientSecret));
             }
 
             if (redirectUri == null || string.IsNullOrWhiteSpace(Uri.EscapeDataString(redirectUri.ToString())))
             {
-                throw new ArgumentNullException("redirectUri");
+                throw new ArgumentNullException(nameof(redirectUri));
             }
 
             if (authorizationCode == null || string.IsNullOrWhiteSpace(authorizationCode))
             {
-                throw new ArgumentNullException("authorizationCode");
+                throw new ArgumentNullException(nameof(authorizationCode));
             }
 
             var queryParameters = new Dictionary<string, string>
@@ -252,7 +252,7 @@ namespace Egnyte.Api
         /// <returns>Token response</returns>
         public static TokenResponse ParseTokenFromUrlResponse(string urlHash)
         {
-            if (urlHash.StartsWith("#"))
+            if (urlHash.StartsWith("#", StringComparison.Ordinal))
             {
                 urlHash = urlHash.TrimStart(new[] { '#' });
             }

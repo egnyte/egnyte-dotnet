@@ -38,8 +38,8 @@
             {
                 content = request.Content.ReadAsStringAsync().Result;
             }
-            catch (Exception) {}
-            
+            catch { }
+
             requestMessage = request;
 
             if (this.exception != null)

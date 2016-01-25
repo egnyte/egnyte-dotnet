@@ -8,6 +8,7 @@ namespace Egnyte.Api.Tests.Files
     using NUnit.Framework;
     using System.Text;
     using System;
+    using Api.Users;
     [TestFixture]
     public class UpdateUserTests
     {
@@ -104,9 +105,9 @@ namespace Egnyte.Api.Tests.Files
             Assert.IsNull(exception.InnerException);
         }
         
-        Users.UserUpdate UserToUpdate()
+        UserUpdate UserToUpdate()
         {
-            return new Users.UserUpdate
+            return new UserUpdate
             {
                 Id = 12345,
                 Email = "mik@egnyte.com",
@@ -114,8 +115,8 @@ namespace Egnyte.Api.Tests.Files
                 GivenName = "Michael",
                 Active = true,
                 SendInvite = true,
-                AuthType = Users.UserAuthType.Internal_Egnyte,
-                UserType = Users.UserType.PowerUser
+                AuthType = UserAuthType.Internal_Egnyte,
+                UserType = UserType.PowerUser
             };
         }
 

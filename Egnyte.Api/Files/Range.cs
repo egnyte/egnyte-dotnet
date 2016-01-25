@@ -8,7 +8,7 @@
         {
             if (from > to)
             {
-                throw new ArgumentOutOfRangeException("from", "'From' parameter must be less or equal to 'to'");
+                throw new ArgumentOutOfRangeException(nameof(from), "'From' parameter must be less or equal to 'to'");
             }
 
             From = from;

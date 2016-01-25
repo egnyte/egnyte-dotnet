@@ -73,6 +73,8 @@
     <Compile Include="Users\User.cs" />
     <Compile Include="Users\UserFlat.cs" />
     <Compile Include="Users\UserName.cs" />
+    <Compile Include="Users\UsersList.cs" />
+    <Compile Include="Users\UsersListResponse.cs" />
     <Compile Include="Users\UserType.cs" />
     <Compile Include="Users\UserAuthType.cs" />
     <Compile Include="Users\UsersClient.cs" />

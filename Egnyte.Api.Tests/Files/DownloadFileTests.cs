@@ -118,7 +118,7 @@
             var responseMessage = new HttpResponseMessage
             {
                 StatusCode = HttpStatusCode.OK,
-                Content = new ByteArrayContent(new byte[] { 0x20, 0x21, 0x22 }),
+                Content = new ByteArrayContent(new byte[] { 0x20, 0x21, 0x22 })
             };
             responseMessage.Headers.Add("X-Sha512-Checksum", Checksum);
             responseMessage.Headers.ETag = new System.Net.Http.Headers.EntityTagHeaderValue("\"" + ETag + "\"");

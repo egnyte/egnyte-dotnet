@@ -8,6 +8,7 @@ namespace Egnyte.Api.Tests.Files
     using NUnit.Framework;
     using System.Text;
     using System;
+    using Egnyte.Api.Users;
 
     [TestFixture]
     public class GetUserTests
@@ -69,8 +70,8 @@ namespace Egnyte.Api.Tests.Files
             Assert.AreEqual("Michael", existingUser.GivenName);
             Assert.AreEqual(true, existingUser.Active);
             Assert.AreEqual(false, existingUser.Locked);
-            Assert.AreEqual(Users.UserAuthType.Internal_Egnyte, existingUser.AuthType);
-            Assert.AreEqual(Users.UserType.PowerUser, existingUser.UserType);
+            Assert.AreEqual(UserAuthType.Internal_Egnyte, existingUser.AuthType);
+            Assert.AreEqual(UserType.PowerUser, existingUser.UserType);
             Assert.AreEqual("mik", existingUser.IdpUserId);
             Assert.AreEqual("mik@egnyte.com", existingUser.UserPrincipalName);
         }

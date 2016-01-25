@@ -35,7 +35,7 @@
         {
             if (string.IsNullOrWhiteSpace(path))
             {
-                throw new ArgumentNullException("path");
+                throw new ArgumentNullException(nameof(path));
             }
 
             var uriBuilder = new UriBuilder(string.Format(FilesBasePath, domain) + path);
@@ -61,12 +61,12 @@
         {
             if (string.IsNullOrWhiteSpace(path))
             {
-                throw new ArgumentNullException("path");
+                throw new ArgumentNullException(nameof(path));
             }
 
             if (file.Length == 0)
             {
-                throw new ArgumentNullException("file");
+                throw new ArgumentNullException(nameof(file));
             }
 
             var uriBuilder = new UriBuilder(string.Format(FilesContentBasePath, domain) + path);
@@ -100,15 +100,15 @@
         {
             if (string.IsNullOrWhiteSpace(path))
             {
-                throw new ArgumentNullException("path");
+                throw new ArgumentNullException(nameof(path));
             }
 
             if (string.IsNullOrWhiteSpace(destination))
             {
-                throw new ArgumentNullException("destination");
+                throw new ArgumentNullException(nameof(destination));
             }
 
-            if (!destination.StartsWith("/"))
+            if (!destination.StartsWith("/", StringComparison.Ordinal))
             {
                 destination = "/" + destination;
             }
@@ -138,15 +138,15 @@
         {
             if (string.IsNullOrWhiteSpace(path))
             {
-                throw new ArgumentNullException("path");
+                throw new ArgumentNullException(nameof(path));
             }
 
             if (string.IsNullOrWhiteSpace(destination))
             {
-                throw new ArgumentNullException("destination");
+                throw new ArgumentNullException(nameof(destination));
             }
 
-            if (!destination.StartsWith("/"))
+            if (!destination.StartsWith("/", StringComparison.Ordinal))
             {
                 destination = "/" + destination;
             }
@@ -225,7 +225,7 @@
         {
             if (string.IsNullOrWhiteSpace(path))
             {
-                throw new ArgumentNullException("path");
+                throw new ArgumentNullException(nameof(path));
             }
 
             var query = string.Empty;
@@ -257,12 +257,12 @@
         {
             if (string.IsNullOrWhiteSpace(path))
             {
-                throw new ArgumentNullException("path");
+                throw new ArgumentNullException(nameof(path));
             }
 
             if (file.Length == 0)
             {
-                throw new ArgumentNullException("file");
+                throw new ArgumentNullException(nameof(file));
             }
 
             var uri = new UriBuilder(string.Format(FilesChunkedContentBasePath, domain) + path).Uri;
@@ -303,22 +303,22 @@
         {
             if (string.IsNullOrWhiteSpace(path))
             {
-                throw new ArgumentNullException("path");
+                throw new ArgumentNullException(nameof(path));
             }
 
             if (chunkNumber <= 1)
             {
-                throw new ArgumentOutOfRangeException("chunkNumber", "Chunk number must start with 1 and next chunks should be 2, 3, etc.");
+                throw new ArgumentOutOfRangeException(nameof(chunkNumber), "Chunk number must start with 1 and next chunks should be 2, 3, etc.");
             }
 
             if (string.IsNullOrWhiteSpace(chunkUploadId))
             {
-                throw new ArgumentNullException("chunkUploadId");
+                throw new ArgumentNullException(nameof(chunkUploadId));
             }
 
             if (file.Length == 0)
             {
-                throw new ArgumentNullException("file");
+                throw new ArgumentNullException(nameof(file));
             }
             
             var uri = new UriBuilder(string.Format(FilesChunkedContentBasePath, domain) + path).Uri;
@@ -361,22 +361,22 @@
         {
             if (string.IsNullOrWhiteSpace(path))
             {
-                throw new ArgumentNullException("path");
+                throw new ArgumentNullException(nameof(path));
             }
 
             if (chunkNumber <= 1)
             {
-                throw new ArgumentOutOfRangeException("chunkNumber", "Chunk number must start with 1 and next chunks should be 2, 3, etc.");
+                throw new ArgumentOutOfRangeException(nameof(chunkNumber), "Chunk number must start with 1 and next chunks should be 2, 3, etc.");
             }
 
             if (string.IsNullOrWhiteSpace(chunkUploadId))
             {
-                throw new ArgumentNullException("chunkUploadId");
+                throw new ArgumentNullException(nameof(chunkUploadId));
             }
 
             if (file.Length == 0)
             {
-                throw new ArgumentNullException("file");
+                throw new ArgumentNullException(nameof(file));
             }
 
             var uri = new UriBuilder(string.Format(FilesChunkedContentBasePath, domain) + path).Uri;

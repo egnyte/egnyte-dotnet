@@ -8,6 +8,7 @@ namespace Egnyte.Api.Tests.Files
     using NUnit.Framework;
     using System.Text;
     using System;
+    using Api.Users;
     [TestFixture]
     public class CreateUserTests
     {
@@ -172,9 +173,9 @@ namespace Egnyte.Api.Tests.Files
             Assert.IsNull(exception.InnerException);
         }
 
-        Users.NewUser GetNewUser()
+        NewUser GetNewUser()
         {
-            return new Users.NewUser
+            return new NewUser
             {
                 UserName = "mik",
                 ExternalId = "84079f93-f174-4c76-8522-3f30210fc14e",
@@ -183,8 +184,8 @@ namespace Egnyte.Api.Tests.Files
                 GivenName = "Michael",
                 Active = true,
                 SendInvite = true,
-                AuthType = Users.UserAuthType.Internal_Egnyte,
-                UserType = Users.UserType.PowerUser,
+                AuthType = UserAuthType.Internal_Egnyte,
+                UserType = UserType.PowerUser,
                 Role = "Reviewer"
             };
         }
