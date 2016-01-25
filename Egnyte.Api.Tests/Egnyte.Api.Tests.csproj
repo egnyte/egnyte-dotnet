@@ -75,6 +75,7 @@
     <Compile Include="HttpMessageHandlerMock.cs" />
     <Compile Include="OAuthHelperTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Users\DeleteUserTests.cs" />
     <Compile Include="Users\GetUserListTests.cs" />
     <Compile Include="Users\GetUserTests.cs" />
     <Compile Include="Users\UpdateUserTests.cs" />
