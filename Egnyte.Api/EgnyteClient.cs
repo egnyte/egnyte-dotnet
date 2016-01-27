@@ -6,6 +6,7 @@
     using Egnyte.Api.Files;
     using System;
     using Users;
+    using Links;
     public class EgnyteClient
     {
         public EgnyteClient(
@@ -26,6 +27,7 @@
             
             Files = new FilesClient(httpClient, domain);
             Users = new UsersClient(httpClient, domain);
+            Links = new LinksClient(httpClient, domain);
         }
 
         /// <summary>
@@ -40,5 +42,11 @@
         /// receives an invitation email.
         /// </summary>
         public UsersClient Users { get; private set; }
+
+        /// <summary>
+        /// Links allows you to list the file and folder links in your domain,
+        /// show the details of an individual link, create new links, and delete links.
+        /// </summary>
+        public LinksClient Links { get; private set; }
     }
 }

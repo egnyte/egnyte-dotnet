@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace Egnyte.Api.Tests.Users
 {
+    [TestFixture]
     public class GetUserListTests
     {
         const string GetUserListResponseContent = @"
