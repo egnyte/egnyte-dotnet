@@ -63,6 +63,70 @@ namespace Egnyte.Api.Links
             return response.Data;
         }
 
+        /// <summary>
+        /// Gets the details of a link.
+        /// </summary>
+        /// <param name="linkId">Required. Link id, retrieved earlier from Egnyte.</param>
+        /// <returns>Details of the link</returns>
+        public async Task<LinkDetails> GetLinkDetails(string linkId)
+        {
+            if(string.IsNullOrWhiteSpace(linkId))
+            {
+                throw new ArgumentNullException(nameof(linkId));
+            }
+
+            var uriBuilder = new UriBuilder(string.Format(LinkBasePath, domain) + "/" + linkId);
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, uriBuilder.Uri);
+
+            var serviceHandler = new ServiceHandler<LinkDetailsResponse>(httpClient);
+            var response = await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
+
+            return MapGetLinkDetailsResponse(response.Data);
+        }
+
+        private LinkDetails MapGetLinkDetailsResponse(LinkDetailsResponse data)
+        {
+            return new LinkDetails
+            {
+                Id = data.Id,
+                Path = data.Path,
+                Url = data.Url,
+                Type = ParseLinkType(data.LinkType),
+                Accessibility = ParseAccessibility(data.Accessibility),
+                Notify = data.Notify,
+                Protection = data.Protection,
+                LinkToCurrent = data.LinkToCurrent,
+                CreationDate = data.CreationDate,
+                CreatedBy = data.CreatedBy,
+                Recipients = data.Recipients
+            };
+        }
+
+        LinkAccessibility ParseAccessibility(string accessibility)
+        {
+            switch (accessibility)
+            {
+                case "domain":
+                    return LinkAccessibility.Domain;
+                case "password":
+                    return LinkAccessibility.Password;
+                case "recipients":
+                    return LinkAccessibility.Recipients;
+                default:
+                    return LinkAccessibility.Anyone;
+            }
+        }
+
+        LinkType ParseLinkType(string linkType)
+        {
+            if (linkType == "file")
+            {
+                return LinkType.File;
+            }
+
+            return LinkType.Folder;
+        }
+
         Uri ListLinksRequestUri(
             string path,
             string userName,
@@ -96,12 +160,12 @@ namespace Egnyte.Api.Links
 
             if (linkType.HasValue)
             {
-                queryParams.Add("type=" + ParseLinkType(linkType.Value));
+                queryParams.Add("type=" + MapLinkType(linkType.Value));
             }
 
             if (accessibility.HasValue)
             {
-                queryParams.Add("accessibility=" + ParseAccessibilityType(accessibility.Value));
+                queryParams.Add("accessibility=" + MapAccessibilityType(accessibility.Value));
             }
 
             if (offset.HasValue)
@@ -124,7 +188,7 @@ namespace Egnyte.Api.Links
             return uriBuilder.Uri;
         }
 
-        string ParseAccessibilityType(LinkAccessibility value)
+        string MapAccessibilityType(LinkAccessibility value)
         {
             switch (value)
             {
@@ -139,7 +203,7 @@ namespace Egnyte.Api.Links
             }
         }
 
-        string ParseLinkType(LinkType linkType)
+        string MapLinkType(LinkType linkType)
         {
             if (linkType == LinkType.File)
             {

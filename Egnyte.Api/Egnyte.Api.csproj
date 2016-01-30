@@ -63,7 +63,10 @@
     <Compile Include="Files\FolderExtendedMetadata.cs" />
     <Compile Include="Files\ListFileOrFolderResponse.cs" />
     <Compile Include="Files\Range.cs" />
+    <Compile Include="Links\Link.cs" />
     <Compile Include="Links\LinkAccessibility.cs" />
+    <Compile Include="Links\LinkDetails.cs" />
+    <Compile Include="Links\LinkDetailsResponse.cs" />
     <Compile Include="Links\LinksClient.cs" />
     <Compile Include="Links\LinksList.cs" />
     <Compile Include="Links\LinkType.cs" />

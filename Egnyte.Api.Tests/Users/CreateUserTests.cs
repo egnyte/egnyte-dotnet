@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Egnyte.Api.Tests.Files
+namespace Egnyte.Api.Tests.Users
 {
     using System.Net;
     using System.Net.Http;
