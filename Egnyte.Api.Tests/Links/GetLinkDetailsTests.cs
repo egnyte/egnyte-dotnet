@@ -18,7 +18,7 @@ namespace Egnyte.Api.Tests.Lniks
                 ""path"": ""/Shared/johnd/fun.png"",
                 ""type"": ""file"",
                 ""accessibility"": ""anyone"",
-                ""protection"": ""NONE"",
+                ""protection"": ""None"",
                 ""recipients"": [""johnd@egnyte.com""],
                 ""notify"": false,
                 ""url"": ""https://test.egnyte.com/dl/jKI7Lx9VPA"",
@@ -56,7 +56,7 @@ namespace Egnyte.Api.Tests.Lniks
             Assert.AreEqual("/Shared/johnd/fun.png", linkDetails.Path);
             Assert.AreEqual(LinkType.File, linkDetails.Type);
             Assert.AreEqual(LinkAccessibility.Anyone, linkDetails.Accessibility);
-            Assert.AreEqual("NONE", linkDetails.Protection);
+            Assert.AreEqual(ProtectionType.None, linkDetails.Protection);
             Assert.AreEqual(1, linkDetails.Recipients.Count);
             Assert.AreEqual("johnd@egnyte.com", linkDetails.Recipients[0]);
             Assert.IsFalse(linkDetails.Notify);

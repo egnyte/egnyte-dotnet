@@ -9,6 +9,7 @@ namespace Egnyte.Api.Tests.Users
     using System.Text;
     using System;
     using Api.Users;
+
     [TestFixture]
     public class CreateUserTests
     {

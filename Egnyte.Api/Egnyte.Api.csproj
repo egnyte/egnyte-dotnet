@@ -63,6 +63,8 @@
     <Compile Include="Files\FolderExtendedMetadata.cs" />
     <Compile Include="Files\ListFileOrFolderResponse.cs" />
     <Compile Include="Files\Range.cs" />
+    <Compile Include="Links\CreatedLink.cs" />
+    <Compile Include="Links\CreatedLinkResponse.cs" />
     <Compile Include="Links\Link.cs" />
     <Compile Include="Links\LinkAccessibility.cs" />
     <Compile Include="Links\LinkDetails.cs" />
@@ -70,6 +72,8 @@
     <Compile Include="Links\LinksClient.cs" />
     <Compile Include="Links\LinksList.cs" />
     <Compile Include="Links\LinkType.cs" />
+    <Compile Include="Links\NewLink.cs" />
+    <Compile Include="Links\ProtectionType.cs" />
     <Compile Include="OAuthHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TokenResponse.cs" />
