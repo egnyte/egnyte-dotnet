@@ -112,6 +112,27 @@ namespace Egnyte.Api.Links
             return MapFlatCreatedLinkToCreatedLink(response.Data);
         }
 
+        /// <summary>
+        /// Delets a link
+        /// </summary>
+        /// <param name="linkId">Required. Link id, retrieved earlier from Egnyte.</param>
+        /// <returns>Returns true if deleting link succeeded</returns>
+        public async Task<bool> DeleteLink(string linkId)
+        {
+            if (string.IsNullOrWhiteSpace(linkId))
+            {
+                throw new ArgumentNullException(nameof(linkId));
+            }
+
+            var uriBuilder = new UriBuilder(string.Format(LinkBasePath, domain) + "/" + linkId);
+            var httpRequest = new HttpRequestMessage(HttpMethod.Delete, uriBuilder.Uri);
+
+            var serviceHandler = new ServiceHandler<string>(httpClient);
+            await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
+
+            return true;
+        }
+
         CreatedLink MapFlatCreatedLinkToCreatedLink(CreatedLinkResponse data)
         {
             return new CreatedLink
