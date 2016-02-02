@@ -63,6 +63,9 @@
     <Compile Include="Files\FolderExtendedMetadata.cs" />
     <Compile Include="Files\ListFileOrFolderResponse.cs" />
     <Compile Include="Files\Range.cs" />
+    <Compile Include="Groups\GroupResource.cs" />
+    <Compile Include="Groups\Groups.cs" />
+    <Compile Include="Groups\GroupsClient.cs" />
     <Compile Include="Links\CreatedLink.cs" />
     <Compile Include="Links\CreatedLinkResponse.cs" />
     <Compile Include="Links\Link.cs" />

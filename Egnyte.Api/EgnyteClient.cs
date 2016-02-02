@@ -7,6 +7,7 @@
     using System;
     using Users;
     using Links;
+    using Groups;
     public class EgnyteClient
     {
         public EgnyteClient(
@@ -28,6 +29,7 @@
             Files = new FilesClient(httpClient, domain);
             Users = new UsersClient(httpClient, domain);
             Links = new LinksClient(httpClient, domain);
+            Groups = new GroupsClient(httpClient, domain);
         }
 
         /// <summary>
@@ -48,5 +50,12 @@
         /// show the details of an individual link, create new links, and delete links.
         /// </summary>
         public LinksClient Links { get; private set; }
+
+        /// <summary>
+        /// Groups allows you to list the groups in your domain, show the details of an individual group,
+        /// manage group membership, create new groups, rename groups, and delete groups.
+        /// This API is designed to comply with SCIM 1.1.
+        /// </summary>
+        public GroupsClient Groups { get; private set; }
     }
 }
