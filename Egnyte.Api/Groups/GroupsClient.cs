@@ -57,6 +57,28 @@ namespace Egnyte.Api.Groups
             return response.Data;
         }
 
+        /// <summary>
+        /// Shows which users are in the group and view group attributes.
+        /// </summary>
+        /// <param name="groupId">The globally unique group ID.</param>
+        /// <returns>Group details and it's members.</returns>
+        public async Task<GroupDetails> ShowSingleGruop(string groupId)
+        {
+            if (string.IsNullOrWhiteSpace(groupId))
+            {
+                throw new ArgumentNullException(nameof(groupId));
+            }
+            
+            var uriBuilder = new UriBuilder(string.Format(LinkBasePath, domain) + "/" + groupId);
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, uriBuilder.Uri);
+
+            var serviceHandler = new ServiceHandler<GroupDetails>(httpClient);
+            var response = await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
+
+            return response.Data;
+        }
+
+
         static string GetListGroupsRequestQuery(
             int? startIndex,
             int? count,
