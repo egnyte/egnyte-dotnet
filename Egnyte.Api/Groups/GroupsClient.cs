@@ -1,7 +1,9 @@
 ﻿using Egnyte.Api.Common;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Egnyte.Api.Groups
@@ -60,7 +62,7 @@ namespace Egnyte.Api.Groups
         /// <summary>
         /// Shows which users are in the group and view group attributes.
         /// </summary>
-        /// <param name="groupId">The globally unique group ID.</param>
+        /// <param name="groupId">Required. The globally unique group ID.</param>
         /// <returns>Group details and it's members.</returns>
         public async Task<GroupDetails> ShowSingleGruop(string groupId)
         {
@@ -78,6 +80,53 @@ namespace Egnyte.Api.Groups
             return response.Data;
         }
 
+        /// <summary>
+        /// Creates user group
+        /// </summary>
+        /// <param name="displayName">Required. The name of the group.</param>
+        /// <param name="members">Required. An array containing all users in the group.</param>
+        /// <returns>Group details and it's members.</returns>
+        public async Task<GroupDetails> CreateGroup(
+            string displayName,
+            List<long> members)
+        {
+            if (string.IsNullOrWhiteSpace(displayName))
+            {
+                throw new ArgumentNullException(nameof(displayName));
+            }
+
+            if (members == null)
+            {
+                throw new ArgumentNullException(nameof(members));
+            }
+
+            var uriBuilder = new UriBuilder(string.Format(LinkBasePath, domain));
+            var httpRequest = new HttpRequestMessage(HttpMethod.Post, uriBuilder.Uri)
+            {
+                Content = new StringContent(
+                    GetCreateGroupContent(displayName, members),
+                    Encoding.UTF8,
+                    "application/json")
+            };
+
+            var serviceHandler = new ServiceHandler<GroupDetails>(httpClient);
+            var response = await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
+
+            return response.Data;
+        }
+
+        string GetCreateGroupContent(string displayName, List<long> members)
+        {
+            var membersContent = string.Join(",", members.Select(m => "{\"value\":" + m + "}").ToArray());
+
+            var builder = new StringBuilder();
+            builder
+                .Append("{")
+                .Append("\"displayName\": \"" + displayName + "\"")
+                .Append(", \"members\":[" + membersContent + "]")
+                .Append("}");
+            return builder.ToString();
+        }
 
         static string GetListGroupsRequestQuery(
             int? startIndex,
