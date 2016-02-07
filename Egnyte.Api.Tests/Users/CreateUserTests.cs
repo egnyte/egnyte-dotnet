@@ -90,8 +90,8 @@ namespace Egnyte.Api.Tests.Users
 
             var content = httpHandlerMock.GetRequestContentAsString();
             Assert.AreEqual(
-                RemoveWhitespaces(CreateUserRequestContent),
-                RemoveWhitespaces(content));
+                TestsHelper.RemoveWhitespaces(CreateUserRequestContent),
+                TestsHelper.RemoveWhitespaces(content));
         }
 
         [Test]
@@ -189,14 +189,6 @@ namespace Egnyte.Api.Tests.Users
                 UserType = UserType.PowerUser,
                 Role = "Reviewer"
             };
-        }
-
-        string RemoveWhitespaces(string text)
-        {
-            return text.Replace(" ", "")
-                .Replace("\n", "")
-                .Replace("\t", "")
-                .Replace("\r", "");
         }
     }
 }

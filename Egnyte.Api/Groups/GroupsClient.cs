@@ -115,6 +115,49 @@ namespace Egnyte.Api.Groups
             return response.Data;
         }
 
+        /// <summary>
+        /// Overrides all of the attributes of a group. This is especially useful for making
+        /// a change to settings that ensures all prior settings are removed.
+        /// </summary>
+        /// <param name="groupId">Required. The globally unique group ID.</param>
+        /// <param name="displayName">Required. The name of the group.</param>
+        /// <param name="members">Required. An array containing all users in the group.</param>
+        /// <returns>Group details and it's members.</returns>
+        public async Task<GroupDetails> FullGroupUpdate(
+            string groupId,
+            string displayName,
+            List<long> members)
+        {
+            if (string.IsNullOrWhiteSpace(groupId))
+            {
+                throw new ArgumentNullException(nameof(groupId));
+            }
+
+            if (string.IsNullOrWhiteSpace(displayName))
+            {
+                throw new ArgumentNullException(nameof(displayName));
+            }
+
+            if (members == null)
+            {
+                throw new ArgumentNullException(nameof(members));
+            }
+
+            var uriBuilder = new UriBuilder(string.Format(LinkBasePath, domain) + "/" + groupId);
+            var httpRequest = new HttpRequestMessage(HttpMethod.Put, uriBuilder.Uri)
+            {
+                Content = new StringContent(
+                    GetCreateGroupContent(displayName, members),
+                    Encoding.UTF8,
+                    "application/json")
+            };
+
+            var serviceHandler = new ServiceHandler<GroupDetails>(httpClient);
+            var response = await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
+
+            return response.Data;
+        }
+
         string GetCreateGroupContent(string displayName, List<long> members)
         {
             var membersContent = string.Join(",", members.Select(m => "{\"value\":" + m + "}").ToArray());

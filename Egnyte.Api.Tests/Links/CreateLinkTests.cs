@@ -105,8 +105,8 @@ namespace Egnyte.Api.Tests.Links
 
             var content = httpHandlerMock.GetRequestContentAsString();
             Assert.AreEqual(
-                RemoveWhitespaces(CreateLinkRequestContent),
-                RemoveWhitespaces(content));
+                TestsHelper.RemoveWhitespaces(CreateLinkRequestContent),
+                TestsHelper.RemoveWhitespaces(content));
         }
 
         [Test]
@@ -154,14 +154,6 @@ namespace Egnyte.Api.Tests.Links
                 LinkToCurrent = false,
                 ExpiryDate = new DateTime(2012, 05, 27)
             };
-        }
-
-        string RemoveWhitespaces(string text)
-        {
-            return text.Replace(" ", "")
-                .Replace("\n", "")
-                .Replace("\t", "")
-                .Replace("\r", "");
         }
     }
 }
