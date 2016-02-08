@@ -43,7 +43,7 @@
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
 
             var exception = await AssertExtensions.ThrowsAsync<ArgumentNullException>(
-                () => egnyteClient.Files.MoveFileOrFolder(string.Empty, "destination"));
+                () => egnyteClient.Files.CopyFileOrFolder(string.Empty, "destination"));
 
             Assert.IsTrue(exception.Message.Contains("path"));
             Assert.IsNull(exception.InnerException);
@@ -57,7 +57,7 @@
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
 
             var exception = await AssertExtensions.ThrowsAsync<ArgumentNullException>(
-                () => egnyteClient.Files.MoveFileOrFolder("path", string.Empty));
+                () => egnyteClient.Files.CopyFileOrFolder("path", string.Empty));
 
             Assert.IsTrue(exception.Message.Contains("destination"));
             Assert.IsNull(exception.InnerException);

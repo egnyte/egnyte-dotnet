@@ -258,7 +258,7 @@ namespace Egnyte.Api.Users
                 builder.Append(",\"idpUserId\" : \"" + user.IdpUserId + "\"");
             }
 
-            if (!string.IsNullOrWhiteSpace(user.IdpUserId))
+            if (!string.IsNullOrWhiteSpace(user.UserPrincipalName))
             {
                 builder.Append(",\"userPrincipalName\" : \"" + user.UserPrincipalName + "\"");
             }

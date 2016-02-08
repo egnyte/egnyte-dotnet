@@ -10,15 +10,15 @@
 
     public class FilesClient
     {
-        private const string FilesBasePath = "https://{0}.egnyte.com/pubapi/v1/fs/";
+        const string FilesBasePath = "https://{0}.egnyte.com/pubapi/v1/fs/";
 
-        private const string FilesContentBasePath = "https://{0}.egnyte.com/pubapi/v1/fs-content/";
+        const string FilesContentBasePath = "https://{0}.egnyte.com/pubapi/v1/fs-content/";
 
-        private const string FilesChunkedContentBasePath = "https://{0}.egnyte.com/pubapi/v1/fs-content-chunked/";
+        const string FilesChunkedContentBasePath = "https://{0}.egnyte.com/pubapi/v1/fs-content-chunked/";
 
-        private readonly HttpClient httpClient;
+        readonly HttpClient httpClient;
 
-        private readonly string domain;
+        readonly string domain;
 
         internal FilesClient(HttpClient httpClient, string domain)
         {
@@ -403,7 +403,7 @@
                     : response.Data.EntryId);
         }
 
-        private DownloadedFile MapResponseToDownloadedFile(ServiceResponse<byte[]> response)
+        DownloadedFile MapResponseToDownloadedFile(ServiceResponse<byte[]> response)
         {
             return new DownloadedFile(
                            response.Data,
@@ -425,7 +425,7 @@
                            GetFullFileLengthFromRange(response));
         }
 
-        private int GetFullFileLengthFromRange(ServiceResponse<byte[]> response)
+        int GetFullFileLengthFromRange(ServiceResponse<byte[]> response)
         {
             if (response.Headers.ContainsKey("Content-Range"))
             {
@@ -439,7 +439,7 @@
             return 0;
         }
 
-        private Uri PrepareListFileOrFolderUri(string path, bool listContent, bool allowedLinkTypes)
+        Uri PrepareListFileOrFolderUri(string path, bool listContent, bool allowedLinkTypes)
         {
             var query = "list_content=" + listContent + "&allowed_link_types=" + allowedLinkTypes;
             var uriBuilder = new UriBuilder(string.Format(FilesBasePath, domain) + path) { Query = query };
@@ -447,7 +447,7 @@
             return uriBuilder.Uri;
         }
 
-        private Uri PrepareDownloadFileUri(string path, string entryId)
+        Uri PrepareDownloadFileUri(string path, string entryId)
         {
             var query = string.Empty;
 
