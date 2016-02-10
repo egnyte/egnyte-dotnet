@@ -158,6 +158,39 @@ namespace Egnyte.Api.Groups
             return response.Data;
         }
 
+        /// <summary>
+        /// Updates specific attributes of a group. This is especially useful for making
+        /// incremental modifications to a folder.
+        /// </summary>
+        /// <param name="groupId">Required. The globally unique group ID.</param>
+        /// <param name="displayName">Optional. The name of the group.</param>
+        /// <param name="members">Optional. An array containing all users being modified.</param>
+        /// <returns>Group details and it's members.</returns>
+        public async Task<GroupDetails> PartialGroupUpdate(
+            string groupId,
+            string displayName = null,
+            List<GroupMember> members = null)
+        {
+            if (string.IsNullOrWhiteSpace(groupId))
+            {
+                throw new ArgumentNullException(nameof(groupId));
+            }
+
+            var uriBuilder = new UriBuilder(string.Format(LinkBasePath, domain) + "/" + groupId);
+            var httpRequest = new HttpRequestMessage(new HttpMethod("PATCH"), uriBuilder.Uri)
+            {
+                Content = new StringContent(
+                    GetPartialGroupUpdateContent(displayName, members),
+                    Encoding.UTF8,
+                    "application/json")
+            };
+
+            var serviceHandler = new ServiceHandler<GroupDetails>(httpClient);
+            var response = await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
+
+            return response.Data;
+        }
+
         string GetCreateGroupContent(string displayName, List<long> members)
         {
             var membersContent = string.Join(",", members.Select(m => "{\"value\":" + m + "}").ToArray());
@@ -168,6 +201,48 @@ namespace Egnyte.Api.Groups
                 .Append("\"displayName\": \"" + displayName + "\"")
                 .Append(", \"members\":[" + membersContent + "]")
                 .Append("}");
+            return builder.ToString();
+        }
+
+        string GetPartialGroupUpdateContent(string displayName, List<GroupMember> members)
+        {
+            var membersStringified = new List<string>();
+
+            if (members != null && members.Count > 0)
+            {
+                foreach (var member in members)
+                {
+                    var singleMember = "{";
+                    if (member.DeleteUser)
+                    {
+                        singleMember += "\"operation\":\"delete\",";
+                    }
+
+                    singleMember += "\"value\":" + member.Id;
+                    singleMember += "}";
+                    membersStringified.Add(singleMember);
+                }
+            }
+            
+            var builder = new StringBuilder();
+            builder.Append("{");
+
+            if (!string.IsNullOrWhiteSpace(displayName))
+            {
+                builder.Append("\"displayName\": \"" + displayName + "\"");
+            }
+            
+            if (membersStringified.Count > 0)
+            {
+                if (!string.IsNullOrWhiteSpace(displayName))
+                {
+                    builder.Append(", ");
+                }
+
+                builder.Append("\"members\":[" + string.Join(",", membersStringified) + "]");
+            }
+
+            builder.Append("}");
             return builder.ToString();
         }
 

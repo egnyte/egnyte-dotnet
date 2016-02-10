@@ -66,6 +66,7 @@
     <Compile Include="Files\ListFileOrFolderResponse.cs" />
     <Compile Include="Files\Range.cs" />
     <Compile Include="Groups\GroupDetails.cs" />
+    <Compile Include="Groups\GroupMember.cs" />
     <Compile Include="Groups\GroupResource.cs" />
     <Compile Include="Groups\Groups.cs" />
     <Compile Include="Groups\GroupsClient.cs" />

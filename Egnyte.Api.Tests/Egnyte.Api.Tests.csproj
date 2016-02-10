@@ -77,6 +77,7 @@
     <Compile Include="Files\MoveFileOrFolderTests.cs" />
     <Compile Include="Groups\FullGroupUpdateTests.cs" />
     <Compile Include="Groups\CreateGroupTests.cs" />
+    <Compile Include="Groups\PartialGroupUpdateTests.cs" />
     <Compile Include="Groups\ShowSingleGroupTests.cs" />
     <Compile Include="Groups\ListGroupsTests.cs" />
     <Compile Include="HttpMessageHandlerMock.cs" />
