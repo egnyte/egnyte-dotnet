@@ -14,7 +14,7 @@ namespace Egnyte.Api.Groups
 
         readonly string domain;
 
-        const string LinkBasePath = "https://{0}.egnyte.com/pubapi/v2/groups";
+        const string GroupBasePath = "https://{0}.egnyte.com/pubapi/v2/groups";
 
         internal GroupsClient(HttpClient httpClient, string domain)
         {
@@ -47,7 +47,7 @@ namespace Egnyte.Api.Groups
                 throw new ArgumentOutOfRangeException(nameof(count));
             }
 
-            var uriBuilder = new UriBuilder(string.Format(LinkBasePath, domain))
+            var uriBuilder = new UriBuilder(string.Format(GroupBasePath, domain))
             {
                 Query = GetListGroupsRequestQuery(startIndex, count, filter)
             };
@@ -71,7 +71,7 @@ namespace Egnyte.Api.Groups
                 throw new ArgumentNullException(nameof(groupId));
             }
             
-            var uriBuilder = new UriBuilder(string.Format(LinkBasePath, domain) + "/" + groupId);
+            var uriBuilder = new UriBuilder(string.Format(GroupBasePath, domain) + "/" + groupId);
             var httpRequest = new HttpRequestMessage(HttpMethod.Get, uriBuilder.Uri);
 
             var serviceHandler = new ServiceHandler<GroupDetails>(httpClient);
@@ -100,7 +100,7 @@ namespace Egnyte.Api.Groups
                 throw new ArgumentNullException(nameof(members));
             }
 
-            var uriBuilder = new UriBuilder(string.Format(LinkBasePath, domain));
+            var uriBuilder = new UriBuilder(string.Format(GroupBasePath, domain));
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, uriBuilder.Uri)
             {
                 Content = new StringContent(
@@ -143,7 +143,7 @@ namespace Egnyte.Api.Groups
                 throw new ArgumentNullException(nameof(members));
             }
 
-            var uriBuilder = new UriBuilder(string.Format(LinkBasePath, domain) + "/" + groupId);
+            var uriBuilder = new UriBuilder(string.Format(GroupBasePath, domain) + "/" + groupId);
             var httpRequest = new HttpRequestMessage(HttpMethod.Put, uriBuilder.Uri)
             {
                 Content = new StringContent(
@@ -176,7 +176,7 @@ namespace Egnyte.Api.Groups
                 throw new ArgumentNullException(nameof(groupId));
             }
 
-            var uriBuilder = new UriBuilder(string.Format(LinkBasePath, domain) + "/" + groupId);
+            var uriBuilder = new UriBuilder(string.Format(GroupBasePath, domain) + "/" + groupId);
             var httpRequest = new HttpRequestMessage(new HttpMethod("PATCH"), uriBuilder.Uri)
             {
                 Content = new StringContent(
@@ -189,6 +189,27 @@ namespace Egnyte.Api.Groups
             var response = await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
 
             return response.Data;
+        }
+
+        /// <summary>
+        /// Deletes a group.
+        /// </summary>
+        /// <param name="groupId">Required. The globally unique group ID.</param>
+        /// <returns>True if deletion succeeded</returns>
+        public async Task<bool> DeleteGroup(string groupId)
+        {
+            if (string.IsNullOrWhiteSpace(groupId))
+            {
+                throw new ArgumentNullException(nameof(groupId));
+            }
+
+            var uriBuilder = new UriBuilder(string.Format(GroupBasePath, domain) + "/" + groupId);
+            var httpRequest = new HttpRequestMessage(HttpMethod.Delete, uriBuilder.Uri);
+
+            var serviceHandler = new ServiceHandler<string>(httpClient);
+            await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
+
+            return true;
         }
 
         string GetCreateGroupContent(string displayName, List<long> members)

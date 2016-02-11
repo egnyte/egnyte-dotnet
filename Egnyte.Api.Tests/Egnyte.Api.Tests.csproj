@@ -75,6 +75,7 @@
     <Compile Include="Files\ListFileOrFolderTests.cs" />
     <Compile Include="Files\CopyFileOrFolderTests.cs" />
     <Compile Include="Files\MoveFileOrFolderTests.cs" />
+    <Compile Include="Groups\DeleteGroupTests.cs" />
     <Compile Include="Groups\FullGroupUpdateTests.cs" />
     <Compile Include="Groups\CreateGroupTests.cs" />
     <Compile Include="Groups\PartialGroupUpdateTests.cs" />
