@@ -8,6 +8,7 @@
     using Users;
     using Links;
     using Groups;
+    using Permissions;
     public class EgnyteClient
     {
         public EgnyteClient(
@@ -30,6 +31,7 @@
             Users = new UsersClient(httpClient, domain);
             Links = new LinksClient(httpClient, domain);
             Groups = new GroupsClient(httpClient, domain);
+            Permissions = new PermissionsClient(httpClient, domain);
         }
 
         /// <summary>
@@ -57,5 +59,12 @@
         /// This API is designed to comply with SCIM 1.1.
         /// </summary>
         public GroupsClient Groups { get; private set; }
+
+        /// <summary>
+        /// With Permissions you can list, set, and remove folder permissions for users and groups.
+        /// Refer to the table here: https://developers.egnyte.com/docs/read/Egnyte_Permissions_API#Permissions
+        /// for details on our different permission levels.
+        /// </summary>
+        public PermissionsClient Permissions { get; private set; }
     }
 }

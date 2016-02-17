@@ -238,7 +238,7 @@ namespace Egnyte.Api.Links
 
         ProtectionType ParseProtectionType(string protection)
         {
-            switch (protection)
+            switch (protection.ToLower())
             {
                 case "preview":
                     return ProtectionType.Preview;
@@ -251,7 +251,7 @@ namespace Egnyte.Api.Links
 
         LinkAccessibility ParseAccessibility(string accessibility)
         {
-            switch (accessibility)
+            switch (accessibility.ToLower())
             {
                 case "domain":
                     return LinkAccessibility.Domain;

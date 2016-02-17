@@ -83,6 +83,12 @@
     <Compile Include="Links\NewLink.cs" />
     <Compile Include="Links\ProtectionType.cs" />
     <Compile Include="OAuthHelper.cs" />
+    <Compile Include="Permissions\FolderPermissionsResponse.cs" />
+    <Compile Include="Permissions\FolderPermissions.cs" />
+    <Compile Include="Permissions\GroupOrUserPermissions.cs" />
+    <Compile Include="Permissions\PermissionsClient.cs" />
+    <Compile Include="Permissions\PermissionType.cs" />
+    <Compile Include="Permissions\GroupOrUserPermissionsResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TokenResponse.cs" />
     <Compile Include="TokenRequestParameters.cs" />

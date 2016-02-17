@@ -4,7 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Egnyte.Api.Tests.Users
+namespace Egnyte.Api.Tests.Groups
 {
     [TestFixture]
     public class DeleteGroupTests

@@ -355,7 +355,7 @@ namespace Egnyte.Api.Users
 
         UserAuthType MapAuthType(string authType)
         {
-            switch (authType)
+            switch (authType.ToLower())
             {
                 case "sso":
                     return UserAuthType.SAML_SSO;
@@ -381,7 +381,7 @@ namespace Egnyte.Api.Users
 
         UserType MapUserType(string userType)
         {
-            switch (userType)
+            switch (userType.ToLower())
             {
                 case "admin":
                     return UserType.Administrator;
