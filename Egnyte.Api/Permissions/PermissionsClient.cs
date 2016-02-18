@@ -14,7 +14,7 @@ namespace Egnyte.Api.Permissions
 
         readonly string domain;
 
-        const string GroupBasePath = "https://{0}.egnyte.com/pubapi/v1/perms";
+        const string PermissionsBasePath = "https://{0}.egnyte.com/pubapi/v1/perms";
 
         internal PermissionsClient(HttpClient httpClient, string domain)
         {
@@ -48,7 +48,7 @@ namespace Egnyte.Api.Permissions
                 throw new ArgumentException("One of parameters: " + nameof(users) + " or " + nameof(groups) + " must be not empty.");
             }
 
-            var uriBuilder = new UriBuilder(string.Format(GroupBasePath, domain) + "/folder/" + path);
+            var uriBuilder = new UriBuilder(string.Format(PermissionsBasePath, domain) + "/folder/" + path);
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, uriBuilder.Uri)
             {
                 Content = new StringContent(
@@ -70,7 +70,7 @@ namespace Egnyte.Api.Permissions
         /// <param name="users">Optional. List of usernames to report on.
         /// If neither users nor groups is set then permissions for all subjects are returned.</param>
         /// <param name="groups">Optional. List of groups to report on.
-        /// If neither users nor groups is set then permissions for all subjects are returned. </param>
+        /// If neither users nor groups is set then permissions for all subjects are returned.</param>
         /// <returns></returns>
         public async Task<FolderPermissions> GetFolderPermissions(
             string path,
@@ -83,7 +83,7 @@ namespace Egnyte.Api.Permissions
             }
 
             var query = GetGetFolderPermissionsQuery(users, groups);
-            var uriBuilder = new UriBuilder(string.Format(GroupBasePath, domain) + "/folder/" + path)
+            var uriBuilder = new UriBuilder(string.Format(PermissionsBasePath, domain) + "/folder/" + path)
             {
                 Query = query
             };
@@ -93,6 +93,45 @@ namespace Egnyte.Api.Permissions
             var response = await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
 
             return MapFolderPermissions(response.Data);
+        }
+
+        /// <summary>
+        /// Gets the effective permissions for a user for a given folder.
+        /// This effective permission takes into account both user and group permissions
+        /// that apply to the given user, along with permission inheritance.
+        /// </summary>
+        /// <param name="username">Required. Egnyte username.</param>
+        /// <param name="path">Required. Full path to the folder.</param>
+        /// <returns>Effective user permissions for folder.</returns>
+        public async Task<PermissionType> GetEffectivePermissionsForUser(
+            string username,
+            string path)
+        {
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                throw new ArgumentNullException(nameof(username));
+            }
+
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                throw new ArgumentNullException(nameof(path));
+            }
+            
+            if (!path.StartsWith("/", StringComparison.Ordinal))
+            {
+                path = "/" + path;
+            }
+
+            var uriBuilder = new UriBuilder(string.Format(PermissionsBasePath, domain) + "/user/" + username)
+            {
+                Query = "folder=" + path
+            };
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, uriBuilder.Uri);
+
+            var serviceHandler = new ServiceHandler<EffectivePermissionsResponse>(httpClient);
+            var response = await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
+
+            return ParsePermissionType(response.Data.Permission);
         }
 
         FolderPermissions MapFolderPermissions(FolderPermissionsResponse data)

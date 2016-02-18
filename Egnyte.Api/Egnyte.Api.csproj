@@ -86,6 +86,7 @@
     <Compile Include="Permissions\FolderPermissionsResponse.cs" />
     <Compile Include="Permissions\FolderPermissions.cs" />
     <Compile Include="Permissions\GroupOrUserPermissions.cs" />
+    <Compile Include="Permissions\EffectivePermissionsResponse.cs" />
     <Compile Include="Permissions\PermissionsClient.cs" />
     <Compile Include="Permissions\PermissionType.cs" />
     <Compile Include="Permissions\GroupOrUserPermissionsResponse.cs" />

@@ -87,6 +87,7 @@
     <Compile Include="Links\GetLinkDetailsTests.cs" />
     <Compile Include="Links\ListLinksTests.cs" />
     <Compile Include="OAuthHelperTests.cs" />
+    <Compile Include="Permissions\GetEffectiveUserPermissionsTests.cs" />
     <Compile Include="Permissions\GetFolderPermissionsTests.cs" />
     <Compile Include="Permissions\SetFolderPermissionsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
