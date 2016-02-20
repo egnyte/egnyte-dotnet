@@ -9,6 +9,7 @@
     using Links;
     using Groups;
     using Permissions;
+    using Search;
     public class EgnyteClient
     {
         public EgnyteClient(
@@ -32,6 +33,7 @@
             Links = new LinksClient(httpClient, domain);
             Groups = new GroupsClient(httpClient, domain);
             Permissions = new PermissionsClient(httpClient, domain);
+            Search = new SearchClient(httpClient, domain);
         }
 
         /// <summary>
@@ -66,5 +68,13 @@
         /// for details on our different permission levels.
         /// </summary>
         public PermissionsClient Permissions { get; private set; }
+
+        /// <summary>
+        /// The Search API allows you to find content stored in Egnyte based on filenames,
+        /// metadata, and text content. Searches are performed in the context of the user token being passed.
+        /// Accordingly, a user will only see results for contents they have permission to access.
+        /// Note, this endpoint is currently limited to searching for files only. 
+        /// </summary>
+        public SearchClient Search { get; private set; }
     }
 }
