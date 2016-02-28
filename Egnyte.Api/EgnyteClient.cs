@@ -10,6 +10,7 @@
     using Groups;
     using Permissions;
     using Search;
+    using Audit;
     public class EgnyteClient
     {
         public EgnyteClient(
@@ -34,6 +35,7 @@
             Groups = new GroupsClient(httpClient, domain);
             Permissions = new PermissionsClient(httpClient, domain);
             Search = new SearchClient(httpClient, domain);
+            Audit = new AuditClient(httpClient, domain);
         }
 
         /// <summary>
@@ -76,5 +78,12 @@
         /// Note, this endpoint is currently limited to searching for files only. 
         /// </summary>
         public SearchClient Search { get; private set; }
+
+        /// <summary>
+        /// The Audit Reporting API allows you to programmatically generate and retrieve reports
+        /// on login activity, file actions, and permission changes. The scope of these reports
+        /// effectively gives you a 360° view of the activity in your account.
+        /// </summary>
+        public AuditClient Audit { get; private set; }
     }
 }

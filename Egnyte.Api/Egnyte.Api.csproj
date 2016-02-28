@@ -43,6 +43,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Audit\AuditClient.cs" />
+    <Compile Include="Audit\AuditReportAccessPoint.cs" />
+    <Compile Include="Audit\AuditReportFormat.cs" />
+    <Compile Include="Audit\CreateLoginAuditReportResponse.cs" />
     <Compile Include="Common\EgnyteApiException.cs" />
     <Compile Include="Common\ServiceHandler.cs" />
     <Compile Include="Common\ServiceResponse.cs" />
