@@ -62,3 +62,9 @@ For more details, read methods descriptions or documentation.
 ## Documentation
 
 You can browse full documentation of Egnyte SDK here: https://developers.egnyte.com/docs.
+
+## License
+
+MIT License
+
+https://opensource.org/licenses/MIT
