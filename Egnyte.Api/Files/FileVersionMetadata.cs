@@ -4,7 +4,7 @@
 
     public class FileVersionMetadata
     {
-        public FileVersionMetadata(
+        internal FileVersionMetadata(
             string checksum,
             int size,
             string entryId,

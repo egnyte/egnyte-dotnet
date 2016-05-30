@@ -9,30 +9,30 @@ namespace Egnyte.Api.Groups
         /// The SCIM schema version of the response.
         /// </summary>
         [JsonProperty(PropertyName = "schemas")]
-        public List<string> Schemas { get; set; }
+        public List<string> Schemas { get; private set; }
 
         /// <summary>
         /// The total number of results matching the query.
         /// </summary>
         [JsonProperty(PropertyName = "totalResults")]
-        public int TotalResults { get; set; }
+        public int TotalResults { get; private set; }
 
         /// <summary>
         /// The number of results returned.
         /// </summary>
         [JsonProperty(PropertyName = "itemsPerPage")]
-        public int ItemsPerPage { get; set; }
+        public int ItemsPerPage { get; private set; }
 
         /// <summary>
         /// The 1-based index of the first result in the current set of results.
         /// </summary>
         [JsonProperty(PropertyName = "startIndex")]
-        public int StartIndex { get; set; }
+        public int StartIndex { get; private set; }
 
         /// <summary>
         /// A JSON array that holds all of the group objects.
         /// </summary>
         [JsonProperty(PropertyName = "resources")]
-        public List<GroupResource> Resources { get; set; }
+        public List<GroupResource> Resources { get; private set; }
     }
 }

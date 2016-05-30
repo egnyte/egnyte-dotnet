@@ -5,7 +5,7 @@
 
     public class FileMetadata : FileBasicMetadata
     {
-        public FileMetadata(
+        internal FileMetadata(
             string checksum,
             int size,
             string path,

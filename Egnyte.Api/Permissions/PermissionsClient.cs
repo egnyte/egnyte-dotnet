@@ -136,19 +136,17 @@ namespace Egnyte.Api.Permissions
 
         FolderPermissions MapFolderPermissions(FolderPermissionsResponse data)
         {
-            return new FolderPermissions
-            {
-                Users = data.Users.Select(
+            return new FolderPermissions(
+                data.Users.Select(
                     u => new GroupOrUserPermissions(
                         u.Subject,
                         ParsePermissionType(u.Permission)))
                     .ToList(),
-                Groups = data.Groups.Select(
+                data.Groups.Select(
                     g => new GroupOrUserPermissions(
                         g.Subject,
                         ParsePermissionType(g.Permission)))
-                    .ToList()
-            };
+                    .ToList());
         }
 
         string GetGetFolderPermissionsQuery(List<string> users, List<string> groups)

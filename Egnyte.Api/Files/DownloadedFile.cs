@@ -4,7 +4,7 @@
 
     public class DownloadedFile
     {
-        public DownloadedFile(
+        internal DownloadedFile(
             byte[] data,
             string checksum,
             DateTime lastModified,

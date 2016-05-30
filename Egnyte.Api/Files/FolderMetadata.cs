@@ -2,7 +2,7 @@
 {
     public class FolderMetadata
     {
-        public FolderMetadata(
+        internal FolderMetadata(
             string name,
             string path,
             string folderId,

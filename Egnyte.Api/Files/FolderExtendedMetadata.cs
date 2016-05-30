@@ -4,7 +4,7 @@
 
     public class FolderExtendedMetadata : FolderMetadata
     {
-        public FolderExtendedMetadata(
+        internal FolderExtendedMetadata(
             string name,
             int count,
             int offset,

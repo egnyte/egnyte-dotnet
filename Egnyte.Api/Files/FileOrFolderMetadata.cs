@@ -2,7 +2,7 @@
 {
     public class FileOrFolderMetadata
     {
-        public FileOrFolderMetadata(
+        internal FileOrFolderMetadata(
             bool isFolder,
             FolderExtendedMetadata foldesExtendedMetadata = null,
             FileMetadata fileMetadataResponse = null)

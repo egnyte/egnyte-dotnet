@@ -4,7 +4,7 @@
 
     public class UploadedFileMetadata
     {
-        public UploadedFileMetadata(string checksum, DateTime lastModified, string entryId)
+        internal UploadedFileMetadata(string checksum, DateTime lastModified, string entryId)
         {
             Checksum = checksum;
             LastModified = lastModified;

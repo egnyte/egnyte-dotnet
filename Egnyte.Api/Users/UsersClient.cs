@@ -174,33 +174,30 @@ namespace Egnyte.Api.Users
 
         UserList MapUserList(UserListResponse data) 
         {
-            return new UserList
-            {
-                ItemsPerPage = data.ItemsPerPage,
-                StartIndex = data.StartIndex,
-                TotalResults = data.TotalResults,
-                Users = data.Resources.Select(u => MapFlatUserToUser(u)).ToList()
-            };
+            return new UserList(
+                data.TotalResults,
+                data.ItemsPerPage,
+                data.StartIndex,
+                data.Resources.Select(u => MapFlatUserToUser(u)).ToList());
         }
 
         ExistingUser MapFlatUserToUser(ExistingUserFlat data)
         {
-            return new ExistingUser
-            {
-                Id = long.Parse(data.id),
-                UserName = data.userName,
-                ExternalId = data.externalId,
-                Email = data.email,
-                FamilyName = data.name.familyName,
-                GivenName = data.name.givenName,
-                Active = data.active,
-                Locked = data.locked,
-                AuthType = MapAuthType(data.authType),
-                UserType = MapUserType(data.userType),
-                IdpUserId = data.idpUserId,
-                Role = data.role,
-                UserPrincipalName = data.userPrincipalName
-            };
+            return new ExistingUser(
+                data.userName,
+                data.externalId,
+                data.email,
+                data.name.familyName,
+                data.name.givenName,
+                data.active,
+                MapAuthType(data.authType),
+                MapUserType(data.userType),
+                data.role,
+                data.idpUserId,
+                data.userPrincipalName,
+                long.Parse(data.id),
+                data.locked
+            );
         }
 
         void ThrowExceptionsIfNewUserIsInvalid(User user)

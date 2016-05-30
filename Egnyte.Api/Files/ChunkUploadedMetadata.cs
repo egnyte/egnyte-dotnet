@@ -2,7 +2,7 @@
 {
     public class ChunkUploadedMetadata
     {
-        public ChunkUploadedMetadata(string uploadId, int chunkNumber, string checksum)
+        internal ChunkUploadedMetadata(string uploadId, int chunkNumber, string checksum)
         {
             UploadId = uploadId;
             ChunkNumber = chunkNumber;

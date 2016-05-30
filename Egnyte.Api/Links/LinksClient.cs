@@ -135,18 +135,16 @@ namespace Egnyte.Api.Links
 
         CreatedLink MapFlatCreatedLinkToCreatedLink(CreatedLinkResponse data)
         {
-            return new CreatedLink
-            {
-                Links = data.Links,
-                Path = data.Path,
-                Type = ParseLinkType(data.LinkType),
-                Accessibility = ParseAccessibility(data.Accessibility),
-                Notify = data.Notify,
-                LinkToCurrent = data.LinkToCurrent,
-                ExpiryDate = data.ExpiryDate,
-                CreationDate = data.CreationDate,
-                CreatedBy = data.CreatedBy
-            };
+            return new CreatedLink(
+                data.Links,
+                data.Path,
+                ParseLinkType(data.LinkType),
+                ParseAccessibility(data.Accessibility),
+                data.Notify,
+                data.LinkToCurrent,
+                data.ExpiryDate,
+                data.CreationDate,
+                data.CreatedBy);
         }
 
         string MapLinkForRequest(NewLink link)
@@ -220,20 +218,18 @@ namespace Egnyte.Api.Links
 
         LinkDetails MapGetLinkDetailsResponse(LinkDetailsResponse data)
         {
-            return new LinkDetails
-            {
-                Id = data.Id,
-                Path = data.Path,
-                Url = data.Url,
-                Type = ParseLinkType(data.LinkType),
-                Accessibility = ParseAccessibility(data.Accessibility),
-                Notify = data.Notify,
-                Protection = ParseProtectionType(data.Protection),
-                LinkToCurrent = data.LinkToCurrent,
-                CreationDate = data.CreationDate,
-                CreatedBy = data.CreatedBy,
-                Recipients = data.Recipients
-            };
+            return new LinkDetails(
+                data.Path,
+                ParseLinkType(data.LinkType),
+                ParseAccessibility(data.Accessibility),
+                data.Notify,
+                data.LinkToCurrent,
+                data.CreationDate,
+                data.CreatedBy,
+                ParseProtectionType(data.Protection),
+                data.Recipients,
+                data.Url,
+                data.Id);
         }
 
         ProtectionType ParseProtectionType(string protection)
