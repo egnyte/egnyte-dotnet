@@ -33,19 +33,30 @@
             string authorizationCode,
             HttpClient httpClient = null)
         {
-            httpClient = httpClient ?? new HttpClient();
-            var requestParameters = OAuthHelper.GetTokenRequestParameters(
-                userDomain,
-                clientId,
-                clientSecret,
-                redirectUri,
-                authorizationCode);
-            var content = new FormUrlEncodedContent(requestParameters.QueryParameters);
-            var result = await httpClient.PostAsync(requestParameters.BaseAddress, content).ConfigureAwait(false);
+            var disposeClient = httpClient == null;
+            try
+            {
+                httpClient = httpClient ?? new HttpClient();
+                var requestParameters = OAuthHelper.GetTokenRequestParameters(
+                    userDomain,
+                    clientId,
+                    clientSecret,
+                    redirectUri,
+                    authorizationCode);
+                var content = new FormUrlEncodedContent(requestParameters.QueryParameters);
+                var result = await httpClient.PostAsync(requestParameters.BaseAddress, content).ConfigureAwait(false);
 
-            var rawContent = await result.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var rawContent = await result.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-            return JsonConvert.DeserializeObject<TokenResponse>(rawContent);
+                return JsonConvert.DeserializeObject<TokenResponse>(rawContent);
+            }
+            finally
+            {
+                if (disposeClient)
+                {
+                    httpClient.Dispose();
+                }
+            }
         }
 
         public static async Task<TokenResponse> GetTokenResourceOwnerFlow(
@@ -55,19 +66,30 @@
             string password,
             HttpClient httpClient = null)
         {
-            httpClient = httpClient ?? new HttpClient();
-            var tokenRequesrUri = OAuthHelper.GetAuthorizationUriResourceOwnerFlow(
-                userDomain,
-                clientId,
-                username,
-                password);
+            var disposeClient = httpClient == null;
+            try
+            {
+                httpClient = httpClient ?? new HttpClient();
+                var tokenRequesrUri = OAuthHelper.GetAuthorizationUriResourceOwnerFlow(
+                    userDomain,
+                    clientId,
+                    username,
+                    password);
 
-            var content = new FormUrlEncodedContent(tokenRequesrUri.QueryParameters);
-            var result = await httpClient.PostAsync(tokenRequesrUri.BaseAddress, content).ConfigureAwait(false);
+                var content = new FormUrlEncodedContent(tokenRequesrUri.QueryParameters);
+                var result = await httpClient.PostAsync(tokenRequesrUri.BaseAddress, content).ConfigureAwait(false);
 
-            var rawContent = await result.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var rawContent = await result.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-            return JsonConvert.DeserializeObject<TokenResponse>(rawContent);
+                return JsonConvert.DeserializeObject<TokenResponse>(rawContent);
+            }
+            finally
+            {
+                if (disposeClient)
+                {
+                    httpClient.Dispose();
+                }
+            }
         }
     }
 }

@@ -64,7 +64,7 @@ namespace Egnyte.Api.Groups
         /// </summary>
         /// <param name="groupId">Required. The globally unique group ID</param>
         /// <returns>Group details and it's members</returns>
-        public async Task<GroupDetails> ShowSingleGruop(string groupId)
+        public async Task<GroupDetails> ShowSingleGroup(string groupId)
         {
             if (string.IsNullOrWhiteSpace(groupId))
             {

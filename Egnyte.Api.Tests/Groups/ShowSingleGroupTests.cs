@@ -51,7 +51,7 @@ namespace Egnyte.Api.Tests.Groups
 
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
             var userList = await egnyteClient.Groups
-                .ShowSingleGruop("e3ba9d90-ebc7-483e-abaa-a84e92480c86");
+                .ShowSingleGroup("e3ba9d90-ebc7-483e-abaa-a84e92480c86");
 
             var requestMessage = httpHandlerMock.GetHttpRequestMessage();
             Assert.AreEqual(
@@ -84,7 +84,7 @@ namespace Egnyte.Api.Tests.Groups
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
 
             var exception = await AssertExtensions.ThrowsAsync<ArgumentNullException>(
-                            () => egnyteClient.Groups.ShowSingleGruop(string.Empty));
+                            () => egnyteClient.Groups.ShowSingleGroup(string.Empty));
 
             Assert.IsTrue(exception.Message.Contains("groupId"));
             Assert.IsNull(exception.InnerException);
