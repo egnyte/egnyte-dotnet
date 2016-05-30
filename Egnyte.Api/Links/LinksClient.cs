@@ -24,18 +24,18 @@ namespace Egnyte.Api.Links
 
         /// <summary>
         /// Lists all links. Please note, that if the user executing this method is not an admin,
-        /// then only links created by the user will be listed.
+        /// then only links created by the user will be listed
         /// </summary>
-        /// <param name="path">Optional. List links to a file or folder specified by its full path.</param>
-        /// <param name="userName">Optional. List links created by this user.</param>
-        /// <param name="createdBefore">Optional. List links created before a given date.</param>
-        /// <param name="createdAfter">Optional. List links created after a given date.</param>
-        /// <param name="linkType">Optional. List links that are "file" or "folder".</param>
+        /// <param name="path">Optional. List links to a file or folder specified by its full path</param>
+        /// <param name="userName">Optional. List links created by this user</param>
+        /// <param name="createdBefore">Optional. List links created before a given date</param>
+        /// <param name="createdAfter">Optional. List links created after a given date</param>
+        /// <param name="linkType">Optional. List links that are "file" or "folder"</param>
         /// <param name="accessibility">Optional. Filter to links whose accessiblity is "anyone,"
-        /// "password," "domain," or "recipients."</param>
-        /// <param name="offset">Optional. The 0-based index of the initial record being requested.</param>
+        /// "password," "domain," or "recipients"</param>
+        /// <param name="offset">Optional. The 0-based index of the initial record being requested</param>
         /// <param name="count">Optional. Limit number of entries per page. By default,
-        /// all entries are returned.</param>
+        /// all entries are returned</param>
         /// <returns></returns>
         public async Task<LinksList> ListLinks(
             string path = null,
@@ -66,9 +66,9 @@ namespace Egnyte.Api.Links
         }
 
         /// <summary>
-        /// Gets the details of a link.
+        /// Gets the details of a link
         /// </summary>
-        /// <param name="linkId">Required. Link id, retrieved earlier from Egnyte.</param>
+        /// <param name="linkId">Required. Link id, retrieved earlier from Egnyte</param>
         /// <returns>Details of the link</returns>
         public async Task<LinkDetails> GetLinkDetails(string linkId)
         {
@@ -115,7 +115,7 @@ namespace Egnyte.Api.Links
         /// <summary>
         /// Delets a link
         /// </summary>
-        /// <param name="linkId">Required. Link id, retrieved earlier from Egnyte.</param>
+        /// <param name="linkId">Required. Link id, retrieved earlier from Egnyte</param>
         /// <returns>Returns true if deleting link succeeded</returns>
         public async Task<bool> DeleteLink(string linkId)
         {

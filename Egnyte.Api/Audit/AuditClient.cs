@@ -8,6 +8,7 @@
     using Egnyte.Api.Common;
     using System.Collections.Generic;
     using System.Linq;
+
     public class AuditClient
     {
         const string AuditReportBasePath = "https://{0}.egnyte.com/pubapi/v1/audit/";
@@ -25,15 +26,15 @@
         /// <summary>
         /// Creates login audit report
         /// </summary>
-        /// <param name="format">Required. Determines format of audit report data.</param>
-        /// <param name="startDate">Required. Start of date range for report.</param>
-        /// <param name="endDate">Required. End of date range for report.</param>
-        /// <param name="events">Required. List of events to report on. At least one event must be specified.</param>
+        /// <param name="format">Required. Determines format of audit report data</param>
+        /// <param name="startDate">Required. Start of date range for report</param>
+        /// <param name="endDate">Required. End of date range for report</param>
+        /// <param name="events">Required. List of events to report on. At least one event must be specified</param>
         /// <param name="accessPoints">Optional. List of Egnyte access points covered by report.
-        /// If not specified or empty then report will cover all access points.</param>
+        /// If not specified or empty then report will cover all access points</param>
         /// <param name="users">Optional. List of usernames to report on.
-        /// If not specified or empty then report will cover all users.</param>
-        /// <returns>Id fo an audit report.</returns>
+        /// If not specified or empty then report will cover all users</param>
+        /// <returns>Id fo an audit report</returns>
         public async Task<string> CreateLoginAuditReport(
             AuditReportFormat format,
             DateTime startDate,

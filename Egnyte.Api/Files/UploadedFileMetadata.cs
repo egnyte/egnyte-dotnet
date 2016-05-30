@@ -12,17 +12,17 @@
         }
 
         /// <summary>
-        /// SHA512 hash of entire file that can be used for validating upload integrity.
+        /// SHA512 hash of entire file that can be used for validating upload integrity
         /// </summary>
         public string Checksum { get; private set; }
 
         /// <summary>
-        /// Indicates last modified date for file.
+        /// Indicates last modified date for file
         /// </summary>
         public DateTime LastModified { get; private set; }
 
         /// <summary>
-        /// Current value of the entity tag that can be used to compare whether two versions of a resource are the same.
+        /// Current value of the entity tag that can be used to compare whether two versions of a resource are the same
         /// </summary>
         public string EntryId { get; private set; }
     }

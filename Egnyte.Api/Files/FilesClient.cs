@@ -51,12 +51,12 @@
         }
 
         /// <summary>
-        /// Creates or updates a file. To upload files larger than 100 MB, use the ChunkedUpload method.
+        /// Creates or updates a file. To upload files larger than 100 MB, use the ChunkedUpload method
         /// </summary>
         /// <param name="path">Full path to the file</param>
         /// <param name="file">Content of a file in a memory stream</param>
         /// <returns>Response with checksum and ids.
-        /// Checksum is a SHA512 hash of entire file that can be used for validating upload integrity.</returns>
+        /// Checksum is a SHA512 hash of entire file that can be used for validating upload integrity</returns>
         public async Task<UploadedFileMetadata> CreateOrUpdateFile(string path, MemoryStream file)
         {
             if (string.IsNullOrWhiteSpace(path))
@@ -167,12 +167,12 @@
         }
 
         /// <summary>
-        /// Downloads a file (note that this method supports ranged downloads).
+        /// Downloads a file (note that this method supports ranged downloads)
         /// </summary>
         /// <param name="path">Full path to the file</param>
         /// <param name="rangeOfBytes">The range of bytes to download, use of this header is optional</param>
         /// <param name="entryId">Specifies the entry ID of the file version to download.
-        /// Entry IDs are shown in the detail listing for a file.</param>
+        /// Entry IDs are shown in the detail listing for a file</param>
         /// <returns>File download information with data in bytes</returns>
         public async Task<DownloadedFile> DownloadFile(
             string path,
@@ -194,12 +194,12 @@
         }
 
         /// <summary>
-        /// List information about a file or folder (including folder contents).
+        /// List information about a file or folder (including folder contents)
         /// </summary>
         /// <param name="path">Full path to folder or file</param>
         /// <param name="listContent">If false, then do not include contents of folder in response</param>
         /// <param name="allowedLinkTypes">If true, then show allowed_file_link_types,
-        /// allowed_folder_link_types fields, and allow_upload_links fields.</param>
+        /// allowed_folder_link_types fields, and allow_upload_links fields</param>
         /// <returns>Metadata info about file or folder</returns>
         public async Task<FileOrFolderMetadata> ListFileOrFolder(
             string path,
@@ -248,7 +248,7 @@
 
         /// <summary>
         /// The chunked upload flow provides a mechanism to upload large files—we recommend only using this flow
-        /// for files larger than 100 MB. To upload files of smaller sizes, you can use the CreateOrUpdateFile method.
+        /// for files larger than 100 MB. To upload files of smaller sizes, you can use the CreateOrUpdateFile method
         /// </summary>
         /// <param name="path">Full path to file</param>
         /// <param name="file">Stream with the file content</param>
@@ -288,11 +288,11 @@
         }
 
         /// <summary>
-        /// Method for uploading second and consecutive chunks of file. To upload first chunk use ChunkedUploadFirstChunk.
+        /// Method for uploading second and consecutive chunks of file. To upload first chunk use ChunkedUploadFirstChunk
         /// </summary>
         /// <param name="path">Full path to file</param>
         /// <param name="chunkNumber">Chunk number. First should be 1, others 2, 3, etc.</param>
-        /// <param name="chunkUploadId">Chunk upload id from response after uploading first chunk.</param>
+        /// <param name="chunkUploadId">Chunk upload id from response after uploading first chunk</param>
         /// <param name="file">Stream with part of file content</param>
         /// <returns>Uploaded chunk metadata</returns>
         public async Task<ChunkUploadedMetadata> ChunkedUploadNextChunk(
@@ -346,11 +346,11 @@
 
         /// <summary>
         /// Method for uploading last chunk of file. To upload previous chunks use
-        /// ChunkedUploadFirstChunk or ChunkedUploadNextChunk.
+        /// ChunkedUploadFirstChunk or ChunkedUploadNextChunk
         /// </summary>
         /// <param name="path">Full path to file</param>
         /// <param name="chunkNumber">Chunk number. First should be 1, others 2, 3, etc.</param>
-        /// <param name="chunkUploadId">Chunk upload id from response after uploading first chunk.</param>
+        /// <param name="chunkUploadId">Chunk upload id from response after uploading first chunk</param>
         /// <param name="file">Stream with part of file content</param>
         /// <returns>Uploaded file metadata</returns>
         public async Task<UploadedFileMetadata> ChunkedUploadLastChunk(

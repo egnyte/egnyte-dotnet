@@ -23,14 +23,14 @@ namespace Egnyte.Api.Permissions
         }
 
         /// <summary>
-        /// Sets the effective permission level for specific users or groups on a given folder.
+        /// Sets the effective permission level for specific users or groups on a given folder
         /// </summary>
         /// <param name="path">Required. Full path to the folder</param>
-        /// <param name="permission">Required. Type of permission: None, Viewer, Editor, Full, Owner.</param>
-        /// <param name="users">List of usernames to set permissions for.
-        /// At least one user or group must be specified.</param>
-        /// <param name="groups">List of groupnames to set permissions for.
-        /// At least one user or group must be specified.</param>
+        /// <param name="permission">Required. Type of permission: None, Viewer, Editor, Full, Owner</param>
+        /// <param name="users">List of usernames to set permissions for
+        /// At least one user or group must be specified</param>
+        /// <param name="groups">List of groupnames to set permissions for
+        /// At least one user or group must be specified</param>
         /// <returns>True if operation succedes</returns>
         public async Task<bool> SetFolderPermissions(
             string path,
@@ -64,13 +64,13 @@ namespace Egnyte.Api.Permissions
         }
 
         /// <summary>
-        /// Gets the permissions for a given folder.
+        /// Gets the permissions for a given folder
         /// </summary>
         /// <param name="path">Required. Full path to the folder</param>
-        /// <param name="users">Optional. List of usernames to report on.
-        /// If neither users nor groups is set then permissions for all subjects are returned.</param>
-        /// <param name="groups">Optional. List of groups to report on.
-        /// If neither users nor groups is set then permissions for all subjects are returned.</param>
+        /// <param name="users">Optional. List of usernames to report on
+        /// If neither users nor groups is set then permissions for all subjects are returned</param>
+        /// <param name="groups">Optional. List of groups to report on
+        /// If neither users nor groups is set then permissions for all subjects are returned</param>
         /// <returns></returns>
         public async Task<FolderPermissions> GetFolderPermissions(
             string path,
@@ -98,11 +98,11 @@ namespace Egnyte.Api.Permissions
         /// <summary>
         /// Gets the effective permissions for a user for a given folder.
         /// This effective permission takes into account both user and group permissions
-        /// that apply to the given user, along with permission inheritance.
+        /// that apply to the given user, along with permission inheritance
         /// </summary>
-        /// <param name="username">Required. Egnyte username.</param>
-        /// <param name="path">Required. Full path to the folder.</param>
-        /// <returns>Effective user permissions for folder.</returns>
+        /// <param name="username">Required. Egnyte username</param>
+        /// <param name="path">Required. Full path to the folder</param>
+        /// <returns>Effective user permissions for folder</returns>
         public async Task<PermissionType> GetEffectivePermissionsForUser(
             string username,
             string path)

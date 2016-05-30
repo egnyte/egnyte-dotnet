@@ -18,19 +18,19 @@ namespace Egnyte.Api.Users
 
         /// <summary>
         /// Non-negative Integer. Specifies the total number
-        /// of results matching the query; e.g., 1000.
+        /// of results matching the query; e.g., 1000
         /// </summary>
         public int TotalResults { get; private set; }
 
         /// <summary>
         /// Non-negative Integer. Specifies the number of search results
-        /// returned in a query response page; e.g., 50.
+        /// returned in a query response page; e.g., 50
         /// </summary>
         public int ItemsPerPage { get; private set; }
 
         /// <summary>
         /// The 1-based index of the first result in the current
-        /// set of search results; e.g., 1.
+        /// set of search results; e.g., 1
         /// </summary>
         public int StartIndex { get; private set; }
         

@@ -21,16 +21,16 @@ namespace Egnyte.Api.Search
         }
 
         /// <summary>
-        /// Searching for files.
+        /// Searching for files
         /// </summary>
-        /// <param name="query">Required. The search string you want to find.</param>
+        /// <param name="query">Required. The search string you want to find</param>
         /// <param name="offset">Optional. The 0-based index of the initial record
-        /// being requested (Integer ≥ 0).</param>
-        /// <param name="count">Optional. The number of entries per page (min 1, max 100).</param>
+        /// being requested (Integer ≥ 0.</param>
+        /// <param name="count">Optional. The number of entries per page (min 1, max 100)</param>
         /// <param name="folder">Optional. Limit the result set to only items contained
-        /// in the specified folder.</param>
-        /// <param name="modifiedBefore">Optional. Limit to results modified before given date.</param>
-        /// <param name="modifiedAfter">Optional. Limit to results modified after given date.</param>
+        /// in the specified folder</param>
+        /// <param name="modifiedBefore">Optional. Limit to results modified before given date</param>
+        /// <param name="modifiedAfter">Optional. Limit to results modified after given date</param>
         /// <returns>Search results</returns>
         public async Task<SearchResults> Search(
             string query,

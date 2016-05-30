@@ -27,10 +27,10 @@ namespace Egnyte.Api.Groups
         /// </summary>
         /// <param name="startIndex">Optional. The 1-based index of the initial record
         /// being requested (Integer ≥ 1).</param>
-        /// <param name="count">Optional. The number of entries per page (min 1, max 100).</param>
-        /// <param name="filter">Allows you to request a subset of groups.
+        /// <param name="count">Optional. The number of entries per page (min 1, max 100)</param>
+        /// <param name="filter">Allows you to request a subset of groups
         /// These terms are not case sensitive. For example:
-        /// filter=displayname sw "acc" (for starts with "acc").</param>
+        /// filter=displayname sw "acc" (for starts with "acc")</param>
         /// <returns></returns>
         public async Task<Groups> ListGroups(
             int? startIndex = null,
@@ -60,10 +60,10 @@ namespace Egnyte.Api.Groups
         }
 
         /// <summary>
-        /// Shows which users are in the group and view group attributes.
+        /// Shows which users are in the group and view group attributes
         /// </summary>
-        /// <param name="groupId">Required. The globally unique group ID.</param>
-        /// <returns>Group details and it's members.</returns>
+        /// <param name="groupId">Required. The globally unique group ID</param>
+        /// <returns>Group details and it's members</returns>
         public async Task<GroupDetails> ShowSingleGruop(string groupId)
         {
             if (string.IsNullOrWhiteSpace(groupId))
@@ -83,9 +83,9 @@ namespace Egnyte.Api.Groups
         /// <summary>
         /// Creates user group
         /// </summary>
-        /// <param name="displayName">Required. The name of the group.</param>
-        /// <param name="members">Required. An array containing all users in the group.</param>
-        /// <returns>Group details and it's members.</returns>
+        /// <param name="displayName">Required. The name of the group</param>
+        /// <param name="members">Required. An array containing all users in the group</param>
+        /// <returns>Group details and it's members</returns>
         public async Task<GroupDetails> CreateGroup(
             string displayName,
             List<long> members)
@@ -117,12 +117,12 @@ namespace Egnyte.Api.Groups
 
         /// <summary>
         /// Overrides all of the attributes of a group. This is especially useful for making
-        /// a change to settings that ensures all prior settings are removed.
+        /// a change to settings that ensures all prior settings are removed
         /// </summary>
-        /// <param name="groupId">Required. The globally unique group ID.</param>
-        /// <param name="displayName">Required. The name of the group.</param>
-        /// <param name="members">Required. An array containing all users in the group.</param>
-        /// <returns>Group details and it's members.</returns>
+        /// <param name="groupId">Required. The globally unique group ID</param>
+        /// <param name="displayName">Required. The name of the group</param>
+        /// <param name="members">Required. An array containing all users in the group</param>
+        /// <returns>Group details and it's members</returns>
         public async Task<GroupDetails> FullGroupUpdate(
             string groupId,
             string displayName,
@@ -160,12 +160,12 @@ namespace Egnyte.Api.Groups
 
         /// <summary>
         /// Updates specific attributes of a group. This is especially useful for making
-        /// incremental modifications to a folder.
+        /// incremental modifications to a folder
         /// </summary>
-        /// <param name="groupId">Required. The globally unique group ID.</param>
-        /// <param name="displayName">Optional. The name of the group.</param>
-        /// <param name="members">Optional. An array containing all users being modified.</param>
-        /// <returns>Group details and it's members.</returns>
+        /// <param name="groupId">Required. The globally unique group ID</param>
+        /// <param name="displayName">Optional. The name of the group</param>
+        /// <param name="members">Optional. An array containing all users being modified</param>
+        /// <returns>Group details and it's members</returns>
         public async Task<GroupDetails> PartialGroupUpdate(
             string groupId,
             string displayName = null,
@@ -192,9 +192,9 @@ namespace Egnyte.Api.Groups
         }
 
         /// <summary>
-        /// Deletes a group.
+        /// Deletes a group
         /// </summary>
-        /// <param name="groupId">Required. The globally unique group ID.</param>
+        /// <param name="groupId">Required. The globally unique group ID</param>
         /// <returns>True if deletion succeeded</returns>
         public async Task<bool> DeleteGroup(string groupId)
         {
