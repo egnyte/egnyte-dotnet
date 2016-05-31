@@ -6,26 +6,18 @@ using System.Threading.Tasks;
 
 namespace Egnyte.Api.Search
 {
-    public class SearchClient
+    public class SearchClient : BaseClient
     {
-        readonly HttpClient httpClient;
-
-        readonly string domain;
-
         const string SearchBasePath = "https://{0}.egnyte.com/pubapi/v1/search";
 
-        internal SearchClient(HttpClient httpClient, string domain)
-        {
-            this.httpClient = httpClient;
-            this.domain = domain;
-        }
+        internal SearchClient(HttpClient httpClient, string domain) : base(httpClient, domain) { }
 
         /// <summary>
         /// Searching for files
         /// </summary>
         /// <param name="query">Required. The search string you want to find</param>
         /// <param name="offset">Optional. The 0-based index of the initial record
-        /// being requested (Integer ≥ 0.</param>
+        /// being requested (Integer ≥ 0)</param>
         /// <param name="count">Optional. The number of entries per page (min 1, max 100)</param>
         /// <param name="folder">Optional. Limit the result set to only items contained
         /// in the specified folder</param>

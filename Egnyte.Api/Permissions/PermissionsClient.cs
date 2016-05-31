@@ -8,19 +8,11 @@ using System.Threading.Tasks;
 
 namespace Egnyte.Api.Permissions
 {
-    public class PermissionsClient
+    public class PermissionsClient : BaseClient
     {
-        readonly HttpClient httpClient;
-
-        readonly string domain;
-
         const string PermissionsBasePath = "https://{0}.egnyte.com/pubapi/v1/perms";
 
-        internal PermissionsClient(HttpClient httpClient, string domain)
-        {
-            this.httpClient = httpClient;
-            this.domain = domain;
-        }
+        internal PermissionsClient(HttpClient httpClient, string domain) : base(httpClient, domain) { }
 
         /// <summary>
         /// Sets the effective permission level for specific users or groups on a given folder

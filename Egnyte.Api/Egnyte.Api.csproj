@@ -48,6 +48,7 @@
     <Compile Include="Audit\AuditReportAccessPoint.cs" />
     <Compile Include="Audit\AuditReportFormat.cs" />
     <Compile Include="Audit\CreateLoginAuditReportResponse.cs" />
+    <Compile Include="Common\BaseClient.cs" />
     <Compile Include="Common\EgnyteApiException.cs" />
     <Compile Include="Common\ServiceHandler.cs" />
     <Compile Include="Common\ServiceResponse.cs" />

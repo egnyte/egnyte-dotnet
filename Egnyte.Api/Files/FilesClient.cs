@@ -8,23 +8,15 @@
 
     using Egnyte.Api.Common;
 
-    public class FilesClient
+    public class FilesClient : BaseClient
     {
         const string FilesBasePath = "https://{0}.egnyte.com/pubapi/v1/fs/";
 
         const string FilesContentBasePath = "https://{0}.egnyte.com/pubapi/v1/fs-content/";
 
         const string FilesChunkedContentBasePath = "https://{0}.egnyte.com/pubapi/v1/fs-content-chunked/";
-
-        readonly HttpClient httpClient;
-
-        readonly string domain;
-
-        internal FilesClient(HttpClient httpClient, string domain)
-        {
-            this.httpClient = httpClient;
-            this.domain = domain;
-        }
+        
+        internal FilesClient(HttpClient httpClient, string domain) : base(httpClient, domain) { }
 
         /// <summary>
         /// Creates a folder for specified path

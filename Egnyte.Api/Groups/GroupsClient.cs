@@ -8,25 +8,17 @@ using System.Threading.Tasks;
 
 namespace Egnyte.Api.Groups
 {
-    public class GroupsClient
+    public class GroupsClient : BaseClient
     {
-        readonly HttpClient httpClient;
-
-        readonly string domain;
-
         const string GroupBasePath = "https://{0}.egnyte.com/pubapi/v2/groups";
 
-        internal GroupsClient(HttpClient httpClient, string domain)
-        {
-            this.httpClient = httpClient;
-            this.domain = domain;
-        }
+        internal GroupsClient(HttpClient httpClient, string domain) : base(httpClient, domain) { }
 
         /// <summary>
         /// Lists user groups
         /// </summary>
         /// <param name="startIndex">Optional. The 1-based index of the initial record
-        /// being requested (Integer ≥ 1).</param>
+        /// being requested (Integer ≥ 1)</param>
         /// <param name="count">Optional. The number of entries per page (min 1, max 100)</param>
         /// <param name="filter">Allows you to request a subset of groups
         /// These terms are not case sensitive. For example:

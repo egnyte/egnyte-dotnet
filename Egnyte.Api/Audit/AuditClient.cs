@@ -9,19 +9,11 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    public class AuditClient
+    public class AuditClient : BaseClient
     {
         const string AuditReportBasePath = "https://{0}.egnyte.com/pubapi/v1/audit/";
 
-        readonly HttpClient httpClient;
-
-        readonly string domain;
-
-        internal AuditClient(HttpClient httpClient, string domain)
-        {
-            this.httpClient = httpClient;
-            this.domain = domain;
-        }
+        internal AuditClient(HttpClient httpClient, string domain) : base(httpClient, domain) { }
 
         /// <summary>
         /// Creates login audit report

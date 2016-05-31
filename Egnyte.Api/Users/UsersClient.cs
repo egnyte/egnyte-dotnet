@@ -8,19 +8,11 @@ using System.Threading.Tasks;
 
 namespace Egnyte.Api.Users
 {
-    public class UsersClient
+    public class UsersClient : BaseClient
     {
-        readonly HttpClient httpClient;
-
-        readonly string domain;
-
         const string UsersBasePath = "https://{0}.egnyte.com/pubapi/v2/users";
 
-        internal UsersClient(HttpClient httpClient, string domain)
-        {
-            this.httpClient = httpClient;
-            this.domain = domain;
-        }
+        internal UsersClient(HttpClient httpClient, string domain) : base(httpClient, domain) { }
 
         /// <summary>
         /// Creates single user

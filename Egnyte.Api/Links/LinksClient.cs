@@ -8,19 +8,11 @@ using System.Threading.Tasks;
 
 namespace Egnyte.Api.Links
 {
-    public class LinksClient
+    public class LinksClient : BaseClient
     {
-        readonly HttpClient httpClient;
-
-        readonly string domain;
-
         const string LinkBasePath = "https://{0}.egnyte.com/pubapi/v1/links";
 
-        internal LinksClient(HttpClient httpClient, string domain)
-        {
-            this.httpClient = httpClient;
-            this.domain = domain;
-        }
+        internal LinksClient(HttpClient httpClient, string domain) : base(httpClient, domain) {}
 
         /// <summary>
         /// Lists all links. Please note, that if the user executing this method is not an admin,
