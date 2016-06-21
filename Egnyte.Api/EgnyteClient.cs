@@ -14,12 +14,31 @@
 
     public class EgnyteClient
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="token">OAuth 2.0 token obtained from Egnyte</param>
+        /// <param name="domain">Domain on which you connect to egnyte,
+        /// i.e.: domain is 'mydomain', when url looks like: mydomain.egnyte.com</param>
+        /// <param name="httpClient">You can provide your own httpClient. Optional</param>
+        /// <param name="requestTimeout">You can provide timeout for calling Egnyte API,
+        /// by default it's 10 minutes. This parameter is optional</param>
         public EgnyteClient(
             string token,
             string domain,
             HttpClient httpClient = null,
             TimeSpan? requestTimeout = null)
         {
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                throw new ArgumentNullException(nameof(token));
+            }
+
+            if (string.IsNullOrWhiteSpace(domain))
+            {
+                throw new ArgumentNullException(nameof(domain));
+            }
+
             httpClient = httpClient ?? new HttpClient();
 
             httpClient.Timeout = TimeSpan.FromMinutes(10);
