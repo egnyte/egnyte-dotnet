@@ -208,7 +208,7 @@
         }
 
         /// <summary>
-        /// 
+        /// Deletes a file or folder.
         /// </summary>
         /// <param name="path">Full path to folder or file</param>
         /// <param name="entryId">Optional, entry id to a file</param>
