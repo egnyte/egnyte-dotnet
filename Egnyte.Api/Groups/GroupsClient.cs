@@ -155,8 +155,10 @@ namespace Egnyte.Api.Groups
         /// incremental modifications to a folder
         /// </summary>
         /// <param name="groupId">Required. The globally unique group ID</param>
-        /// <param name="displayName">Optional. The name of the group</param>
-        /// <param name="members">Optional. An array containing all users being modified</param>
+        /// <param name="displayName">Optional. Specifying this parameter will rename the group</param>
+        /// <param name="members">Optional. An array containing all users being modified.
+        /// It will modify only users specifyied. If you want to remove a user,
+        /// use DeleteUser property in GroupMember class.</param>
         /// <returns>Group details and it's members</returns>
         public async Task<GroupDetails> PartialGroupUpdate(
             string groupId,
