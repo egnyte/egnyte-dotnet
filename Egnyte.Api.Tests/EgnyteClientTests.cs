@@ -25,5 +25,23 @@ namespace Egnyte.Api.Tests
             Assert.IsNotNull(client.Links);
             Assert.IsNotNull(client.Users);
         }
+
+        [Test]
+        public void CreateClient_WithEmptyToken_ThrowsArgumentException()
+        {
+            var exception = Assert.Throws<ArgumentNullException>(
+                () => new EgnyteClient(string.Empty, "domain"));
+
+            Assert.IsTrue(exception.Message.Contains("token"));
+        }
+
+        [Test]
+        public void CreateClient_WithEmptyDomain_ThrowsArgumentException()
+        {
+            var exception = Assert.Throws<ArgumentNullException>(
+                () => new EgnyteClient("token", string.Empty));
+
+            Assert.IsTrue(exception.Message.Contains("domain"));
+        }
     }
 }
