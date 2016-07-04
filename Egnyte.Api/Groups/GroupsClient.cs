@@ -10,7 +10,7 @@ namespace Egnyte.Api.Groups
 {
     public class GroupsClient : BaseClient
     {
-        const string GroupBasePath = "https://{0}.egnyte.com/pubapi/v2/groups";
+        const string GroupMethod = "/pubapi/v2/groups";
 
         internal GroupsClient(HttpClient httpClient, string domain) : base(httpClient, domain) { }
 
@@ -39,10 +39,7 @@ namespace Egnyte.Api.Groups
                 throw new ArgumentOutOfRangeException(nameof(count));
             }
 
-            var uriBuilder = new UriBuilder(string.Format(GroupBasePath, domain))
-            {
-                Query = GetListGroupsRequestQuery(startIndex, count, filter)
-            };
+            var uriBuilder = BuildUri(GroupMethod, GetListGroupsRequestQuery(startIndex, count, filter));
             var httpRequest = new HttpRequestMessage(HttpMethod.Get, uriBuilder.Uri);
 
             var serviceHandler = new ServiceHandler<Groups>(httpClient);
@@ -63,7 +60,7 @@ namespace Egnyte.Api.Groups
                 throw new ArgumentNullException(nameof(groupId));
             }
             
-            var uriBuilder = new UriBuilder(string.Format(GroupBasePath, domain) + "/" + groupId);
+            var uriBuilder = BuildUri(GroupMethod + "/" + groupId);
             var httpRequest = new HttpRequestMessage(HttpMethod.Get, uriBuilder.Uri);
 
             var serviceHandler = new ServiceHandler<GroupDetails>(httpClient);
@@ -92,7 +89,7 @@ namespace Egnyte.Api.Groups
                 throw new ArgumentNullException(nameof(members));
             }
 
-            var uriBuilder = new UriBuilder(string.Format(GroupBasePath, domain));
+            var uriBuilder = BuildUri(GroupMethod);
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, uriBuilder.Uri)
             {
                 Content = new StringContent(
@@ -135,7 +132,7 @@ namespace Egnyte.Api.Groups
                 throw new ArgumentNullException(nameof(members));
             }
 
-            var uriBuilder = new UriBuilder(string.Format(GroupBasePath, domain) + "/" + groupId);
+            var uriBuilder = BuildUri(GroupMethod + "/" + groupId);
             var httpRequest = new HttpRequestMessage(HttpMethod.Put, uriBuilder.Uri)
             {
                 Content = new StringContent(
@@ -170,7 +167,7 @@ namespace Egnyte.Api.Groups
                 throw new ArgumentNullException(nameof(groupId));
             }
 
-            var uriBuilder = new UriBuilder(string.Format(GroupBasePath, domain) + "/" + groupId);
+            var uriBuilder = BuildUri(GroupMethod + "/" + groupId);
             var httpRequest = new HttpRequestMessage(new HttpMethod("PATCH"), uriBuilder.Uri)
             {
                 Content = new StringContent(
@@ -197,7 +194,7 @@ namespace Egnyte.Api.Groups
                 throw new ArgumentNullException(nameof(groupId));
             }
 
-            var uriBuilder = new UriBuilder(string.Format(GroupBasePath, domain) + "/" + groupId);
+            var uriBuilder = BuildUri(GroupMethod + "/" + groupId);
             var httpRequest = new HttpRequestMessage(HttpMethod.Delete, uriBuilder.Uri);
 
             var serviceHandler = new ServiceHandler<string>(httpClient);

@@ -8,7 +8,7 @@ namespace Egnyte.Api.Search
 {
     public class SearchClient : BaseClient
     {
-        const string SearchBasePath = "https://{0}.egnyte.com/pubapi/v1/search";
+        const string SearchMethod = "/pubapi/v1/search";
 
         internal SearchClient(HttpClient httpClient, string domain) : base(httpClient, domain) { }
 
@@ -35,10 +35,7 @@ namespace Egnyte.Api.Search
             VerifySearchParameters(query, offset, count);
 
             var requestQuery = GetSearchQuery(query, offset, count, folder, modifiedBefore, modifiedAfter);
-            var uriBuilder = new UriBuilder(string.Format(SearchBasePath, domain))
-            {
-                Query = requestQuery
-            };
+            var uriBuilder = BuildUri(SearchMethod, requestQuery);
             var httpRequest = new HttpRequestMessage(HttpMethod.Get, uriBuilder.Uri);
 
             var serviceHandler = new ServiceHandler<SearchResults>(httpClient);

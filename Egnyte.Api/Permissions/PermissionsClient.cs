@@ -10,7 +10,7 @@ namespace Egnyte.Api.Permissions
 {
     public class PermissionsClient : BaseClient
     {
-        const string PermissionsBasePath = "https://{0}.egnyte.com/pubapi/v1/perms";
+        const string PermissionsMethod = "/pubapi/v1/perms";
 
         internal PermissionsClient(HttpClient httpClient, string domain) : base(httpClient, domain) { }
 
@@ -40,7 +40,7 @@ namespace Egnyte.Api.Permissions
                 throw new ArgumentException("One of parameters: " + nameof(users) + " or " + nameof(groups) + " must be not empty.");
             }
 
-            var uriBuilder = new UriBuilder(string.Format(PermissionsBasePath, domain) + "/folder/" + path);
+            var uriBuilder = BuildUri(PermissionsMethod + "/folder/" + path);
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, uriBuilder.Uri)
             {
                 Content = new StringContent(
@@ -75,10 +75,7 @@ namespace Egnyte.Api.Permissions
             }
 
             var query = GetGetFolderPermissionsQuery(users, groups);
-            var uriBuilder = new UriBuilder(string.Format(PermissionsBasePath, domain) + "/folder/" + path)
-            {
-                Query = query
-            };
+            var uriBuilder = BuildUri(PermissionsMethod + "/folder/" + path, query);
             var httpRequest = new HttpRequestMessage(HttpMethod.Get, uriBuilder.Uri);
 
             var serviceHandler = new ServiceHandler<FolderPermissionsResponse>(httpClient);
@@ -114,10 +111,7 @@ namespace Egnyte.Api.Permissions
                 path = "/" + path;
             }
 
-            var uriBuilder = new UriBuilder(string.Format(PermissionsBasePath, domain) + "/user/" + username)
-            {
-                Query = "folder=" + path
-            };
+            var uriBuilder = BuildUri(PermissionsMethod + "/user/" + username, "folder=" + path);
             var httpRequest = new HttpRequestMessage(HttpMethod.Get, uriBuilder.Uri);
 
             var serviceHandler = new ServiceHandler<EffectivePermissionsResponse>(httpClient);

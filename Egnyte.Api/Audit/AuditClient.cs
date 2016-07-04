@@ -11,7 +11,7 @@
 
     public class AuditClient : BaseClient
     {
-        const string AuditReportBasePath = "https://{0}.egnyte.com/pubapi/v1/audit/";
+        const string AuditReportMethod = "/pubapi/v1/audit";
 
         internal AuditClient(HttpClient httpClient, string domain) : base(httpClient, domain) { }
 
@@ -40,7 +40,7 @@
                 throw new ArgumentException("At least one event must be specified.", nameof(events));
             }
 
-            var uriBuilder = new UriBuilder(string.Format(AuditReportBasePath, domain) + "logins");
+            var uriBuilder = BuildUri(AuditReportMethod + "/logins");
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, uriBuilder.Uri)
             {
                 Content = new StringContent(
