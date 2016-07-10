@@ -10,7 +10,7 @@ namespace Egnyte.Api.Users
 {
     public class UsersClient : BaseClient
     {
-        const string UsersBasePath = "https://{0}.egnyte.com/pubapi/v2/users";
+        const string UsersMethod = "/pubapi/v2/users";
 
         internal UsersClient(HttpClient httpClient, string domain) : base(httpClient, domain) { }
 
@@ -23,7 +23,7 @@ namespace Egnyte.Api.Users
         {
             ThrowExceptionsIfNewUserIsInvalid(user);
 
-            var uriBuilder = new UriBuilder(string.Format(UsersBasePath, domain));
+            var uriBuilder = BuildUri(UsersMethod);
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, uriBuilder.Uri)
             {
                 Content = new StringContent(MapUserForRequest(user), Encoding.UTF8, "application/json")
@@ -47,7 +47,7 @@ namespace Egnyte.Api.Users
                 throw new ArgumentOutOfRangeException(nameof(user.Id));
             }
 
-            var uriBuilder = new UriBuilder(string.Format(UsersBasePath, domain) + "/" + user.Id);
+            var uriBuilder = BuildUri(UsersMethod + "/" + user.Id);
             var httpRequest = new HttpRequestMessage(new HttpMethod("PATCH"), uriBuilder.Uri)
             {
                 Content = new StringContent(MapUserForRequest(user), Encoding.UTF8, "application/json")
@@ -72,7 +72,7 @@ namespace Egnyte.Api.Users
                 throw new ArgumentOutOfRangeException(nameof(id));
             }
 
-            var uriBuilder = new UriBuilder(string.Format(UsersBasePath, domain) + "/" + id);
+            var uriBuilder = BuildUri(UsersMethod + "/" + id);
             var httpRequest = new HttpRequestMessage(HttpMethod.Get, uriBuilder.Uri);
 
             var serviceHandler = new ServiceHandler<ExistingUserFlat>(httpClient);
@@ -106,10 +106,7 @@ namespace Egnyte.Api.Users
                 throw new ArgumentOutOfRangeException(nameof(count));
             }
 
-            var uriBuilder = new UriBuilder(string.Format(UsersBasePath, domain))
-            {
-                Query = GetUserListRequestQueryParams(startIndex, count, filter)
-            };
+            var uriBuilder = BuildUri(UsersMethod, GetUserListRequestQueryParams(startIndex, count, filter));
             var httpRequest = new HttpRequestMessage(HttpMethod.Get, uriBuilder.Uri);
 
             var serviceHandler = new ServiceHandler<UserListResponse>(httpClient);
@@ -131,7 +128,7 @@ namespace Egnyte.Api.Users
                 throw new ArgumentOutOfRangeException(nameof(id));
             }
 
-            var uriBuilder = new UriBuilder(string.Format(UsersBasePath, domain) + "/" + id);
+            var uriBuilder = BuildUri(UsersMethod + "/" + id);
             var httpRequest = new HttpRequestMessage(HttpMethod.Delete, uriBuilder.Uri);
 
             var serviceHandler = new ServiceHandler<string>(httpClient);

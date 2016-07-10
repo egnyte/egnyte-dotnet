@@ -68,7 +68,40 @@ namespace Egnyte.Api.Tests.Permissions
                 TestsHelper.RemoveWhitespaces(SetFolderPermissionsRequestContent),
                 TestsHelper.RemoveWhitespaces(content));
         }
-        
+
+        [Test]
+        public async Task SetFolderPermissions_HashCharactersInNameReturnsSuccess()
+        {
+            var httpHandlerMock = new HttpMessageHandlerMock();
+            var httpClient = new HttpClient(httpHandlerMock);
+
+            httpHandlerMock.SendAsyncFunc =
+                (request, cancellationToken) =>
+                Task.FromResult(
+                    new HttpResponseMessage
+                    {
+                        StatusCode = HttpStatusCode.OK,
+                        Content = new StringContent(string.Empty)
+                    });
+
+            var egnyteClient = new EgnyteClient("token", "acme", httpClient);
+            var userList = await egnyteClient.Permissions.SetFolderPermissions(
+                "Shared/myFolder with ##/",
+                PermissionType.Viewer,
+                new List<string> { "jsmith", "ajones" });
+
+            var requestMessage = httpHandlerMock.GetHttpRequestMessage();
+            Assert.AreEqual(
+                "https://acme.egnyte.com/pubapi/v1/perms/folder/Shared/myFolder with %23%23/",
+                requestMessage.RequestUri.ToString());
+            Assert.AreEqual(HttpMethod.Post, requestMessage.Method);
+
+            var content = httpHandlerMock.GetRequestContentAsString();
+            Assert.AreEqual(
+                TestsHelper.RemoveWhitespaces(SetFolderPermissionsRequestContent),
+                TestsHelper.RemoveWhitespaces(content));
+        }
+
         [Test]
         public async Task SetFolderPermissions_WithUsersAndGroups_ReturnsSuccess()
         {

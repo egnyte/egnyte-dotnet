@@ -10,11 +10,11 @@
 
     public class FilesClient : BaseClient
     {
-        const string FilesBasePath = "https://{0}.egnyte.com/pubapi/v1/fs/";
+        const string FilesMethod = "/pubapi/v1/fs";
 
-        const string FilesContentBasePath = "https://{0}.egnyte.com/pubapi/v1/fs-content/";
+        const string FilesContentMethod = "/pubapi/v1/fs-content";
 
-        const string FilesChunkedContentBasePath = "https://{0}.egnyte.com/pubapi/v1/fs-content-chunked/";
+        const string FilesChunkedContentMethod = "/pubapi/v1/fs-content-chunked";
         
         internal FilesClient(HttpClient httpClient, string domain) : base(httpClient, domain) { }
 
@@ -30,7 +30,7 @@
                 throw new ArgumentNullException(nameof(path));
             }
 
-            var uriBuilder = new UriBuilder(string.Format(FilesBasePath, domain) + path);
+            var uriBuilder = BuildUri(FilesMethod + "/" + path);
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, uriBuilder.Uri)
             {
                 Content = new StringContent(@"{""action"": ""add_folder""}", Encoding.UTF8, "application/json")
@@ -61,7 +61,7 @@
                 throw new ArgumentNullException(nameof(file));
             }
 
-            var uriBuilder = new UriBuilder(string.Format(FilesContentBasePath, domain) + path);
+            var uriBuilder = BuildUri(FilesContentMethod + "/" + path);
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, uriBuilder.Uri)
             {
                 Content = new StreamContent(file)
@@ -105,7 +105,7 @@
                 destination = "/" + destination;
             }
 
-            var uriBuilder = new UriBuilder(string.Format(FilesBasePath, domain) + path);
+            var uriBuilder = BuildUri(FilesMethod + "/" + path);
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, uriBuilder.Uri)
             {
                 Content = new StringContent(
@@ -143,7 +143,7 @@
                 destination = "/" + destination;
             }
 
-            var uriBuilder = new UriBuilder(string.Format(FilesBasePath, domain) + path);
+            var uriBuilder = BuildUri(FilesMethod + "/" + path);
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, uriBuilder.Uri)
             {
                 Content = new StringContent(
@@ -226,10 +226,7 @@
                 query = "entry_id=" + entryId;
             }
 
-            var uriBuilder = new UriBuilder(string.Format(FilesBasePath, domain) + path)
-            {
-                Query = query
-            };
+            var uriBuilder = BuildUri(FilesMethod + "/" + path, query);
             var httpRequest = new HttpRequestMessage(HttpMethod.Delete, uriBuilder.Uri);
 
             var serviceHandler = new ServiceHandler<string>(httpClient);
@@ -257,8 +254,8 @@
                 throw new ArgumentNullException(nameof(file));
             }
 
-            var uri = new UriBuilder(string.Format(FilesChunkedContentBasePath, domain) + path).Uri;
-            var httpRequest = new HttpRequestMessage(HttpMethod.Post, uri)
+            var uriBuilder = BuildUri(FilesChunkedContentMethod + "/" + path);
+            var httpRequest = new HttpRequestMessage(HttpMethod.Post, uriBuilder.Uri)
             {
                 Content = new StreamContent(file)
             };
@@ -313,8 +310,8 @@
                 throw new ArgumentNullException(nameof(file));
             }
             
-            var uri = new UriBuilder(string.Format(FilesChunkedContentBasePath, domain) + path).Uri;
-            var httpRequest = new HttpRequestMessage(HttpMethod.Post, uri)
+            var uriBuilder = BuildUri(FilesChunkedContentMethod + "/" + path);
+            var httpRequest = new HttpRequestMessage(HttpMethod.Post, uriBuilder.Uri)
             {
                 Content = new StreamContent(file)
             };
@@ -371,8 +368,8 @@
                 throw new ArgumentNullException(nameof(file));
             }
 
-            var uri = new UriBuilder(string.Format(FilesChunkedContentBasePath, domain) + path).Uri;
-            var httpRequest = new HttpRequestMessage(HttpMethod.Post, uri)
+            var uriBuilder = BuildUri(FilesChunkedContentMethod + "/" + path);
+            var httpRequest = new HttpRequestMessage(HttpMethod.Post, uriBuilder.Uri)
             {
                 Content = new StreamContent(file)
             };
@@ -434,7 +431,7 @@
         Uri PrepareListFileOrFolderUri(string path, bool listContent, bool allowedLinkTypes)
         {
             var query = "list_content=" + listContent + "&allowed_link_types=" + allowedLinkTypes;
-            var uriBuilder = new UriBuilder(string.Format(FilesBasePath, domain) + path) { Query = query };
+            var uriBuilder = BuildUri(FilesMethod + "/" + path, query);
 
             return uriBuilder.Uri;
         }
@@ -448,7 +445,7 @@
                 query += "entry_id=" + entryId;
             }
             
-            var uriBuilder = new UriBuilder(string.Format(FilesContentBasePath, domain) + path) { Query = query };
+            var uriBuilder = BuildUri(FilesContentMethod + "/" + path, query);
 
             return uriBuilder.Uri;
         }

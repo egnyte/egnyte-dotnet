@@ -10,7 +10,7 @@ namespace Egnyte.Api.Links
 {
     public class LinksClient : BaseClient
     {
-        const string LinkBasePath = "https://{0}.egnyte.com/pubapi/v1/links";
+        const string LinkMethod = "/pubapi/v1/links";
 
         internal LinksClient(HttpClient httpClient, string domain) : base(httpClient, domain) {}
 
@@ -69,7 +69,7 @@ namespace Egnyte.Api.Links
                 throw new ArgumentNullException(nameof(linkId));
             }
 
-            var uriBuilder = new UriBuilder(string.Format(LinkBasePath, domain) + "/" + linkId);
+            var uriBuilder = BuildUri(LinkMethod + "/" + linkId);
             var httpRequest = new HttpRequestMessage(HttpMethod.Get, uriBuilder.Uri);
 
             var serviceHandler = new ServiceHandler<LinkDetailsResponse>(httpClient);
@@ -92,7 +92,7 @@ namespace Egnyte.Api.Links
                 link.Path = "/" + link.Path;
             }
 
-            var uriBuilder = new UriBuilder(string.Format(LinkBasePath, domain));
+            var uriBuilder = BuildUri(LinkMethod);
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, uriBuilder.Uri)
             {
                 Content = new StringContent(MapLinkForRequest(link), Encoding.UTF8, "application/json")
@@ -116,7 +116,7 @@ namespace Egnyte.Api.Links
                 throw new ArgumentNullException(nameof(linkId));
             }
 
-            var uriBuilder = new UriBuilder(string.Format(LinkBasePath, domain) + "/" + linkId);
+            var uriBuilder = BuildUri(LinkMethod + "/" + linkId);
             var httpRequest = new HttpRequestMessage(HttpMethod.Delete, uriBuilder.Uri);
 
             var serviceHandler = new ServiceHandler<string>(httpClient);
@@ -315,10 +315,7 @@ namespace Egnyte.Api.Links
 
             var query = string.Join("&", queryParams);
 
-            var uriBuilder = new UriBuilder(string.Format(LinkBasePath, domain))
-            {
-                Query = query
-            };
+            var uriBuilder = BuildUri(LinkMethod, query);
 
             return uriBuilder.Uri;
         }
