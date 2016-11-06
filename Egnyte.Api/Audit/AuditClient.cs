@@ -13,7 +13,7 @@
     {
         const string AuditReportMethod = "/pubapi/v1/audit";
 
-        internal AuditClient(HttpClient httpClient, string domain) : base(httpClient, domain) { }
+        internal AuditClient(HttpClient httpClient, string domain = "", string host = "") : base(httpClient, domain, host) { }
 
         /// <summary>
         /// Creates login audit report

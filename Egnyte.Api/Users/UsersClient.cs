@@ -12,7 +12,7 @@ namespace Egnyte.Api.Users
     {
         const string UsersMethod = "/pubapi/v2/users";
 
-        internal UsersClient(HttpClient httpClient, string domain) : base(httpClient, domain) { }
+        internal UsersClient(HttpClient httpClient, string domain = "", string host = "") : base(httpClient, domain, host) { }
 
         /// <summary>
         /// Creates single user

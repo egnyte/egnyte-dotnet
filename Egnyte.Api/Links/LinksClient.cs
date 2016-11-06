@@ -12,7 +12,7 @@ namespace Egnyte.Api.Links
     {
         const string LinkMethod = "/pubapi/v1/links";
 
-        internal LinksClient(HttpClient httpClient, string domain) : base(httpClient, domain) {}
+        internal LinksClient(HttpClient httpClient, string domain = "", string host = "") : base(httpClient, domain, host) {}
 
         /// <summary>
         /// Lists all links. Please note, that if the user executing this method is not an admin,

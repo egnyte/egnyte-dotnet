@@ -23,20 +23,23 @@
         /// <param name="httpClient">You can provide your own httpClient. Optional</param>
         /// <param name="requestTimeout">You can provide timeout for calling Egnyte API,
         /// by default it's 10 minutes. This parameter is optional</param>
+        /// <param name="host">Full host name on which you connect to egnyte,
+        /// i.e.: host is 'my.custom.host.com', when url looks like: my.custom.host.com</param>
         public EgnyteClient(
             string token,
-            string domain,
+            string domain = "",
             HttpClient httpClient = null,
-            TimeSpan? requestTimeout = null)
+            TimeSpan? requestTimeout = null,
+            string host = "")
         {
             if (string.IsNullOrWhiteSpace(token))
             {
                 throw new ArgumentNullException(nameof(token));
             }
-
-            if (string.IsNullOrWhiteSpace(domain))
+            
+            if (string.IsNullOrWhiteSpace(domain) && string.IsNullOrWhiteSpace(host))
             {
-                throw new ArgumentNullException(nameof(domain));
+                throw new ArgumentNullException("domain", "Domain or host has to specified");
             }
 
             httpClient = httpClient ?? new HttpClient();
@@ -49,13 +52,13 @@
 
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            Files = new FilesClient(httpClient, domain);
-            Users = new UsersClient(httpClient, domain);
-            Links = new LinksClient(httpClient, domain);
-            Groups = new GroupsClient(httpClient, domain);
-            Permissions = new PermissionsClient(httpClient, domain);
-            Search = new SearchClient(httpClient, domain);
-            Audit = new AuditClient(httpClient, domain);
+            Files = new FilesClient(httpClient, domain, host);
+            Users = new UsersClient(httpClient, domain, host);
+            Links = new LinksClient(httpClient, domain, host);
+            Groups = new GroupsClient(httpClient, domain, host);
+            Permissions = new PermissionsClient(httpClient, domain, host);
+            Search = new SearchClient(httpClient, domain, host);
+            Audit = new AuditClient(httpClient, domain, host);
         }
 
         /// <summary>

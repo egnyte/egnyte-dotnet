@@ -13,15 +13,22 @@ namespace Egnyte.Api.Common
 
         internal readonly string domain;
 
-        internal BaseClient(HttpClient httpClient, string domain)
+        internal readonly string host;
+
+        internal BaseClient(HttpClient httpClient, string domain = "", string host = "")
         {
             this.httpClient = httpClient;
             this.domain = domain;
+            this.host = host;
         }
 
         internal UriBuilder BuildUri(string method, string query = null)
         {
-            UriBuilder ub = new UriBuilder(baseSchema, string.Format(basePath, domain), basePort, method);
+            var userHost = string.IsNullOrWhiteSpace(host)
+                ? string.Format(basePath, domain)
+                : host;
+
+            UriBuilder ub = new UriBuilder(baseSchema, userHost, basePort, method);
             if (query != null)
                 ub.Query = query;
 

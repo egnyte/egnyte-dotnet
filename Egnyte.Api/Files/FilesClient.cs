@@ -16,7 +16,7 @@
 
         const string FilesChunkedContentMethod = "/pubapi/v1/fs-content-chunked";
         
-        internal FilesClient(HttpClient httpClient, string domain) : base(httpClient, domain) { }
+        internal FilesClient(HttpClient httpClient, string domain = "", string host = "") : base(httpClient, domain, host) { }
 
         /// <summary>
         /// Creates a folder for specified path

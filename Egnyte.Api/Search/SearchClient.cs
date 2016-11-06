@@ -10,7 +10,7 @@ namespace Egnyte.Api.Search
     {
         const string SearchMethod = "/pubapi/v1/search";
 
-        internal SearchClient(HttpClient httpClient, string domain) : base(httpClient, domain) { }
+        internal SearchClient(HttpClient httpClient, string domain = "", string host = "") : base(httpClient, domain, host) { }
 
         /// <summary>
         /// Searching for files

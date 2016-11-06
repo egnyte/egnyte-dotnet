@@ -37,6 +37,50 @@ namespace Egnyte.Api.Tests.Files
         }
 
         [Test]
+        public async Task CreateFolder_WhenOnlyPartOfDomainIsSpecified_CallsCorrectUrl()
+        {
+            var httpHandlerMock = new HttpMessageHandlerMock();
+            var httpClient = new HttpClient(httpHandlerMock);
+
+            httpHandlerMock.SendAsyncFunc =
+                (request, cancellationToken) =>
+                Task.FromResult(
+                    new HttpResponseMessage
+                    {
+                        StatusCode = HttpStatusCode.Created,
+                        Content = new StringContent(string.Empty)
+                    });
+
+            var egnyteClient = new EgnyteClient("token", "acme", httpClient);
+            var isSucccess = await egnyteClient.Files.CreateFolder("path");
+
+            var requestMessage = httpHandlerMock.GetHttpRequestMessage();
+            Assert.AreEqual("https://acme.egnyte.com/pubapi/v1/fs/path", requestMessage.RequestUri.ToString());
+        }
+
+        [Test]
+        public async Task CreateFolder_WithFullHostName_CallsCorrectUrl()
+        {
+            var httpHandlerMock = new HttpMessageHandlerMock();
+            var httpClient = new HttpClient(httpHandlerMock);
+
+            httpHandlerMock.SendAsyncFunc =
+                (request, cancellationToken) =>
+                Task.FromResult(
+                    new HttpResponseMessage
+                    {
+                        StatusCode = HttpStatusCode.Created,
+                        Content = new StringContent(string.Empty)
+                    });
+
+            var egnyteClient = new EgnyteClient("token", httpClient: httpClient, host: "custom.host.name");
+            var isSucccess = await egnyteClient.Files.CreateFolder("path");
+
+            var requestMessage = httpHandlerMock.GetHttpRequestMessage();
+            Assert.AreEqual("https://custom.host.name/pubapi/v1/fs/path", requestMessage.RequestUri.ToString());
+        }
+
+        [Test]
         public async Task CreateFolder_WhenLanguageSpecificCharactersAreInUrl_ReturnsSuccess()
         {
             var httpHandlerMock = new HttpMessageHandlerMock();

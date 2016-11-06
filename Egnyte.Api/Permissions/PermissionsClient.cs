@@ -12,7 +12,7 @@ namespace Egnyte.Api.Permissions
     {
         const string PermissionsMethod = "/pubapi/v1/perms";
 
-        internal PermissionsClient(HttpClient httpClient, string domain) : base(httpClient, domain) { }
+        internal PermissionsClient(HttpClient httpClient, string domain = "", string host = "") : base(httpClient, domain, host) { }
 
         /// <summary>
         /// Sets the effective permission level for specific users or groups on a given folder

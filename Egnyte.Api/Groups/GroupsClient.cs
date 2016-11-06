@@ -12,7 +12,7 @@ namespace Egnyte.Api.Groups
     {
         const string GroupMethod = "/pubapi/v2/groups";
 
-        internal GroupsClient(HttpClient httpClient, string domain) : base(httpClient, domain) { }
+        internal GroupsClient(HttpClient httpClient, string domain = "", string host = "") : base(httpClient, domain, host) { }
 
         /// <summary>
         /// Lists user groups
