@@ -12,7 +12,7 @@ namespace Egnyte.Api.Links
     {
         const string LinkMethod = "/pubapi/v1/links";
 
-        internal LinksClient(HttpClient httpClient, string domain = "", string host = "") : base(httpClient, domain, host) {}
+        internal LinksClient(HttpClient httpClient, string domain = "", string host = "") : base(httpClient, domain, host) { }
 
         /// <summary>
         /// Lists all links. Please note, that if the user executing this method is not an admin,
@@ -64,7 +64,7 @@ namespace Egnyte.Api.Links
         /// <returns>Details of the link</returns>
         public async Task<LinkDetails> GetLinkDetails(string linkId)
         {
-            if(string.IsNullOrWhiteSpace(linkId))
+            if (string.IsNullOrWhiteSpace(linkId))
             {
                 throw new ArgumentNullException(nameof(linkId));
             }
@@ -145,26 +145,27 @@ namespace Egnyte.Api.Links
             builder
                 .Append("{")
                 .Append("\"path\" : \"" + link.Path + "\",")
-                .Append("\"type\" : \"" + MapLinkType(link.Type) + "\",")
-                .Append("\"accessibility\" : \"" + MapAccessibilityType(link.Accessibility) + "\"");
+                .Append("\"type\" : \"" + MapLinkType(link.Type) + "\"" );
+
+            if (link.Type != LinkType.Upload)
+                builder.AppendFormat(@", ""accessibility"": ""{0}""", MapAccessibilityType(link.Accessibility));            
 
             if (link.SendEmail.HasValue)
             {
                 builder.AppendFormat(@", ""send_email"" : ""{0}""", link.SendEmail.Value ? "true" : "false");
+                if (link.Recipients.Count > 0)
+                {
+                    builder.Append(", \"recipients\": [");
+                    builder.Append(string.Join(", ", link.Recipients.Select(r => "\"" + r + "\"")));
+                    builder.Append("]");
+                }
             }
-            
-            if (link.Recipients.Count > 0)
-            {
-                builder.Append(", \"recipients\": [");
-                builder.Append(string.Join(", ", link.Recipients.Select(r => "\"" + r + "\"")));
-                builder.Append("]");
-            }
-
+   
             if (!string.IsNullOrWhiteSpace(link.Message))
             {
                 builder.Append(", \"message\": \"" + link.Message + "\"");
             }
-            
+
             if (link.CopyMe.HasValue)
             {
                 builder.AppendFormat(@", ""copy_me"": ""{0}""", link.CopyMe.Value ? "true" : "false");
@@ -188,6 +189,11 @@ namespace Egnyte.Api.Links
             if (link.ExpiryClicks.HasValue)
             {
                 builder.Append(", \"expiry_clicks\": \"" + link.ExpiryClicks.Value + "\"");
+            }
+
+            if (link.FolderPerRecipient.HasValue)
+            {
+                builder.AppendFormat(@", ""folder_per_recipient"": ""{0}""", link.FolderPerRecipient.Value ? "true" : "false");
             }
 
             builder.Append("}");
@@ -239,6 +245,9 @@ namespace Egnyte.Api.Links
 
         LinkAccessibility ParseAccessibility(string accessibility)
         {
+            if (string.IsNullOrEmpty(accessibility))
+                return LinkAccessibility.Anyone;
+            
             switch (accessibility.ToLower())
             {
                 case "domain":
@@ -254,12 +263,12 @@ namespace Egnyte.Api.Links
 
         LinkType ParseLinkType(string linkType)
         {
-            if (linkType == "file")
+            switch (linkType)
             {
-                return LinkType.File;
+                case "file": return LinkType.File;
+                case "upload": return LinkType.Upload;
+                default: return LinkType.Folder;
             }
-
-            return LinkType.Folder;
         }
 
         Uri ListLinksRequestUri(
@@ -337,12 +346,12 @@ namespace Egnyte.Api.Links
 
         string MapLinkType(LinkType linkType)
         {
-            if (linkType == LinkType.File)
+            switch (linkType)
             {
-                return "file";
+                case LinkType.File: return "file";
+                case LinkType.Upload: return "upload";                
+                default: return "folder";
             }
-
-            return "folder";
         }
     }
 }

@@ -16,7 +16,7 @@ namespace Egnyte.Api.Links
         public LinkType Type { get; set; }
 
         /// <summary>
-        /// Required. Determines who a link is accessible by.
+        /// Required (except upload links). Determines who a link is accessible by.
         /// </summary>
         public LinkAccessibility Accessibility { get; set; }
 
@@ -64,5 +64,11 @@ namespace Egnyte.Api.Links
         /// Value must be between 1 - 10, inclusive.
         /// </summary>
         public int? ExpiryClicks { get; set; }
+
+        /// <summary>
+        /// Optional. If True then each recipient's uploaded data will be put into a separate folder.
+        /// Only applies to upload links.
+        /// </summary>
+        public bool? FolderPerRecipient { get; set; }
     }
 }
