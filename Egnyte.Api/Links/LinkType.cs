@@ -3,6 +3,7 @@
     public enum LinkType
     {
         File,
-        Folder
+        Folder,
+        Upload
     }
 }
