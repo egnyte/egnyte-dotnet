@@ -7,7 +7,7 @@
     {
         internal FileMetadata(
             string checksum,
-            int size,
+            long size,
             string path,
             string name,
             bool locked,

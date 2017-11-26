@@ -90,6 +90,13 @@
             ""num_versions"": 3
         }";
 
+        private const string ListFileWithLargSize = @"
+        {
+            ""size"": 3222111000,
+            ""path"": ""/Shared/Documents/report.docx"",
+            ""name"": ""report.docx""
+        }";
+
         [Test]
         public async Task ListFileOrFolder_ReturnsCorrectFolder()
         {
@@ -277,6 +284,30 @@
 
             Assert.AreEqual(ErrorMessage, exception.Message);
             Assert.IsNull(exception.InnerException);
+        }
+
+        [Test]
+        public async Task ListFileOrFolder_ReturnsCorrectSize_WhenFileSizeIsBiggerThenInt32()
+        {
+            var httpHandlerMock = new HttpMessageHandlerMock();
+            var httpClient = new HttpClient(httpHandlerMock);
+
+            httpHandlerMock.SendAsyncFunc = (request, cancellationToken) => Task.FromResult(
+                new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = new StringContent(ListFileWithLargSize)
+                });
+
+            var egnyteClient = new EgnyteClient("token", "acme", httpClient);
+            var result = await egnyteClient.Files.ListFileOrFolder("path");
+
+            Assert.AreEqual(false, result.IsFolder);
+            Assert.NotNull(result.AsFile);
+            Assert.AreEqual(null, result.AsFolder);
+
+            var fileMetadata = result.AsFile;
+            Assert.AreEqual(3222111000, fileMetadata.Size);
         }
     }
 }

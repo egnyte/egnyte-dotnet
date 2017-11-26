@@ -6,7 +6,7 @@
     {
         internal FileBasicMetadata(
             string checksum,
-            int size,
+            long size,
             string path,
             string name,
             bool locked,
@@ -30,7 +30,7 @@
 
         public string Checksum { get; private set; }
 
-        public int Size { get; private set; }
+        public long Size { get; private set; }
 
         public string Path { get; private set; }
 

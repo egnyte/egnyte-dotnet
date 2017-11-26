@@ -27,7 +27,7 @@ namespace Egnyte.Api.Search
         /// The size of the file in bytes.
         /// </summary>
         [JsonProperty(PropertyName = "size")]
-        public int Size { get; set; }
+        public long Size { get; set; }
 
         /// <summary>
         /// A plain text snippet of the text containing the matched content.

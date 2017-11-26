@@ -10,7 +10,7 @@
         public string Checksum { get; set; }
 
         [JsonProperty(PropertyName = "size")]
-        public int Size { get; set; }
+        public long Size { get; set; }
 
         [JsonProperty(PropertyName = "path")]
         public string Path { get; set; }

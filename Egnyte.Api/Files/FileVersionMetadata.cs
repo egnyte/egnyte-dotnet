@@ -6,7 +6,7 @@
     {
         internal FileVersionMetadata(
             string checksum,
-            int size,
+            long size,
             string entryId,
             DateTime lastModified,
             string uploadedBy)
@@ -20,7 +20,7 @@
 
         public string Checksum { get; private set; }
 
-        public int Size { get; private set; }
+        public long Size { get; private set; }
 
         public string EntryId { get; private set; }
 

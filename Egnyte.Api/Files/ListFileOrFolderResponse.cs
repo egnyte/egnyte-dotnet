@@ -56,7 +56,7 @@
         public string Checksum { get; set; }
 
         [JsonProperty(PropertyName = "size")]
-        public int Size { get; set; }
+        public long Size { get; set; }
 
         [JsonProperty(PropertyName = "locked")]
         public bool Locked { get; set; }
