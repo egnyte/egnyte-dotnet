@@ -7,7 +7,7 @@
     using System.Threading.Tasks;
 
     using Egnyte.Api.Common;
-
+    using System.Collections.Generic;
     public class FilesClient : BaseClient
     {
         const string FilesMethod = "/pubapi/v1/fs";
@@ -183,6 +183,22 @@
             var response = await serviceHandler.GetFileToDownload(httpRequest).ConfigureAwait(false);
 
             return MapResponseToDownloadedFile(response);
+        }
+
+        /// <summary>
+        /// Downloads a file as a stream (suitable for files larger then 2 GB)
+        /// </summary>
+        /// <param name="path">Full path to the file</param>
+        /// <returns>File download information with data in a stream</returns>
+        public async Task<DownloadedFileAsStream> DownloadFileAsStream(string path)
+        {
+            var listFilesUri = PrepareDownloadFileUri(path);
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, listFilesUri);
+
+            var serviceHandler = new ServiceHandler<string>(httpClient);
+            var response = await serviceHandler.GetFileToDownloadAsStream(httpRequest).ConfigureAwait(false);
+
+            return MapResponseToDownloadedFileAsStream(response);
         }
 
         /// <summary>
@@ -409,19 +425,41 @@
                                    ? response.Headers["Content-Type"]
                                    : string.Empty,
                            response.Headers.ContainsKey("Content-Length")
-                                   ? int.Parse(response.Headers["Content-Length"])
+                                   ? long.Parse(response.Headers["Content-Length"])
                                    : 0,
-                           GetFullFileLengthFromRange(response));
+                           GetFullFileLengthFromRange(response.Headers));
         }
 
-        int GetFullFileLengthFromRange(ServiceResponse<byte[]> response)
+        DownloadedFileAsStream MapResponseToDownloadedFileAsStream(ServiceResponse<Stream> response)
         {
-            if (response.Headers.ContainsKey("Content-Range"))
+            return new DownloadedFileAsStream(
+                           response.Data,
+                           response.Headers.ContainsKey("X-Sha512-Checksum")
+                                   ? response.Headers["X-Sha512-Checksum"]
+                                   : string.Empty,
+                           response.Headers.ContainsKey("Last-Modified")
+                                   ? DateTime.Parse(response.Headers["Last-Modified"])
+                                   : DateTime.Now,
+                           response.Headers.ContainsKey("ETag")
+                                   ? response.Headers["ETag"]
+                                   : string.Empty,
+                           response.Headers.ContainsKey("Content-Type")
+                                   ? response.Headers["Content-Type"]
+                                   : string.Empty,
+                           response.Headers.ContainsKey("Content-Length")
+                                   ? long.Parse(response.Headers["Content-Length"])
+                                   : 0,
+                           GetFullFileLengthFromRange(response.Headers));
+        }
+
+        long GetFullFileLengthFromRange(Dictionary<string, string> headers)
+        {
+            if (headers.ContainsKey("Content-Range"))
             {
-                var rangeParts = response.Headers["Content-Range"].Split('/');
+                var rangeParts = headers["Content-Range"].Split('/');
                 if (rangeParts.Length == 2)
                 {
-                    return int.Parse(rangeParts[1]);
+                    return long.Parse(rangeParts[1]);
                 }
             }
 
@@ -436,7 +474,7 @@
             return uriBuilder.Uri;
         }
 
-        Uri PrepareDownloadFileUri(string path, string entryId)
+        Uri PrepareDownloadFileUri(string path, string entryId = "")
         {
             var query = string.Empty;
 

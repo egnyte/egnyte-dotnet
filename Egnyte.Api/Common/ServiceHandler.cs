@@ -7,7 +7,7 @@
     using System.Threading.Tasks;
 
     using Newtonsoft.Json;
-
+    using System.IO;
     public class ServiceHandler<T> where T : class 
     {
         readonly HttpClient httpClient;
@@ -57,6 +57,19 @@
                            Data = bytes,
                            Headers = GetResponseHeaders(response)
                        };
+        }
+
+        public async Task<ServiceResponse<Stream>> GetFileToDownloadAsStream(HttpRequestMessage request)
+        {
+            request.RequestUri = ApplyAdditionalUrlMapping(request.RequestUri);
+            var response = await this.httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+            var stream = await response.Content.ReadAsStreamAsync();
+            
+            return new ServiceResponse<Stream>
+            {
+                Data = stream,
+                Headers = GetResponseHeaders(response)
+            };
         }
 
         public Dictionary<string, string> GetResponseHeaders(HttpResponseMessage message)

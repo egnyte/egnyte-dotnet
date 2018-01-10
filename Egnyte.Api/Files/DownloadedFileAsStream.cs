@@ -1,11 +1,11 @@
 ﻿namespace Egnyte.Api.Files
 {
     using System;
-
-    public class DownloadedFile
+    using System.IO;
+    public class DownloadedFileAsStream
     {
-        internal DownloadedFile(
-            byte[] data,
+        internal DownloadedFileAsStream(
+            Stream data,
             string checksum,
             DateTime lastModified,
             string eTag,
@@ -22,7 +22,7 @@
             FullFileLength = fullFileLength;
         }
 
-        public byte[] Data { get; private set; }
+        public Stream Data { get; private set; }
 
         public string Checksum { get; private set; }
 
