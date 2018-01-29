@@ -181,7 +181,14 @@
             
             var serviceHandler = new ServiceHandler<string>(httpClient);
             var response = await serviceHandler.GetFileToDownload(httpRequest).ConfigureAwait(false);
-
+            
+            //Method did not throw an exception
+            if (response.Headers.ContainsKey("X-Mashery-Error-Code"))
+            {
+            string errormsg;
+            response.Headers.TryGetValue("X-Mashery-Error-Code",out errormsg);
+            throw new Exception(errormsg);
+            }
             return MapResponseToDownloadedFile(response);
         }
 
