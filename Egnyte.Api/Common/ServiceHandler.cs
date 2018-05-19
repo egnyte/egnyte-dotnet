@@ -27,6 +27,15 @@
             {
                 try
                 {
+                    if (typeof(T) == typeof(string))
+                    {
+                        return new ServiceResponse<T>
+                        {
+                            Data = rawContent as T,
+                            Headers = GetResponseHeaders(response)
+                        };
+                    }
+
                     return new ServiceResponse<T>
                                {
                                    Data = JsonConvert.DeserializeObject<T>(rawContent),
