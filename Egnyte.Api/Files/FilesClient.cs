@@ -23,7 +23,7 @@
         /// </summary>
         /// <param name="path">Full path to the new folder</param>
         /// <returns>Returns true if creating of a folder succeeded</returns>
-        public async Task<bool> CreateFolder(string path)
+        public async Task<FolderCreatedResponse> CreateFolder(string path)
         {
             if (string.IsNullOrWhiteSpace(path))
             {
@@ -36,10 +36,10 @@
                 Content = new StringContent(@"{""action"": ""add_folder""}", Encoding.UTF8, "application/json")
             };
             
-            var serviceHandler = new ServiceHandler<string>(httpClient);
-            await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
+            var serviceHandler = new ServiceHandler<FolderCreatedResponse>(httpClient);
+            var response = await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
 
-            return true;
+            return response.Data;
         }
 
         /// <summary>

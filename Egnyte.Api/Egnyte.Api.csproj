@@ -56,6 +56,7 @@
     <Compile Include="EgnyteClientHelper.cs" />
     <Compile Include="Files\ChunkUploadedMetadata.cs" />
     <Compile Include="Files\DownloadedFileAsStream.cs" />
+    <Compile Include="Files\FolderCreatedResponse.cs" />
     <Compile Include="Files\UploadedFileMetadata.cs" />
     <Compile Include="Files\CreateOrUpdateFileResponse.cs" />
     <Compile Include="Files\DownloadedFile.cs" />

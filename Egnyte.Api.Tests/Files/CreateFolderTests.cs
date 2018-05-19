@@ -14,8 +14,11 @@ namespace Egnyte.Api.Tests.Files
         [Test]
         public async Task CreateFolder_ReturnsSuccess()
         {
+            var folderId = "1ff2c7b3-3d97-4c22-982c-8505d137f089";
+
             var httpHandlerMock = new HttpMessageHandlerMock();
             var httpClient = new HttpClient(httpHandlerMock);
+
 
             httpHandlerMock.SendAsyncFunc =
                 (request, cancellationToken) =>
@@ -23,15 +26,15 @@ namespace Egnyte.Api.Tests.Files
                     new HttpResponseMessage
                         {
                             StatusCode = HttpStatusCode.Created,
-                            Content = new StringContent(string.Empty)
+                            Content = new StringContent("{\"folder_id\":\"" + folderId + "\"}")
                         });
 
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
-            var isSucccess = await egnyteClient.Files.CreateFolder("path");
+            var response = await egnyteClient.Files.CreateFolder("path");
 
             var requestMessage = httpHandlerMock.GetHttpRequestMessage();
             var content = httpHandlerMock.GetRequestContentAsString();
-            Assert.IsTrue(isSucccess);
+            Assert.AreEqual(folderId, response.FolderId);
             Assert.AreEqual("https://acme.egnyte.com/pubapi/v1/fs/path", requestMessage.RequestUri.ToString());
             Assert.AreEqual("{\"action\": \"add_folder\"}", content);
         }
@@ -52,7 +55,7 @@ namespace Egnyte.Api.Tests.Files
                     });
 
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
-            var isSucccess = await egnyteClient.Files.CreateFolder("path");
+            var response = await egnyteClient.Files.CreateFolder("path");
 
             var requestMessage = httpHandlerMock.GetHttpRequestMessage();
             Assert.AreEqual("https://acme.egnyte.com/pubapi/v1/fs/path", requestMessage.RequestUri.ToString());
@@ -74,7 +77,7 @@ namespace Egnyte.Api.Tests.Files
                     });
 
             var egnyteClient = new EgnyteClient("token", httpClient: httpClient, host: "custom.host.name");
-            var isSucccess = await egnyteClient.Files.CreateFolder("path");
+            var response = await egnyteClient.Files.CreateFolder("path");
 
             var requestMessage = httpHandlerMock.GetHttpRequestMessage();
             Assert.AreEqual("https://custom.host.name/pubapi/v1/fs/path", requestMessage.RequestUri.ToString());
@@ -96,10 +99,9 @@ namespace Egnyte.Api.Tests.Files
                     });
 
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
-            var isSucccess = await egnyteClient.Files.CreateFolder("[T]{F} ąśćęół");
+            var response = await egnyteClient.Files.CreateFolder("[T]{F} ąśćęół");
 
             var requestMessage = httpHandlerMock.GetHttpRequestMessage();
-            Assert.IsTrue(isSucccess);
             Assert.AreEqual(
                 "/pubapi/v1/fs/%5BT%5D%7BF%7D%20%C4%85%C5%9B%C4%87%C4%99%C3%B3%C5%82",
                 requestMessage.RequestUri.AbsolutePath);
