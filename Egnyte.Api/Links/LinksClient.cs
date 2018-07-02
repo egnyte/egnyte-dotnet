@@ -11,6 +11,7 @@ namespace Egnyte.Api.Links
     public class LinksClient : BaseClient
     {
         const string LinkMethod = "/pubapi/v1/links";
+        const string LinkMethodV2 = "/pubapi/v2/links";
 
         internal LinksClient(HttpClient httpClient, string domain = "", string host = "") : base(httpClient, domain, host) { }
 
@@ -42,6 +43,7 @@ namespace Egnyte.Api.Links
             var httpRequest = new HttpRequestMessage(
                 HttpMethod.Get,
                 ListLinksRequestUri(
+                    LinkMethod,
                     path,
                     userName,
                     createdBefore,
@@ -55,6 +57,52 @@ namespace Egnyte.Api.Links
             var response = await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
 
             return response.Data;
+        }
+
+        /// <summary>
+        /// Lists all links with details. Please note, that if the user executing this method is not an admin,
+        /// then only links created by the user will be listed
+        /// </summary>
+        /// <param name="path">Optional. List links to a file or folder specified by its full path</param>
+        /// <param name="userName">Optional. List links created by this user</param>
+        /// <param name="createdBefore">Optional. List links created before a given date
+        /// (ISO-8601 e.g., 2017-03-05T14:55:59+0000).</param>
+        /// <param name="createdAfter">Optional. List links created after a given date
+        /// (ISO-8601 e.g., 2017-03-05T14:55:59+0000).</param>
+        /// <param name="linkType">Optional. List links that are "file" or "folder"</param>
+        /// <param name="accessibility">Optional. Filter to links whose accessiblity is "anyone,"
+        /// "password," "domain," or "recipients"</param>
+        /// <param name="offset">Optional. The 0-based index of the initial record being requested</param>
+        /// <param name="count">Limit number of entries per page.
+        /// By default the max count of 500 entries is returned.</param>
+        /// <returns></returns>
+        public async Task<LinksListV2> ListLinksV2(
+            string path = null,
+            string userName = null,
+            DateTime? createdBefore = null,
+            DateTime? createdAfter = null,
+            LinkType? linkType = null,
+            LinkAccessibility? accessibility = null,
+            int? offset = null,
+            int? count = null)
+        {
+            var httpRequest = new HttpRequestMessage(
+                HttpMethod.Get,
+                ListLinksRequestUri(
+                    LinkMethodV2,
+                    path,
+                    userName,
+                    createdBefore,
+                    createdAfter,
+                    linkType,
+                    accessibility,
+                    offset,
+                    count));
+
+            var serviceHandler = new ServiceHandler<LinksListV2Response>(httpClient);
+            var response = await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
+
+            return LinksHelper.MapLinksListResponse(response.Data);
         }
 
         /// <summary>
@@ -75,7 +123,7 @@ namespace Egnyte.Api.Links
             var serviceHandler = new ServiceHandler<LinkDetailsResponse>(httpClient);
             var response = await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
 
-            return MapGetLinkDetailsResponse(response.Data);
+            return LinksHelper.MapGetLinkDetailsResponse(response.Data);
         }
 
         /// <summary>
@@ -101,7 +149,7 @@ namespace Egnyte.Api.Links
             var serviceHandler = new ServiceHandler<CreatedLinkResponse>(httpClient);
             var response = await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
 
-            return MapFlatCreatedLinkToCreatedLink(response.Data);
+            return LinksHelper.MapFlatCreatedLinkToCreatedLink(response.Data);
         }
 
         /// <summary>
@@ -123,20 +171,6 @@ namespace Egnyte.Api.Links
             await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
 
             return true;
-        }
-
-        CreatedLink MapFlatCreatedLinkToCreatedLink(CreatedLinkResponse data)
-        {
-            return new CreatedLink(
-                data.Links,
-                data.Path,
-                ParseLinkType(data.LinkType),
-                ParseAccessibility(data.Accessibility),
-                data.Notify,
-                data.LinkToCurrent,
-                data.ExpiryDate,
-                data.CreationDate,
-                data.CreatedBy);
         }
 
         string MapLinkForRequest(NewLink link)
@@ -214,64 +248,10 @@ namespace Egnyte.Api.Links
             }
         }
 
-        LinkDetails MapGetLinkDetailsResponse(LinkDetailsResponse data)
-        {
-            return new LinkDetails(
-                data.Path,
-                ParseLinkType(data.LinkType),
-                ParseAccessibility(data.Accessibility),
-                data.Notify,
-                data.LinkToCurrent,
-                data.CreationDate,
-                data.CreatedBy,
-                ParseProtectionType(data.Protection),
-                data.Recipients,
-                data.Url,
-                data.Id);
-        }
-
-        ProtectionType ParseProtectionType(string protection)
-        {
-            switch (protection.ToLower())
-            {
-                case "preview":
-                    return ProtectionType.Preview;
-                case "preview_donwload":
-                    return ProtectionType.PreviewDownload;
-                default:
-                    return ProtectionType.None;
-            }
-        }
-
-        LinkAccessibility ParseAccessibility(string accessibility)
-        {
-            if (string.IsNullOrEmpty(accessibility))
-                return LinkAccessibility.Anyone;
-            
-            switch (accessibility.ToLower())
-            {
-                case "domain":
-                    return LinkAccessibility.Domain;
-                case "password":
-                    return LinkAccessibility.Password;
-                case "recipients":
-                    return LinkAccessibility.Recipients;
-                default:
-                    return LinkAccessibility.Anyone;
-            }
-        }
-
-        LinkType ParseLinkType(string linkType)
-        {
-            switch (linkType)
-            {
-                case "file": return LinkType.File;
-                case "upload": return LinkType.Upload;
-                default: return LinkType.Folder;
-            }
-        }
+        
 
         Uri ListLinksRequestUri(
+            string linkMethod,
             string path,
             string userName,
             DateTime? createdBefore,
@@ -324,7 +304,7 @@ namespace Egnyte.Api.Links
 
             var query = string.Join("&", queryParams);
 
-            var uriBuilder = BuildUri(LinkMethod, query);
+            var uriBuilder = BuildUri(linkMethod, query);
 
             return uriBuilder.Uri;
         }

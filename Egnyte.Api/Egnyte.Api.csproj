@@ -84,9 +84,14 @@
     <Compile Include="Links\Link.cs" />
     <Compile Include="Links\LinkAccessibility.cs" />
     <Compile Include="Links\LinkDetails.cs" />
+    <Compile Include="Links\LinkDetailsV2Response.cs" />
     <Compile Include="Links\LinkDetailsResponse.cs" />
+    <Compile Include="Links\LinkDetailsV2.cs" />
     <Compile Include="Links\LinksClient.cs" />
+    <Compile Include="Links\LinksHelper.cs" />
     <Compile Include="Links\LinksList.cs" />
+    <Compile Include="Links\LinksListV2.cs" />
+    <Compile Include="Links\LinksListV2Response.cs" />
     <Compile Include="Links\LinkType.cs" />
     <Compile Include="Links\NewLink.cs" />
     <Compile Include="Links\ProtectionType.cs" />

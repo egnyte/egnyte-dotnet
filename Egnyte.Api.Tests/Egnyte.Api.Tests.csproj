@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -87,6 +87,7 @@
     <Compile Include="Links\DeleteLinkTests.cs" />
     <Compile Include="Links\GetLinkDetailsTests.cs" />
     <Compile Include="Links\ListLinksTests.cs" />
+    <Compile Include="Links\ListLinksV2Tests.cs" />
     <Compile Include="OAuthHelperTests.cs" />
     <Compile Include="Permissions\GetEffectiveUserPermissionsTests.cs" />
     <Compile Include="Permissions\GetFolderPermissionsTests.cs" />
