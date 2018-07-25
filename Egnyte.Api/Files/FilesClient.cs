@@ -417,7 +417,7 @@
         /// <param name="restrictMoveDelete">Restricts move and delete operations to only Admins and Owners if true. This can be applied to /Shared and /Private top-level folders.</param>
         /// <param name="emailPreferences">JSON object with boolean keys that can modify periodic emails about file changes.</param>
         /// <returns></returns>
-        public async Task<UpdateFolderResponse> UpdateFolder(
+        public async Task<UpdateFolderMetadata> UpdateFolder(
             string path,
             string folderDescription = null,
             PublicLinksType? publicLinks = null,
@@ -449,7 +449,7 @@
             var serviceHandler = new ServiceHandler<UpdateFolderResponse>(httpClient);
             var response = await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
 
-            return response.Data;
+            return FilesHelper.MapFolderUpdateToMetadata(response.Data);
         }
 
         DownloadedFile MapResponseToDownloadedFile(ServiceResponse<byte[]> response)

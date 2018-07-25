@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System;
 
 namespace Egnyte.Api.Files
 {
@@ -8,8 +7,8 @@ namespace Egnyte.Api.Files
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 
-        [JsonProperty(PropertyName = "last_modified")]
-        public DateTime LastModified { get; set; }
+        [JsonProperty(PropertyName = "lastModified")]
+        public long LastModified { get; set; }
 
         [JsonProperty(PropertyName = "path")]
         public string Path { get; set; }

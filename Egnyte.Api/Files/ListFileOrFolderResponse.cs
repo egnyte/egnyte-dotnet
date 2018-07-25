@@ -1,6 +1,5 @@
 ﻿namespace Egnyte.Api.Files
 {
-    using System;
     using System.Collections.Generic;
 
     using Newtonsoft.Json;
@@ -67,8 +66,8 @@
         [JsonProperty(PropertyName = "group_id")]
         public string GroupId { get; set; }
 
-        [JsonProperty(PropertyName = "last_modified")]
-        public DateTime LastModified { get; set; }
+        [JsonProperty(PropertyName = "lastModified")]
+        public long LastModified { get; set; }
 
         [JsonProperty(PropertyName = "uploaded_by")]
         public string UploadedBy { get; set; }

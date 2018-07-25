@@ -1,5 +1,6 @@
 ﻿namespace Egnyte.Api.Files
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
@@ -38,7 +39,7 @@
                     response.Locked,
                     response.EntryId,
                     response.GroupId,
-                    response.LastModified,
+                    ConvertFromUnixTimestamp(response.LastModified),
                     response.UploadedBy,
                     response.NumberOfVersions,
                     MapFileVersions(response.Versions)));
@@ -78,6 +79,21 @@
             builder.Append("}");
 
             return builder.ToString();
+        }
+
+        internal static UpdateFolderMetadata MapFolderUpdateToMetadata(UpdateFolderResponse response)
+        {
+            return new UpdateFolderMetadata
+            {
+                Name = response.Name,
+                Path = response.Path,
+                FolderDescription = response.FolderDescription,
+                LastModified = ConvertFromUnixTimestamp(response.LastModified),
+                IsFolder = response.IsFolder,
+                FolderId = response.FolderId,
+                PublicLinks = response.PublicLinks,
+                RestrictMoveDelete = response.RestrictMoveDelete
+            };
         }
 
         private static List<FileBasicMetadata> MapChildFilesResponse(IEnumerable<FileMetadataResponse> files)
@@ -142,6 +158,13 @@
                 default:
                     return "disabled";
             }
+        }
+
+        private static DateTime ConvertFromUnixTimestamp(double timestamp)
+        {
+            return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                .AddMilliseconds(timestamp)
+                .ToLocalTime();
         }
     }
 }
