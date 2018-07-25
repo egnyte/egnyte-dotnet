@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text;
 
     public static class FilesHelper
     {
@@ -41,6 +42,42 @@
                     response.UploadedBy,
                     response.NumberOfVersions,
                     MapFileVersions(response.Versions)));
+        }
+
+        internal static string MapFolderUpdateRequest(
+            string folderDescription = null,
+            PublicLinksType? publicLinks = null,
+            bool? restrictMoveDelete = null,
+            string emailPreferences = null)
+        {
+            var jsonParams = new List<string>();
+            if (!string.IsNullOrWhiteSpace(folderDescription))
+            {
+                jsonParams.Add("\"folder_description\" : \"" + folderDescription + "\"");
+            }
+            if (publicLinks.HasValue)
+            {
+                jsonParams.Add("\"public_links\" : \"" + MapPublicLinksType(publicLinks.Value) + "\"");
+            }
+            if (restrictMoveDelete != null)
+            {
+                jsonParams.Add("\"restrict_move_delete\" : \"" + restrictMoveDelete.Value + "\"");
+            }
+            if (!string.IsNullOrWhiteSpace(emailPreferences))
+            {
+                jsonParams.Add("\"email_preferences\" : \"" + emailPreferences + "\"");
+            }
+
+            var builder = new StringBuilder();
+            builder.Append("{");
+            foreach (var param in jsonParams)
+            {
+                builder.Append(param);
+            }
+
+            builder.Append("}");
+
+            return builder.ToString();
         }
 
         private static List<FileBasicMetadata> MapChildFilesResponse(IEnumerable<FileMetadataResponse> files)
@@ -92,6 +129,19 @@
                 versions.Select(
                     v => new FileVersionMetadata(v.Checksum, v.Size, v.EntryId, v.LastModified, v.UploadedBy))
                     .ToList();
+        }
+
+        private static string MapPublicLinksType(PublicLinksType type)
+        {
+            switch (type)
+            {
+                case PublicLinksType.FilesFolders:
+                    return "files_folders";
+                case PublicLinksType.Files:
+                    return "files";
+                default:
+                    return "disabled";
+            }
         }
     }
 }

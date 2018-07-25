@@ -408,6 +408,50 @@
                     : response.Data.EntryId);
         }
 
+        /// <summary>
+        /// Uses Folder Options API to modify folder options
+        /// </summary>
+        /// <param name="path">Full path to folder</param>
+        /// <param name="folderDescription">Text description of the folder. Maximum 200 characters</param>
+        /// <param name="publicLinks">Choose to allow public links from this folder for files and folders, files only, or not to allow public links.</param>
+        /// <param name="restrictMoveDelete">Restricts move and delete operations to only Admins and Owners if true. This can be applied to /Shared and /Private top-level folders.</param>
+        /// <param name="emailPreferences">JSON object with boolean keys that can modify periodic emails about file changes.</param>
+        /// <returns></returns>
+        public async Task<UpdateFolderResponse> UpdateFolder(
+            string path,
+            string folderDescription = null,
+            PublicLinksType? publicLinks = null,
+            bool? restrictMoveDelete = null,
+            string emailPreferences = null)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                throw new ArgumentException(nameof(path));
+            }
+
+            if (folderDescription == null
+                && !publicLinks.HasValue
+                && restrictMoveDelete == null
+                && emailPreferences == null)
+            {
+                throw new ArgumentException("None of the optional parameters were provided");
+            }
+            
+            var uriBuilder = BuildUri(FilesMethod + "/" + path);
+            var httpRequest = new HttpRequestMessage(new HttpMethod("PATCH"), uriBuilder.Uri)
+            {
+                Content = new StringContent(
+                    FilesHelper.MapFolderUpdateRequest(folderDescription, publicLinks, restrictMoveDelete, emailPreferences),
+                    Encoding.UTF8,
+                    "application/json")
+            };
+
+            var serviceHandler = new ServiceHandler<UpdateFolderResponse>(httpClient);
+            var response = await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
+
+            return response.Data;
+        }
+
         DownloadedFile MapResponseToDownloadedFile(ServiceResponse<byte[]> response)
         {
             return new DownloadedFile(
