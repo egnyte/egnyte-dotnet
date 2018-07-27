@@ -1,5 +1,6 @@
 ﻿namespace Egnyte.Api.Files
 {
+    using System;
     using System.Collections.Generic;
 
     using Newtonsoft.Json;
@@ -35,6 +36,9 @@
         [JsonProperty(PropertyName = "public_links")]
         public string PublicLinks { get; set; }
 
+        [JsonProperty(PropertyName = "lastModified")]
+        public long LastModifiedFolder { get; set; }
+
         [JsonProperty(PropertyName = "allowed_file_link_types")]
         public string[] AllowedFileLinkTypes { get; set; }
 
@@ -66,8 +70,8 @@
         [JsonProperty(PropertyName = "group_id")]
         public string GroupId { get; set; }
 
-        [JsonProperty(PropertyName = "lastModified")]
-        public long LastModified { get; set; }
+        [JsonProperty(PropertyName = "last_modified")]
+        public DateTime LastModifiedFile { get; set; }
 
         [JsonProperty(PropertyName = "uploaded_by")]
         public string UploadedBy { get; set; }

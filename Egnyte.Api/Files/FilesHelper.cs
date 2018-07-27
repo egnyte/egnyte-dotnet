@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
 
     public static class FilesHelper
     {
@@ -20,6 +19,7 @@
                         response.Path,
                         response.FolderId,
                         response.TotalCount,
+                        ConvertFromUnixTimestamp(response.LastModifiedFolder),
                         response.RestrictMoveDelete,
                         response.PublicLinks,
                         response.AllowedFileLinkTypes,
@@ -39,7 +39,7 @@
                     response.Locked,
                     response.EntryId,
                     response.GroupId,
-                    ConvertFromUnixTimestamp(response.LastModified),
+                    response.LastModifiedFile,
                     response.UploadedBy,
                     response.NumberOfVersions,
                     MapFileVersions(response.Versions)));
@@ -62,23 +62,16 @@
             }
             if (restrictMoveDelete != null)
             {
-                jsonParams.Add("\"restrict_move_delete\" : \"" + restrictMoveDelete.Value + "\"");
+                jsonParams.Add("\"restrict_move_delete\" : " + (restrictMoveDelete.Value ? "true" : "false"));
             }
             if (!string.IsNullOrWhiteSpace(emailPreferences))
             {
-                jsonParams.Add("\"email_preferences\" : \"" + emailPreferences + "\"");
+                jsonParams.Add("\"email_preferences\" : " + emailPreferences);
             }
 
-            var builder = new StringBuilder();
-            builder.Append("{");
-            foreach (var param in jsonParams)
-            {
-                builder.Append(param);
-            }
+            var content = "{" + string.Join(",", jsonParams) + "}";
 
-            builder.Append("}");
-
-            return builder.ToString();
+            return content;
         }
 
         internal static UpdateFolderMetadata MapFolderUpdateToMetadata(UpdateFolderResponse response)
@@ -91,7 +84,7 @@
                 LastModified = ConvertFromUnixTimestamp(response.LastModified),
                 IsFolder = response.IsFolder,
                 FolderId = response.FolderId,
-                PublicLinks = response.PublicLinks,
+                PublicLinks = ParsePublicLinksType(response.PublicLinks),
                 RestrictMoveDelete = response.RestrictMoveDelete
             };
         }
@@ -159,8 +152,17 @@
                     return "disabled";
             }
         }
+        private static PublicLinksType ParsePublicLinksType(string publicLink)
+        {
+            switch (publicLink)
+            {
+                case "files_folders": return PublicLinksType.FilesFolders;
+                case "files": return PublicLinksType.Files;
+                default: return PublicLinksType.Disabled;
+            }
+        }
 
-        private static DateTime ConvertFromUnixTimestamp(double timestamp)
+        private static DateTime ConvertFromUnixTimestamp(long timestamp)
         {
             return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 .AddMilliseconds(timestamp)

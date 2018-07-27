@@ -1,5 +1,6 @@
 ﻿namespace Egnyte.Api.Files
 {
+    using System;
     using System.Collections.Generic;
 
     public class FolderExtendedMetadata : FolderMetadata
@@ -11,6 +12,7 @@
             string path,
             string folderId,
             int totalCount,
+            DateTime lastModified,
             bool restrictMoveDelete,
             string publicLinks,
             string[] allowedFileLinkTypes,
@@ -22,6 +24,7 @@
             Count = count;
             Offset = offset;
             TotalCount = totalCount;
+            LastModified = lastModified;
             RestrictMoveDelete = restrictMoveDelete;
             PublicLinks = publicLinks;
             Folders = folders ?? new List<FolderMetadata>();
@@ -33,6 +36,8 @@
         public int Offset { get; private set; }
 
         public int TotalCount { get; private set; }
+
+        public DateTime LastModified { get; private set; }
 
         public bool RestrictMoveDelete { get; private set; }
 

@@ -16,7 +16,7 @@ namespace Egnyte.Api.Files
         
         public bool IsFolder { get; set; }
         
-        public string PublicLinks { get; set; }
+        public PublicLinksType PublicLinks { get; set; }
         
         public bool RestrictMoveDelete { get; set; }
     }
