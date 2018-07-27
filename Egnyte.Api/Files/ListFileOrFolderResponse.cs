@@ -36,6 +36,9 @@
         [JsonProperty(PropertyName = "public_links")]
         public string PublicLinks { get; set; }
 
+        [JsonProperty(PropertyName = "lastModified")]
+        public long LastModifiedFolder { get; set; }
+
         [JsonProperty(PropertyName = "allowed_file_link_types")]
         public string[] AllowedFileLinkTypes { get; set; }
 
@@ -68,7 +71,7 @@
         public string GroupId { get; set; }
 
         [JsonProperty(PropertyName = "last_modified")]
-        public DateTime LastModified { get; set; }
+        public DateTime LastModifiedFile { get; set; }
 
         [JsonProperty(PropertyName = "uploaded_by")]
         public string UploadedBy { get; set; }

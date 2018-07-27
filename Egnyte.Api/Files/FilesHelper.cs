@@ -1,5 +1,6 @@
 ﻿namespace Egnyte.Api.Files
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -18,6 +19,7 @@
                         response.Path,
                         response.FolderId,
                         response.TotalCount,
+                        ConvertFromUnixTimestamp(response.LastModifiedFolder),
                         response.RestrictMoveDelete,
                         response.PublicLinks,
                         response.AllowedFileLinkTypes,
@@ -37,10 +39,54 @@
                     response.Locked,
                     response.EntryId,
                     response.GroupId,
-                    response.LastModified,
+                    response.LastModifiedFile,
                     response.UploadedBy,
                     response.NumberOfVersions,
                     MapFileVersions(response.Versions)));
+        }
+
+        internal static string MapFolderUpdateRequest(
+            string folderDescription = null,
+            PublicLinksType? publicLinks = null,
+            bool? restrictMoveDelete = null,
+            string emailPreferences = null)
+        {
+            var jsonParams = new List<string>();
+            if (!string.IsNullOrWhiteSpace(folderDescription))
+            {
+                jsonParams.Add("\"folder_description\" : \"" + folderDescription + "\"");
+            }
+            if (publicLinks.HasValue)
+            {
+                jsonParams.Add("\"public_links\" : \"" + MapPublicLinksType(publicLinks.Value) + "\"");
+            }
+            if (restrictMoveDelete != null)
+            {
+                jsonParams.Add("\"restrict_move_delete\" : " + (restrictMoveDelete.Value ? "true" : "false"));
+            }
+            if (!string.IsNullOrWhiteSpace(emailPreferences))
+            {
+                jsonParams.Add("\"email_preferences\" : " + emailPreferences);
+            }
+
+            var content = "{" + string.Join(",", jsonParams) + "}";
+
+            return content;
+        }
+
+        internal static UpdateFolderMetadata MapFolderUpdateToMetadata(UpdateFolderResponse response)
+        {
+            return new UpdateFolderMetadata
+            {
+                Name = response.Name,
+                Path = response.Path,
+                FolderDescription = response.FolderDescription,
+                LastModified = ConvertFromUnixTimestamp(response.LastModified),
+                IsFolder = response.IsFolder,
+                FolderId = response.FolderId,
+                PublicLinks = ParsePublicLinksType(response.PublicLinks),
+                RestrictMoveDelete = response.RestrictMoveDelete
+            };
         }
 
         private static List<FileBasicMetadata> MapChildFilesResponse(IEnumerable<FileMetadataResponse> files)
@@ -92,6 +138,35 @@
                 versions.Select(
                     v => new FileVersionMetadata(v.Checksum, v.Size, v.EntryId, v.LastModified, v.UploadedBy))
                     .ToList();
+        }
+
+        private static string MapPublicLinksType(PublicLinksType type)
+        {
+            switch (type)
+            {
+                case PublicLinksType.FilesFolders:
+                    return "files_folders";
+                case PublicLinksType.Files:
+                    return "files";
+                default:
+                    return "disabled";
+            }
+        }
+        private static PublicLinksType ParsePublicLinksType(string publicLink)
+        {
+            switch (publicLink)
+            {
+                case "files_folders": return PublicLinksType.FilesFolders;
+                case "files": return PublicLinksType.Files;
+                default: return PublicLinksType.Disabled;
+            }
+        }
+
+        private static DateTime ConvertFromUnixTimestamp(long timestamp)
+        {
+            return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                .AddMilliseconds(timestamp)
+                .ToLocalTime();
         }
     }
 }
