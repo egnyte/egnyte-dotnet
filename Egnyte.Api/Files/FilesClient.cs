@@ -416,13 +416,15 @@
         /// <param name="publicLinks">Choose to allow public links from this folder for files and folders, files only, or not to allow public links.</param>
         /// <param name="restrictMoveDelete">Restricts move and delete operations to only Admins and Owners if true. This can be applied to /Shared and /Private top-level folders.</param>
         /// <param name="emailPreferences">JSON object with boolean keys that can modify periodic emails about file changes.</param>
+        /// <param name="allowLinks">Choose whether links can be shared to files or sub-folders within this folder.</param>
         /// <returns></returns>
         public async Task<UpdateFolderMetadata> UpdateFolder(
             string path,
             string folderDescription = null,
             PublicLinksType? publicLinks = null,
             bool? restrictMoveDelete = null,
-            string emailPreferences = null)
+            string emailPreferences = null,
+            bool? allowLinks = null)
         {
             if (string.IsNullOrWhiteSpace(path))
             {
@@ -432,7 +434,8 @@
             if (folderDescription == null
                 && !publicLinks.HasValue
                 && restrictMoveDelete == null
-                && emailPreferences == null)
+                && emailPreferences == null
+                && allowLinks == null)
             {
                 throw new ArgumentException("None of the optional parameters were provided");
             }
@@ -441,7 +444,7 @@
             var httpRequest = new HttpRequestMessage(new HttpMethod("PATCH"), uriBuilder.Uri)
             {
                 Content = new StringContent(
-                    FilesHelper.MapFolderUpdateRequest(folderDescription, publicLinks, restrictMoveDelete, emailPreferences),
+                    FilesHelper.MapFolderUpdateRequest(folderDescription, publicLinks, restrictMoveDelete, emailPreferences, allowLinks),
                     Encoding.UTF8,
                     "application/json")
             };

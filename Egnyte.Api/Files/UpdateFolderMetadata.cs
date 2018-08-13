@@ -19,5 +19,7 @@ namespace Egnyte.Api.Files
         public PublicLinksType PublicLinks { get; set; }
         
         public bool RestrictMoveDelete { get; set; }
+
+        public bool AllowLinks { get; set; }
     }
 }

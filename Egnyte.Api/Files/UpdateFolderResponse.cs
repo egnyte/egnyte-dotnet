@@ -27,5 +27,8 @@ namespace Egnyte.Api.Files
 
         [JsonProperty(PropertyName = "restrict_move_delete")]
         public bool RestrictMoveDelete { get; set; }
+
+        [JsonProperty(PropertyName = "allow_links")]
+        public bool AllowLinks { get; set; }
     }
 }

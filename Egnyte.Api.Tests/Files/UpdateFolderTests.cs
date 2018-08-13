@@ -21,7 +21,8 @@ namespace Egnyte.Api.Tests.Files
                 ""allow_links"":true,
                 ""is_folder"":true,
                 ""public_links"":""files"",
-                ""restrict_move_delete"":true
+                ""restrict_move_delete"":true,
+                ""allow_links"":false
             }";
 
         [Test]
@@ -45,7 +46,8 @@ namespace Egnyte.Api.Tests.Files
                     folderDescription: "This is new description set up at: " + DateTime.Now,
                     publicLinks: PublicLinksType.Files,
                     restrictMoveDelete: true,
-                    emailPreferences: "{\"content_updates\": false, \"content_accessed\":true}");
+                    emailPreferences: "{\"content_updates\": false, \"content_accessed\":true}",
+                    allowLinks: false);
 
             Assert.AreEqual("/Shared/MyDocument", response.Path);
             Assert.AreEqual("ApiTests2", response.Name);
@@ -55,6 +57,7 @@ namespace Egnyte.Api.Tests.Files
             Assert.True(response.IsFolder);
             Assert.AreEqual(PublicLinksType.Files, response.PublicLinks);
             Assert.True(response.RestrictMoveDelete);
+            Assert.False(response.AllowLinks);
         }
 
         [Test]

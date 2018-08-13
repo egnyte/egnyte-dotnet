@@ -49,7 +49,8 @@
             string folderDescription = null,
             PublicLinksType? publicLinks = null,
             bool? restrictMoveDelete = null,
-            string emailPreferences = null)
+            string emailPreferences = null,
+            bool? allowLinks = null)
         {
             var jsonParams = new List<string>();
             if (!string.IsNullOrWhiteSpace(folderDescription))
@@ -68,6 +69,10 @@
             {
                 jsonParams.Add("\"email_preferences\" : " + emailPreferences);
             }
+            if (allowLinks != null)
+            {
+                jsonParams.Add("\"allow_links\" : " + (allowLinks.Value ? "true" : "false"));
+            }
 
             var content = "{" + string.Join(",", jsonParams) + "}";
 
@@ -85,7 +90,8 @@
                 IsFolder = response.IsFolder,
                 FolderId = response.FolderId,
                 PublicLinks = ParsePublicLinksType(response.PublicLinks),
-                RestrictMoveDelete = response.RestrictMoveDelete
+                RestrictMoveDelete = response.RestrictMoveDelete,
+                AllowLinks = response.AllowLinks
             };
         }
 
