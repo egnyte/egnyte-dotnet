@@ -184,6 +184,11 @@ namespace Egnyte.Api.Links
             if (link.Type != LinkType.Upload)
                 builder.AppendFormat(@", ""accessibility"": ""{0}""", MapAccessibilityType(link.Accessibility));            
 
+            if (!string.IsNullOrWhiteSpace(link.Password))
+            {
+                builder.Append(", \"password\": \"" + link.Password + "\"");
+            }
+
             if (link.SendEmail.HasValue)
             {
                 builder.AppendFormat(@", ""send_email"" : ""{0}""", link.SendEmail.Value ? "true" : "false");

@@ -53,11 +53,14 @@ namespace Egnyte.Api.Links
                 data.Path,
                 ParseLinkType(data.LinkType),
                 ParseAccessibility(data.Accessibility),
+                data.Password,
                 data.Notify,
                 data.LinkToCurrent,
                 data.ExpiryDate,
                 data.CreationDate,
-                data.CreatedBy);
+                data.CreatedBy,
+                data.SendMail,
+                data.CopyMe);
         }
 
         private static ProtectionType ParseProtectionType(string protection)

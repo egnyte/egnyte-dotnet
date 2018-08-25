@@ -55,6 +55,51 @@ namespace Egnyte.Api.Tests.Links
                 ""expiry_date"": ""2012-05-27""
             }";
 
+        const string CreateLinkWithPasswordResponse = @"
+            {
+              ""links"": [
+                {
+                  ""id"": ""47b774f66f344a67"",
+                  ""url"": ""https://domain.egnyte.com/h-s/20130717/47b774f66f344a67"",
+                  ""recipients"": [
+                      ""jsmith@acme.com""
+                  ]
+                },
+                {
+                  ""id"": ""47b774f66f344a68"",
+                  ""url"": ""https://domain.egnyte.com/h-s/20130717/47b774f66f344a68"",
+                  ""recipients"": [
+                      ""mjones@acme.com""
+                  ]
+                }
+              ],
+              ""path"": ""/Shared/Documents/example.txt"",
+              ""type"": ""file"",
+              ""accessibility"": ""password"",
+              ""password"": ""mypass"",
+              ""notify"": true,
+              ""link_to_current"": false,
+              ""expiry_date"": ""2012-05-27"",
+              ""creation_date"": ""2012-05-02"",
+              ""send_mail"": true,
+              ""copy_me"": false
+            }";
+
+        const string CreateLinkWithPasswordRequestContent = @"
+            {
+                ""path"":""/Shared/Documents/example.txt"",
+	            ""type"":""file"",
+	            ""accessibility"": ""password"",
+                ""password"": ""mypass"",
+                ""send_email"": ""true"",
+                ""recipients"": [""jsmith@acme.com"", ""mjones@acme.com""],
+                ""message"": ""Great example"",
+                ""copy_me"": ""false"",
+                ""notify"": ""true"",
+                ""link_to_current"": ""false"",
+                ""expiry_date"": ""2012-05-27""
+            }";
+
         [Test]
         public async Task CreateLink_ReturnsSuccess()
         {
@@ -110,6 +155,62 @@ namespace Egnyte.Api.Tests.Links
         }
 
         [Test]
+        public async Task CreateLinkWithPassword_ReturnsSuccess()
+        {
+            var httpHandlerMock = new HttpMessageHandlerMock();
+            var httpClient = new HttpClient(httpHandlerMock);
+
+            httpHandlerMock.SendAsyncFunc =
+                (request, cancellationToken) =>
+                Task.FromResult(
+                    new HttpResponseMessage
+                    {
+                        StatusCode = HttpStatusCode.Created,
+                        Content = new StringContent(
+                                CreateLinkWithPasswordResponse,
+                                Encoding.UTF8,
+                                "application/json")
+                    });
+
+            var newLink = GetNewLinkWithPassword();
+            var egnyteClient = new EgnyteClient("token", "acme", httpClient);
+            var existingLink = await egnyteClient.Links.CreateLink(newLink);
+
+            var requestMessage = httpHandlerMock.GetHttpRequestMessage();
+            Assert.AreEqual("https://acme.egnyte.com/pubapi/v1/links", requestMessage.RequestUri.ToString());
+            Assert.AreEqual(newLink.Path, existingLink.Path);
+            Assert.AreEqual(newLink.Type, existingLink.Type);
+            Assert.AreEqual(newLink.Accessibility, existingLink.Accessibility);
+            Assert.AreEqual(newLink.Password, existingLink.Password);
+            Assert.AreEqual(newLink.ExpiryDate, existingLink.ExpiryDate);
+            Assert.AreEqual(newLink.LinkToCurrent, existingLink.LinkToCurrent);
+            Assert.AreEqual(newLink.Notify, existingLink.Notify);
+            Assert.AreEqual(new DateTime(2012, 05, 02), existingLink.CreationDate);
+            Assert.AreEqual(newLink.SendEmail, existingLink.SendMail);
+            Assert.AreEqual(newLink.CopyMe, existingLink.CopyMe);
+            Assert.AreEqual(2, existingLink.Links.Count);
+
+            var firstLink = existingLink.Links.FirstOrDefault(l => l.Id == "47b774f66f344a67");
+            Assert.AreEqual(
+                "https://domain.egnyte.com/h-s/20130717/47b774f66f344a67",
+                firstLink.Url);
+            Assert.AreEqual(1, firstLink.Recipients.Count);
+            Assert.AreEqual("jsmith@acme.com", firstLink.Recipients[0]);
+
+            var secondLink = existingLink.Links.FirstOrDefault(l => l.Id == "47b774f66f344a68");
+            Assert.AreEqual(
+                "https://domain.egnyte.com/h-s/20130717/47b774f66f344a68",
+                secondLink.Url);
+            Assert.AreEqual(1, secondLink.Recipients.Count);
+            Assert.AreEqual("mjones@acme.com", secondLink.Recipients[0]);
+
+            var content = httpHandlerMock.GetRequestContentAsString();
+            Assert.AreEqual(
+                TestsHelper.RemoveWhitespaces(CreateLinkWithPasswordRequestContent),
+                TestsHelper.RemoveWhitespaces(content));
+        }
+
+        [Test]
         public async Task CreateLink_WithNullParameter_ThrowsException()
         {
             var httpClient = new HttpClient(new HttpMessageHandlerMock());
@@ -146,6 +247,24 @@ namespace Egnyte.Api.Tests.Links
                 Path = "/Shared/Documents/example.txt",
                 Type = LinkType.File,
                 Accessibility = LinkAccessibility.Recipients,
+                SendEmail = true,
+                Recipients = new List<string> { "jsmith@acme.com", "mjones@acme.com" },
+                Message = "Great example",
+                CopyMe = false,
+                Notify = true,
+                LinkToCurrent = false,
+                ExpiryDate = new DateTime(2012, 05, 27)
+            };
+        }
+
+        NewLink GetNewLinkWithPassword()
+        {
+            return new NewLink
+            {
+                Path = "/Shared/Documents/example.txt",
+                Type = LinkType.File,
+                Accessibility = LinkAccessibility.Password,
+                Password = "mypass",
                 SendEmail = true,
                 Recipients = new List<string> { "jsmith@acme.com", "mjones@acme.com" },
                 Message = "Great example",

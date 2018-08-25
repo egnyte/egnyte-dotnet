@@ -21,6 +21,11 @@ namespace Egnyte.Api.Links
         public LinkAccessibility Accessibility { get; set; }
 
         /// <summary>
+        /// Optional. When accesibility is set to password, then password can be provided.
+        /// </summary>
+        public string Password { get; set; }
+
+        /// <summary>
         /// Optional. If true is set, link will be sent via email by Egnyte.
         /// </summary>
         public bool? SendEmail { get; set; }

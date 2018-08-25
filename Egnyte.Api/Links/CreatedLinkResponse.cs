@@ -18,6 +18,9 @@ namespace Egnyte.Api.Links
         [JsonProperty(PropertyName = "accessibility")]
         public string Accessibility { get; set; }
 
+        [JsonProperty(PropertyName = "password")]
+        public string Password { get; set; }
+
         [JsonProperty(PropertyName = "notify")]
         public bool Notify { get; set; }
 
@@ -30,7 +33,14 @@ namespace Egnyte.Api.Links
         [JsonProperty(PropertyName = "creation_date")]
         public DateTime CreationDate { get; set; }
 
+        [Obsolete]
         [JsonProperty(PropertyName = "created_by")]
         public string CreatedBy { get; set; }
+
+        [JsonProperty(PropertyName = "send_mail")]
+        public bool SendMail { get; set; }
+
+        [JsonProperty(PropertyName = "copy_me")]
+        public bool CopyMe { get; set; }
     }
 }
