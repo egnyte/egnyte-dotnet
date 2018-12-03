@@ -1,13 +1,11 @@
 ﻿namespace Egnyte.Api.Common
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Net.Http;
     using System.Threading.Tasks;
-
     using Newtonsoft.Json;
     using System.IO;
+
     public class ServiceHandler<T> where T : class 
     {
         readonly HttpClient httpClient;
@@ -32,28 +30,28 @@
                         return new ServiceResponse<T>
                         {
                             Data = rawContent as T,
-                            Headers = GetResponseHeaders(response)
+                            Headers = response.GetResponseHeaders()
                         };
                     }
 
                     return new ServiceResponse<T>
                                {
                                    Data = JsonConvert.DeserializeObject<T>(rawContent),
-                                   Headers = GetResponseHeaders(response)
-                               };
+                                   Headers = response.GetResponseHeaders()
+                    };
                 }
                 catch (Exception e)
                 {
                     throw new EgnyteApiException(
                         rawContent,
-                        response.StatusCode,
+                        response,
                         e);
                 }
             }
 
             throw new EgnyteApiException(
                     rawContent,
-                    response.StatusCode);
+                    response);
         }
 
         public async Task<ServiceResponse<byte[]>> GetFileToDownload(HttpRequestMessage request)
@@ -64,7 +62,7 @@
             return new ServiceResponse<byte[]>
                        {
                            Data = bytes,
-                           Headers = GetResponseHeaders(response)
+                           Headers = response.GetResponseHeaders()
                        };
         }
 
@@ -77,20 +75,8 @@
             return new ServiceResponse<Stream>
             {
                 Data = stream,
-                Headers = GetResponseHeaders(response)
+                Headers = response.GetResponseHeaders()
             };
-        }
-
-        public Dictionary<string, string> GetResponseHeaders(HttpResponseMessage message)
-        {
-            var headers = message.Headers.ToDictionary(k => k.Key, v => v.Value.Last());
-
-            foreach (var httpContentHeader in message.Content.Headers)
-            {
-                headers.Add(httpContentHeader.Key, httpContentHeader.Value.Last());
-            }
-
-            return headers;
         }
 
         Uri ApplyAdditionalUrlMapping(Uri requestUri)

@@ -66,6 +66,7 @@
   <ItemGroup>
     <Compile Include="AssertExtensions.cs" />
     <Compile Include="Audit\CreateLoginAuditReportTests.cs" />
+    <Compile Include="Common\ServiceHandlerTests.cs" />
     <Compile Include="EgnyteClientHelperTests.cs" />
     <Compile Include="EgnyteClientTests.cs" />
     <Compile Include="Files\ChunkedUploadTests.cs" />
