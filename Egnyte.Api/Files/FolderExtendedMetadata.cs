@@ -19,12 +19,11 @@
             string[] allowedFolderLinkTypes,
             List<FolderMetadata> folders,
             List<FileBasicMetadata> files)
-            : base(name, path, folderId, allowedFileLinkTypes, allowedFolderLinkTypes)
+            : base(name, lastModified, path, folderId, allowedFileLinkTypes, allowedFolderLinkTypes)
         {
             Count = count;
             Offset = offset;
             TotalCount = totalCount;
-            LastModified = lastModified;
             RestrictMoveDelete = restrictMoveDelete;
             PublicLinks = publicLinks;
             Folders = folders ?? new List<FolderMetadata>();
@@ -36,8 +35,6 @@
         public int Offset { get; private set; }
 
         public int TotalCount { get; private set; }
-
-        public DateTime LastModified { get; private set; }
 
         public bool RestrictMoveDelete { get; private set; }
 

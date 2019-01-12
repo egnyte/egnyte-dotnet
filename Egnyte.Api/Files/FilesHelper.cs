@@ -126,6 +126,7 @@
             return folders.Select(
                 f => new FolderMetadata(
                     f.Name,
+                    ConvertFromUnixTimestamp(f.LastModified),
                     f.Path,
                     f.FolderId,
                     f.AllowedFileLinkTypes,
