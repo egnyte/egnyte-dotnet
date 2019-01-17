@@ -7,6 +7,9 @@
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 
+        [JsonProperty(PropertyName = "lastModified")]
+        public long LastModified { get; set; }
+
         [JsonProperty(PropertyName = "path")]
         public string Path { get; set; }
 
