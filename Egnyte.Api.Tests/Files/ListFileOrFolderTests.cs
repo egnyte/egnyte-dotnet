@@ -1,4 +1,4 @@
-﻿namespace Egnyte.Api.Tests.Files
+namespace Egnyte.Api.Tests.Files
 {
     using System;
     using System.Net;
@@ -43,7 +43,7 @@
             ""folders"":
                 [{
                     ""name"": ""Test"",
-                    ""lastModified"": ""1467908109000"",
+                    ""lastModified"": ""1467908209000"",
                     ""path"": ""/Shared/Documents/Test"",
                     ""folder_id"": ""6a1c7f21-874e-44d0-9360-ca09eacf8553"",
                     ""is_folder"": true,
@@ -52,7 +52,7 @@
                 },
                 {
                     ""name"": ""Articles"",
-                    ""lastModified"": ""1467908109000"",
+                    ""lastModified"": ""1467908309000"",
                     ""path"": ""/Shared/Documents/Articles"",
                     ""folder_id"": ""429b22bf-a111-4f7d-8460-58223db92817"",
                     ""is_folder"": true,
@@ -122,7 +122,7 @@
 
             var folderMetadata = result.AsFolder;
             Assert.AreEqual("Documents", folderMetadata.Name);
-            Assert.AreEqual(new DateTime(2016, 7, 7, 10, 15, 9), folderMetadata.LastModified);
+            Assert.AreEqual(new DateTime(2016, 7, 7, 18, 15, 9), folderMetadata.LastModified);
             Assert.AreEqual(1, folderMetadata.Count);
             Assert.AreEqual(2, folderMetadata.Offset);
             Assert.AreEqual("/Shared/Documents", folderMetadata.Path);
@@ -150,7 +150,7 @@
 
             Assert.AreEqual(2, folderMetadata.Folders.Count);
             Assert.AreEqual("Test", folderMetadata.Folders[0].Name);
-            Assert.AreEqual(new DateTime(2016, 7, 7, 10, 15, 9), folderMetadata.Folders[0].LastModified);
+            Assert.AreEqual(new DateTime(2016, 7, 7, 18, 16, 49), folderMetadata.Folders[0].LastModified);
             Assert.AreEqual("/Shared/Documents/Test", folderMetadata.Folders[0].Path);
             Assert.AreEqual("6a1c7f21-874e-44d0-9360-ca09eacf8553", folderMetadata.Folders[0].FolderId);
             Assert.AreEqual(2, folderMetadata.Folders[0].AllowedFileLinkTypes.Length);
@@ -161,7 +161,7 @@
             Assert.AreEqual("password", folderMetadata.Folders[0].AllowedFolderLinkTypes[1]);
 
             Assert.AreEqual("Articles", folderMetadata.Folders[1].Name);
-            Assert.AreEqual(new DateTime(2016, 7, 7, 10, 15, 9), folderMetadata.Folders[1].LastModified);
+            Assert.AreEqual(new DateTime(2016, 7, 7, 18, 18, 29), folderMetadata.Folders[1].LastModified);
             Assert.AreEqual("/Shared/Documents/Articles", folderMetadata.Folders[1].Path);
             Assert.AreEqual("429b22bf-a111-4f7d-8460-58223db92817", folderMetadata.Folders[1].FolderId);
             Assert.AreEqual(2, folderMetadata.Folders[1].AllowedFileLinkTypes.Length);
