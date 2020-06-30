@@ -9,12 +9,14 @@ To get started working with Egnyte .NET SDK, we recommend you to add it to your 
 To install `Egnyte.Api`, run the following command in the Package Manager Console:
 
 ```PM> Install-Package Egnyte.Api```
+```PM> Install-Package Egnyte.Api.Core```
 
 ## Supported frameworks
 
 * .Net Framework 4.5
 * Windows Phone 8.1
 * Xamarin
+* .Net Standard 2.0
 
 ## Creating an application
 
