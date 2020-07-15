@@ -8,16 +8,19 @@ namespace Egnyte.Api.Common
     {
         public static Dictionary<string, string> GetResponseHeaders(this HttpResponseMessage message)
         {
-            if (message == null || message.Headers == null || message.Content.Headers == null)
+            if (message == null || message.Headers == null)
             {
                 return new Dictionary<string, string>();
             }
 
             var headers = message.Headers.ToDictionary(k => k.Key, v => v.Value.Last());
 
-            foreach (var httpContentHeader in message.Content.Headers)
+            if (message.Content != null)
             {
-                headers.Add(httpContentHeader.Key, httpContentHeader.Value.Last());
+                foreach (var httpContentHeader in message.Content.Headers)
+                {
+                    headers.Add(httpContentHeader.Key, httpContentHeader.Value.Last());
+                }
             }
 
             return headers;
