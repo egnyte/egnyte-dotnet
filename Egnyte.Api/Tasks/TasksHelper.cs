@@ -27,7 +27,7 @@ namespace Egnyte.Api.Tasks
                 data.Id,
                 data.Task,
                 ConvertFromUnixTimestamp(data.CreationDateTimestamp),
-                data.CompletionDate,
+                data.CompletionDateTimestamp.HasValue ? ConvertFromUnixTimestamp(data.CompletionDateTimestamp.Value) : (DateTime?)null,
                 data.DueDate = data.DueDate,
                 data.DueDateTimestamp,
                 MapTaskUserResponseToTaskUser(data.Assignor),
