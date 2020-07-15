@@ -16,7 +16,7 @@
         public long CreationDateTimestamp { get; set; }
 
         [JsonProperty(PropertyName = "completionDate")]
-        public DateTime? CompletionDate { get; set; }
+        public long? CompletionDateTimestamp { get; set; }
 
         [JsonProperty(PropertyName = "dueDate")]
         public DateTime? DueDate { get; set; }
