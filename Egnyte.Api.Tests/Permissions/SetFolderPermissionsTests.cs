@@ -10,30 +10,29 @@ namespace Egnyte.Api.Tests.Permissions
     using System.Text;
     using System.Collections.Generic;
     using Api.Permissions;
+    using System.Text.RegularExpressions;
 
     [TestFixture]
     public class SetFolderPermissionsTests
     {
         const string SetFolderPermissionsRequestContent = @"
             {
-                ""users"": [
-                    ""jsmith"",
-                    ""ajones""
-                ],
-                ""permission"": ""Viewer""
+                ""userPerms"": {
+                    ""jsmith"": ""Viewer"",
+                    ""ajones"": ""Viewer""
+                }
             }";
 
         const string SetFolderPermissionsWithUsersAndGroupsRequestContent = @"
             {
-                ""users"": [
-                    ""jsmith"",
-                    ""ajones""
-                ],
-                ""groups"": [
-                    ""admins"",
-                    ""it_support""
-                ],
-                ""permission"": ""Full""
+                ""userPerms"": {
+                    ""jsmith"": ""Full"",
+                    ""ajones"": ""Full""
+                },
+                ""groupPerms"": {
+                    ""admins"": ""Full"",
+                    ""it_support"": ""Full""
+                }
             }";
 
         [Test]
@@ -54,12 +53,11 @@ namespace Egnyte.Api.Tests.Permissions
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
             var userList = await egnyteClient.Permissions.SetFolderPermissions(
                 "Shared/myFolder/",
-                PermissionType.Viewer,
-                new List<string> { "jsmith", "ajones" });
+                new List<GroupOrUserPermissions> { new GroupOrUserPermissions("jsmith", PermissionType.Viewer), new GroupOrUserPermissions("ajones", PermissionType.Viewer) });
 
             var requestMessage = httpHandlerMock.GetHttpRequestMessage();
             Assert.AreEqual(
-                "https://acme.egnyte.com/pubapi/v1/perms/folder/Shared/myFolder/",
+                "https://acme.egnyte.com/pubapi/v2/perms/Shared/myFolder/",
                 requestMessage.RequestUri.ToString());
             Assert.AreEqual(HttpMethod.Post, requestMessage.Method);
 
@@ -87,12 +85,11 @@ namespace Egnyte.Api.Tests.Permissions
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
             var userList = await egnyteClient.Permissions.SetFolderPermissions(
                 "Shared/myFolder with ##/",
-                PermissionType.Viewer,
-                new List<string> { "jsmith", "ajones" });
+                new List<GroupOrUserPermissions> { new GroupOrUserPermissions("jsmith", PermissionType.Viewer), new GroupOrUserPermissions("ajones", PermissionType.Viewer) });
 
             var requestMessage = httpHandlerMock.GetHttpRequestMessage();
             Assert.AreEqual(
-                "https://acme.egnyte.com/pubapi/v1/perms/folder/Shared/myFolder with %23%23/",
+                "https://acme.egnyte.com/pubapi/v2/perms/Shared/myFolder with %23%23/",
                 requestMessage.RequestUri.ToString());
             Assert.AreEqual(HttpMethod.Post, requestMessage.Method);
 
@@ -120,13 +117,12 @@ namespace Egnyte.Api.Tests.Permissions
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
             var userList = await egnyteClient.Permissions.SetFolderPermissions(
                 "Shared/myFolder/",
-                PermissionType.Full,
-                new List<string> { "jsmith", "ajones" },
-                new List<string> { "admins", "it_support" });
+                new List<GroupOrUserPermissions> { new GroupOrUserPermissions("jsmith", PermissionType.Full), new GroupOrUserPermissions("ajones", PermissionType.Full) },
+                new List<GroupOrUserPermissions> { new GroupOrUserPermissions("admins", PermissionType.Full), new GroupOrUserPermissions("it_support", PermissionType.Full) });
 
             var requestMessage = httpHandlerMock.GetHttpRequestMessage();
             Assert.AreEqual(
-                "https://acme.egnyte.com/pubapi/v1/perms/folder/Shared/myFolder/",
+                "https://acme.egnyte.com/pubapi/v2/perms/Shared/myFolder/",
                 requestMessage.RequestUri.ToString());
             Assert.AreEqual(HttpMethod.Post, requestMessage.Method);
 
@@ -144,7 +140,7 @@ namespace Egnyte.Api.Tests.Permissions
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
 
             var exception = await AssertExtensions.ThrowsAsync<ArgumentNullException>(
-                () => egnyteClient.Permissions.SetFolderPermissions(string.Empty, PermissionType.Viewer));
+                () => egnyteClient.Permissions.SetFolderPermissions(string.Empty));
 
             Assert.IsTrue(exception.Message.Contains("path"));
             Assert.IsNull(exception.InnerException);
@@ -158,10 +154,10 @@ namespace Egnyte.Api.Tests.Permissions
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
 
             var exception = await AssertExtensions.ThrowsAsync<ArgumentException>(
-                () => egnyteClient.Permissions.SetFolderPermissions("myPath", PermissionType.Viewer));
+                () => egnyteClient.Permissions.SetFolderPermissions("myPath"));
 
-            Assert.IsTrue(exception.Message.Contains("users"));
-            Assert.IsTrue(exception.Message.Contains("groups"));
+            Assert.IsTrue(exception.Message.Contains("userPerms"));
+            Assert.IsTrue(exception.Message.Contains("groupPerms"));
             Assert.IsNull(exception.InnerException);
         }
 
@@ -175,12 +171,11 @@ namespace Egnyte.Api.Tests.Permissions
             var exception = await AssertExtensions.ThrowsAsync<ArgumentException>(
                 () => egnyteClient.Permissions.SetFolderPermissions(
                     "myPath",
-                    PermissionType.Viewer,
-                    new List<string>(),
-                    new List<string>()));
+                    new List<GroupOrUserPermissions>(),
+                    new List<GroupOrUserPermissions>()));
 
-            Assert.IsTrue(exception.Message.Contains("users"));
-            Assert.IsTrue(exception.Message.Contains("groups"));
+            Assert.IsTrue(exception.Message.Contains("userPerms"));
+            Assert.IsTrue(exception.Message.Contains("groupPerms"));
             Assert.IsNull(exception.InnerException);
         }
     }
