@@ -2,7 +2,7 @@
 {
     public class GroupOrUserPermissions
     {
-        internal GroupOrUserPermissions(string subject, PermissionType permission)
+        public GroupOrUserPermissions(string subject, PermissionType permission)
         {
             Subject = subject;
             Permission = permission;

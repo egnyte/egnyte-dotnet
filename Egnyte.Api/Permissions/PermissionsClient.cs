@@ -10,7 +10,8 @@ namespace Egnyte.Api.Permissions
 {
     public class PermissionsClient : BaseClient
     {
-        const string PermissionsMethod = "/pubapi/v1/perms";
+        const string PermissionsMethodV1 = "/pubapi/v1/perms";
+        const string PermissionsMethod = "/pubapi/v2/perms";
 
         internal PermissionsClient(HttpClient httpClient, string domain = "", string host = "") : base(httpClient, domain, host) { }
 
@@ -18,33 +19,36 @@ namespace Egnyte.Api.Permissions
         /// Sets the effective permission level for specific users or groups on a given folder
         /// </summary>
         /// <param name="path">Required. Full path to the folder</param>
-        /// <param name="permission">Required. Type of permission: None, Viewer, Editor, Full, Owner</param>
-        /// <param name="users">List of usernames to set permissions for
+        /// <param name="userPerms">List of usernames to set permissions for
         /// At least one user or group must be specified</param>
-        /// <param name="groups">List of groupnames to set permissions for
+        /// <param name="groupPerms">List of groupnames to set permissions for
         /// At least one user or group must be specified</param>
+        /// <param name="inheritsPermissions">Whether permissions should be inherited from the parent folder</param>
+        /// <param name="keepParentPermissions">When disabling permissions inheritance with inheritsPermissions,
+        /// this options determines whether previously inherited permissions from parent folders should be copied to this folder.</param>
         /// <returns>True if operation succedes</returns>
         public async Task<bool> SetFolderPermissions(
             string path,
-            PermissionType permission,
-            List<string> users = null,
-            List<string> groups = null)
+            List<GroupOrUserPermissions> userPerms = null,
+            List<GroupOrUserPermissions> groupPerms = null,
+            bool? inheritsPermissions = null,
+            bool? keepParentPermissions = null)
         {
             if (string.IsNullOrWhiteSpace(path))
             {
                 throw new ArgumentNullException(nameof(path));
             }
 
-            if ((users == null || users.Count == 0) && (groups == null || groups.Count == 0))
+            if ((userPerms == null || userPerms.Count == 0) && (groupPerms == null || groupPerms.Count == 0))
             {
-                throw new ArgumentException("One of parameters: " + nameof(users) + " or " + nameof(groups) + " must be not empty.");
+                throw new ArgumentException("One of parameters: " + nameof(userPerms) + " or " + nameof(groupPerms) + " must be not empty.");
             }
 
-            var uriBuilder = BuildUri(PermissionsMethod + "/folder/" + path);
+            var uriBuilder = BuildUri(PermissionsMethod + "/" + path);
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, uriBuilder.Uri)
             {
                 Content = new StringContent(
-                    GetSetFolderPermissionsContent(permission, users, groups),
+                    GetSetFolderPermissionsContent(userPerms, groupPerms, inheritsPermissions, keepParentPermissions),
                     Encoding.UTF8,
                     "application/json")
             };
@@ -74,14 +78,13 @@ namespace Egnyte.Api.Permissions
                 throw new ArgumentNullException(nameof(path));
             }
 
-            var query = GetGetFolderPermissionsQuery(users, groups);
-            var uriBuilder = BuildUri(PermissionsMethod + "/folder/" + path, query);
+            var uriBuilder = BuildUri(PermissionsMethod + "/" + path);
             var httpRequest = new HttpRequestMessage(HttpMethod.Get, uriBuilder.Uri);
 
             var serviceHandler = new ServiceHandler<FolderPermissionsResponse>(httpClient);
             var response = await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
 
-            return MapFolderPermissions(response.Data);
+            return MapFolderPermissions(response.Data, users, groups);
         }
 
         /// <summary>
@@ -105,13 +108,13 @@ namespace Egnyte.Api.Permissions
             {
                 throw new ArgumentNullException(nameof(path));
             }
-            
+
             if (!path.StartsWith("/", StringComparison.Ordinal))
             {
                 path = "/" + path;
             }
 
-            var uriBuilder = BuildUri(PermissionsMethod + "/user/" + username, "folder=" + path);
+            var uriBuilder = BuildUri(PermissionsMethodV1 + "/user/" + username, "folder=" + path);
             var httpRequest = new HttpRequestMessage(HttpMethod.Get, uriBuilder.Uri);
 
             var serviceHandler = new ServiceHandler<EffectivePermissionsResponse>(httpClient);
@@ -120,39 +123,24 @@ namespace Egnyte.Api.Permissions
             return ParsePermissionType(response.Data.Permission);
         }
 
-        FolderPermissions MapFolderPermissions(FolderPermissionsResponse data)
+        FolderPermissions MapFolderPermissions(FolderPermissionsResponse data, List<string> users, List<string> groups)
         {
             return new FolderPermissions(
-                data.Users.Select(
+                data.Users.Where(w => users == null || (users != null && users.Contains(w.Subject)))
+                .Select(
                     u => new GroupOrUserPermissions(
                         u.Subject,
                         ParsePermissionType(u.Permission)))
                     .ToList(),
-                data.Groups.Select(
+                data.Groups.Where(w => groups == null || (groups != null && groups.Contains(w.Subject)))
+                .Select(
                     g => new GroupOrUserPermissions(
                         g.Subject,
                         ParsePermissionType(g.Permission)))
                     .ToList());
         }
 
-        string GetGetFolderPermissionsQuery(List<string> users, List<string> groups)
-        {
-            var queryParams = new List<string>();
-
-            if (users != null && users.Count > 0)
-            {
-                queryParams.Add("users=" + string.Join("|", users));
-            }
-
-            if (groups != null && groups.Count > 0)
-            {
-                queryParams.Add("groups=" + string.Join("|", groups));
-            }
-
-            return string.Join("&", queryParams);
-        }
-
-        string GetSetFolderPermissionsContent(PermissionType type, List<string> users, List<string> groups)
+        string GetSetFolderPermissionsContent(List<GroupOrUserPermissions> users, List<GroupOrUserPermissions> groups, bool? inheritsPermissions, bool? keepParentPermissions)
         {
             var builder = new StringBuilder();
             builder
@@ -160,26 +148,33 @@ namespace Egnyte.Api.Permissions
 
             if (users != null && users.Count > 0)
             {
-                builder.Append("\"users\": [")
-                    .Append(string.Join(",", users.Select(u => "\"" + u + "\"")))
-                    .Append("],");
+                builder.Append("\"userPerms\": {")
+                    .Append(string.Join(",", users.Select(p => "\"" + p.Subject + "\": \"" + p.Permission + "\"")))
+                    .Append("}");
             }
 
             if (groups != null && groups.Count > 0)
             {
-                builder.Append("\"groups\": [")
-                    .Append(string.Join(",", groups.Select(g => "\"" + g + "\"")))
-                    .Append("],");
+                if (users != null && users.Count > 0)
+                    builder.Append(",");
+                builder.Append("\"groupPerms\": {")
+                    .Append(string.Join(",", groups.Select(p => "\"" + p.Subject + "\": \"" + p.Permission + "\"")))
+                    .Append("}");
             }
 
-            builder.Append("\"permission\": \"" + GetPermissionName(type) + "\"")
-                .Append("}");
+            if (inheritsPermissions.HasValue)
+                builder.Append(",\"inheritsPermissions\": \"" + (inheritsPermissions.Value ? "true" : "false") + "\"");
+            
+            if (keepParentPermissions.HasValue)
+                builder.Append(",\"keepParentPermissions\": \"" + (keepParentPermissions.Value ? "true" : "false") + "\"");
+
+            builder.Append("}");
             return builder.ToString();
         }
 
         string GetPermissionName(PermissionType type)
         {
-            switch(type)
+            switch (type)
             {
                 case PermissionType.Viewer:
                     return "Viewer";
