@@ -54,7 +54,7 @@ namespace Egnyte.Api.Tests.Permissions
 
             var requestMessage = httpHandlerMock.GetHttpRequestMessage();
             Assert.AreEqual(
-                "https://acme.egnyte.com/pubapi/v1/perms/folder/Shared/myFolder",
+                "https://acme.egnyte.com/pubapi/v2/perms/Shared/myFolder",
                 requestMessage.RequestUri.ToString());
             Assert.AreEqual(HttpMethod.Get, requestMessage.Method);
 
@@ -95,7 +95,7 @@ namespace Egnyte.Api.Tests.Permissions
 
             var requestMessage = httpHandlerMock.GetHttpRequestMessage();
             Assert.AreEqual(
-                "https://acme.egnyte.com/pubapi/v1/perms/folder/Shared/myFolder?users=jsmith|ajones&groups=All Power Users",
+                "https://acme.egnyte.com/pubapi/v2/perms/Shared/myFolder",
                 requestMessage.RequestUri.ToString());
             Assert.AreEqual(HttpMethod.Get, requestMessage.Method);
 
