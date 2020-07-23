@@ -94,7 +94,9 @@
     <Compile Include="Links\ListLinksV2Tests.cs" />
     <Compile Include="OAuthHelperTests.cs" />
     <Compile Include="Permissions\GetEffectiveUserPermissionsTests.cs" />
+    <Compile Include="Permissions\GetFolderPermissionsTestsV2.cs" />
     <Compile Include="Permissions\GetFolderPermissionsTests.cs" />
+    <Compile Include="Permissions\SetFolderPermissionsTestsV2.cs" />
     <Compile Include="Permissions\SetFolderPermissionsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Search\SearchTests.cs" />
