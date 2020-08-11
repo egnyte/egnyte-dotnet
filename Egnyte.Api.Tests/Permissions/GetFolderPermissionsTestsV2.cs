@@ -12,7 +12,7 @@ namespace Egnyte.Api.Tests.Permissions
     using System;
 
     [TestFixture]
-    public class GetFolderPermissionsTests
+    public class GetFolderPermissionsTestsV2
     {
         const string GetFolderPermissionsResponseContent = @"
             {
@@ -50,11 +50,11 @@ namespace Egnyte.Api.Tests.Permissions
                     });
 
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
-            var folderPermissions = await egnyteClient.Permissions.GetFolderPermissions("Shared/myFolder");
+            var folderPermissions = await egnyteClient.Permissions.GetFolderPermissionsV2("Shared/myFolder");
 
             var requestMessage = httpHandlerMock.GetHttpRequestMessage();
             Assert.AreEqual(
-                "https://acme.egnyte.com/pubapi/v1/perms/folder/Shared/myFolder",
+                "https://acme.egnyte.com/pubapi/v2/perms/Shared/myFolder",
                 requestMessage.RequestUri.ToString());
             Assert.AreEqual(HttpMethod.Get, requestMessage.Method);
 
@@ -88,14 +88,14 @@ namespace Egnyte.Api.Tests.Permissions
                     });
 
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
-            var folderPermissions = await egnyteClient.Permissions.GetFolderPermissions(
+            var folderPermissions = await egnyteClient.Permissions.GetFolderPermissionsV2(
                 "Shared/myFolder",
                 new List<string> { "jsmith", "ajones" },
                 new List<string> { "All Power Users" });
 
             var requestMessage = httpHandlerMock.GetHttpRequestMessage();
             Assert.AreEqual(
-                "https://acme.egnyte.com/pubapi/v1/perms/folder/Shared/myFolder?users=jsmith|ajones&groups=All Power Users",
+                "https://acme.egnyte.com/pubapi/v2/perms/Shared/myFolder",
                 requestMessage.RequestUri.ToString());
             Assert.AreEqual(HttpMethod.Get, requestMessage.Method);
 
@@ -120,7 +120,7 @@ namespace Egnyte.Api.Tests.Permissions
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
 
             var exception = await AssertExtensions.ThrowsAsync<ArgumentNullException>(
-                () => egnyteClient.Permissions.GetFolderPermissions(string.Empty));
+                () => egnyteClient.Permissions.GetFolderPermissionsV2(string.Empty));
 
             Assert.IsTrue(exception.Message.Contains("path"));
             Assert.IsNull(exception.InnerException);
