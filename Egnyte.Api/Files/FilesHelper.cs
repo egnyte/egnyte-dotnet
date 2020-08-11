@@ -40,6 +40,7 @@
                     response.EntryId,
                     response.GroupId,
                     response.LastModifiedFile,
+                    response.Uploaded,
                     response.UploadedBy,
                     response.NumberOfVersions,
                     MapFileVersions(response.Versions)));
@@ -112,6 +113,7 @@
                     f.EntryId,
                     f.GroupId,
                     f.LastModified,
+                    f.Uploaded,
                     f.UploadedBy,
                     f.NumberOfVersions)).ToList();
         }

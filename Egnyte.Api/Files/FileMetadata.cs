@@ -14,6 +14,7 @@
             string entryId,
             string groupId,
             DateTime lastModified,
+            DateTime uploaded,
             string uploadedBy,
             int numberOfVersions,
             List<FileVersionMetadata> versions)
@@ -26,6 +27,7 @@
                 entryId,
                 groupId,
                 lastModified,
+                uploaded,
                 uploadedBy,
                 numberOfVersions)
         {
