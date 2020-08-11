@@ -11,11 +11,12 @@
     using Permissions;
     using Search;
     using Audit;
+    using Tasks;
 
     public class EgnyteClient
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="token">OAuth 2.0 token obtained from Egnyte</param>
         /// <param name="domain">Domain on which you connect to egnyte,
@@ -36,7 +37,7 @@
             {
                 throw new ArgumentNullException(nameof(token));
             }
-            
+
             if (string.IsNullOrWhiteSpace(domain) && string.IsNullOrWhiteSpace(host))
             {
                 throw new ArgumentNullException("domain", "Domain or host has to specified");
@@ -59,6 +60,7 @@
             Permissions = new PermissionsClient(httpClient, domain, host);
             Search = new SearchClient(httpClient, domain, host);
             Audit = new AuditClient(httpClient, domain, host);
+            Tasks = new TasksClient(httpClient, domain, host);
         }
 
         /// <summary>
@@ -108,5 +110,11 @@
         /// effectively gives you a 360° view of the activity in your account
         /// </summary>
         public AuditClient Audit { get; private set; }
+
+        /// <summary>
+        /// The Tasks API allows you to create a task, list all tasks for a file or for a user,
+        /// and list the details for a specific task. Tasks API can also be referred to as "Workflow API".
+        /// </summary>
+        public TasksClient Tasks { get; private set; }
     }
 }

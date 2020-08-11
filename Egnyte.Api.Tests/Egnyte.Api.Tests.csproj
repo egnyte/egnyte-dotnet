@@ -100,6 +100,11 @@
     <Compile Include="Permissions\SetFolderPermissionsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Search\SearchTests.cs" />
+    <Compile Include="Tasks\GetTaskDetailsTests.cs" />
+    <Compile Include="Tasks\ListTasksTests.cs" />
+    <Compile Include="Tasks\DeleteTaskTests.cs" />
+    <Compile Include="Tasks\UpdateTaskTests.cs" />
+    <Compile Include="Tasks\CreateTaskTests.cs" />
     <Compile Include="TestsHelper.cs" />
     <Compile Include="Users\DeleteUserTests.cs" />
     <Compile Include="Users\GetUserListTests.cs" />
