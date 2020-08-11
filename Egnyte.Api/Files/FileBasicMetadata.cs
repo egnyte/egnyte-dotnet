@@ -13,6 +13,7 @@
             string entryId,
             string groupId,
             DateTime lastModified,
+            DateTime uploaded,
             string uploadedBy,
             int numberOfVersions)
         {
@@ -24,6 +25,7 @@
             EntryId = entryId;
             GroupId = groupId;
             LastModified = lastModified;
+            Uploaded = uploaded;
             UploadedBy = uploadedBy;
             NumberOfVersions = numberOfVersions;
         }
@@ -43,6 +45,8 @@
         public string GroupId { get; private set; }
 
         public DateTime LastModified { get; private set; }
+
+        public DateTime Uploaded { get; private set; }
 
         public string UploadedBy { get; private set; }
 

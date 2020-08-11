@@ -16,6 +16,7 @@ namespace Egnyte.Api.Tests.Files
             {    
             ""name"": ""Documents"",
             ""lastModified"": ""1467908109000"",
+            ""uploaded"": 1596723891528,
             ""count"": 1,
             ""offset"": 2,
             ""path"": ""/Shared/Documents"",
@@ -28,6 +29,7 @@ namespace Egnyte.Api.Tests.Files
             ""allowed_folder_link_types"" : [""anyone"", ""password""],
             ""files"":
                 [{
+                    ""uploaded"": ""1429003200000"",
                     ""checksum"": ""checksum1"",
                     ""size"": 1048147,
                     ""path"": ""/Shared/Documents/nice_image.jpg"",
@@ -44,6 +46,7 @@ namespace Egnyte.Api.Tests.Files
                 [{
                     ""name"": ""Test"",
                     ""lastModified"": ""1467908209000"",
+                    ""uploaded"": ""1467908209000"",
                     ""path"": ""/Shared/Documents/Test"",
                     ""folder_id"": ""6a1c7f21-874e-44d0-9360-ca09eacf8553"",
                     ""is_folder"": true,
@@ -53,6 +56,7 @@ namespace Egnyte.Api.Tests.Files
                 {
                     ""name"": ""Articles"",
                     ""lastModified"": ""1467908309000"",
+                    ""uploaded"": ""1467908309000"",
                     ""path"": ""/Shared/Documents/Articles"",
                     ""folder_id"": ""429b22bf-a111-4f7d-8460-58223db92817"",
                     ""is_folder"": true,
@@ -63,6 +67,7 @@ namespace Egnyte.Api.Tests.Files
 
         private const string ListFileResponse = @"
         {
+            ""uploaded"": ""1439806811000"",
             ""checksum"": ""checksum1"",
             ""size"": 4799,
             ""path"": ""/Shared/Documents/report.docx"",
@@ -122,7 +127,7 @@ namespace Egnyte.Api.Tests.Files
 
             var folderMetadata = result.AsFolder;
             Assert.AreEqual("Documents", folderMetadata.Name);
-            Assert.AreEqual(new DateTime(2016, 7, 7, 18, 15, 9), folderMetadata.LastModified);
+            Assert.AreEqual(new DateTimeOffset(2016, 7, 7, 16, 15, 9, TimeSpan.Zero).ToLocalTime().DateTime, folderMetadata.LastModified);
             Assert.AreEqual(1, folderMetadata.Count);
             Assert.AreEqual(2, folderMetadata.Offset);
             Assert.AreEqual("/Shared/Documents", folderMetadata.Path);
@@ -145,12 +150,13 @@ namespace Egnyte.Api.Tests.Files
             Assert.AreEqual("8d0ee165-fafe-4da8-aea4-4dda4dc7440b", folderMetadata.Files[0].EntryId);
             Assert.AreEqual("f882c636-4a2b-49af-a29c-2ec6507a2a1f", folderMetadata.Files[0].GroupId);
             Assert.AreEqual(new DateTime(2015, 4, 14, 9, 25, 21), folderMetadata.Files[0].LastModified);
+            Assert.AreEqual(new DateTime(2015, 4, 14, 9, 20, 00), folderMetadata.Files[0].Uploaded);
             Assert.AreEqual("mik", folderMetadata.Files[0].UploadedBy);
             Assert.AreEqual(2, folderMetadata.Files[0].NumberOfVersions);
 
             Assert.AreEqual(2, folderMetadata.Folders.Count);
             Assert.AreEqual("Test", folderMetadata.Folders[0].Name);
-            Assert.AreEqual(new DateTime(2016, 7, 7, 18, 16, 49), folderMetadata.Folders[0].LastModified);
+            Assert.AreEqual(new DateTimeOffset(2016, 7, 7, 16, 16, 49, TimeSpan.Zero).ToLocalTime().DateTime, folderMetadata.Folders[0].LastModified);
             Assert.AreEqual("/Shared/Documents/Test", folderMetadata.Folders[0].Path);
             Assert.AreEqual("6a1c7f21-874e-44d0-9360-ca09eacf8553", folderMetadata.Folders[0].FolderId);
             Assert.AreEqual(2, folderMetadata.Folders[0].AllowedFileLinkTypes.Length);
@@ -161,7 +167,7 @@ namespace Egnyte.Api.Tests.Files
             Assert.AreEqual("password", folderMetadata.Folders[0].AllowedFolderLinkTypes[1]);
 
             Assert.AreEqual("Articles", folderMetadata.Folders[1].Name);
-            Assert.AreEqual(new DateTime(2016, 7, 7, 18, 18, 29), folderMetadata.Folders[1].LastModified);
+            Assert.AreEqual(new DateTimeOffset(2016, 7, 7, 16, 18, 29, TimeSpan.Zero).ToLocalTime().DateTime, folderMetadata.Folders[1].LastModified);
             Assert.AreEqual("/Shared/Documents/Articles", folderMetadata.Folders[1].Path);
             Assert.AreEqual("429b22bf-a111-4f7d-8460-58223db92817", folderMetadata.Folders[1].FolderId);
             Assert.AreEqual(2, folderMetadata.Folders[1].AllowedFileLinkTypes.Length);
@@ -206,6 +212,7 @@ namespace Egnyte.Api.Tests.Files
             Assert.AreEqual("c0c01799-df8b-4859-bcb1-0fb6a80fc9ac", fileMetadata.GroupId);
             Assert.AreEqual(false, fileMetadata.Locked);
             Assert.AreEqual(new DateTime(2015, 8, 17, 10, 28, 55), fileMetadata.LastModified);
+            Assert.AreEqual(new DateTime(2015, 8, 17, 10, 20, 11), fileMetadata.Uploaded);
             Assert.AreEqual("mik", fileMetadata.UploadedBy);
             Assert.AreEqual(3, fileMetadata.NumberOfVersions);
 

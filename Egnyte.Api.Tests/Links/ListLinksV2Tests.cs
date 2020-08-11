@@ -85,7 +85,7 @@ namespace Egnyte.Api.Tests.Links
             Assert.AreEqual("https://test.egnyte.com/dl/PLeklqtBWN", firstLink.Url);
             Assert.AreEqual("PLeklqtBWN", firstLink.Id);
             Assert.AreEqual(false, firstLink.LinkToCurrent);
-            Assert.AreEqual(new DateTime(2016, 01, 28, 7, 01, 17), firstLink.CreationDate);
+            Assert.AreEqual(new DateTimeOffset(2016, 01, 28, 6, 01, 17, TimeSpan.Zero).ToLocalTime().DateTime, firstLink.CreationDate);
             Assert.AreEqual("mik", firstLink.CreatedBy);
             Assert.AreEqual(default(DateTime), firstLink.ExpiryDate);
             Assert.AreEqual(0, firstLink.ExpiryClicks);
@@ -102,9 +102,9 @@ namespace Egnyte.Api.Tests.Links
             Assert.AreEqual("https://test.egnyte.com/dl/jKI7Lx9VPE", secondLink.Url);
             Assert.AreEqual("PLeklqtBWN", firstLink.Id);
             Assert.AreEqual(false, secondLink.LinkToCurrent);
-            Assert.AreEqual(new DateTime(2016, 01, 28, 7, 01, 17), secondLink.CreationDate);
+            Assert.AreEqual(new DateTimeOffset(2016, 01, 28, 6, 01, 17, TimeSpan.Zero).ToLocalTime().DateTime, secondLink.CreationDate);
             Assert.AreEqual("mik", secondLink.CreatedBy);
-            Assert.AreEqual(new DateTime(2020, 01, 28, 7, 01, 17), secondLink.ExpiryDate);
+            Assert.AreEqual(new DateTimeOffset(2020, 01, 28, 6, 01, 17, TimeSpan.Zero).ToLocalTime().DateTime, secondLink.ExpiryDate);
             Assert.AreEqual(6, secondLink.ExpiryClicks);
         }
 
