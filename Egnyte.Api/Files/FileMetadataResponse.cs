@@ -1,4 +1,5 @@
-﻿using Egnyte.Api.Common;
+﻿using System.Collections.Generic;
+using Egnyte.Api.Common;
 
 namespace Egnyte.Api.Files
 {
@@ -44,5 +45,8 @@ namespace Egnyte.Api.Files
 
         [JsonProperty(PropertyName = "num_versions")]
         public int NumberOfVersions { get; set; }
+
+        [JsonProperty(PropertyName = "custom_metadata")]
+        public FileOrFolderCustomMetadata CustomMetadata { get; set; }
     }
 }

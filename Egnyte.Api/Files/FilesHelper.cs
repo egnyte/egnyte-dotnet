@@ -8,6 +8,12 @@
     {
         internal static FileOrFolderMetadata MapResponseToMetadata(ListFileOrFolderResponse response)
         {
+            var customMetadata = new FileOrFolderCustomMetadata();
+            if (response.CustomMetadata != null)
+            {
+                customMetadata.AddRange(response.CustomMetadata);
+            }
+
             if (response.IsFolder)
             {
                 return new FileOrFolderMetadata(
@@ -25,7 +31,8 @@
                         response.AllowedFileLinkTypes,
                         response.AllowedFolderLinkTypes,
                         MapChildFoldersResponse(response.Folders),
-                        MapChildFilesResponse(response.Files)));
+                        MapChildFilesResponse(response.Files),
+                        customMetadata));
             }
 
             return new FileOrFolderMetadata(
@@ -43,7 +50,8 @@
                     response.Uploaded,
                     response.UploadedBy,
                     response.NumberOfVersions,
-                    MapFileVersions(response.Versions)));
+                    MapFileVersions(response.Versions),
+                    customMetadata));
         }
 
         internal static string MapFolderUpdateRequest(
@@ -115,7 +123,8 @@
                     f.LastModified,
                     f.Uploaded,
                     f.UploadedBy,
-                    f.NumberOfVersions)).ToList();
+                    f.NumberOfVersions,
+                    f.CustomMetadata)).ToList();
         }
 
         private static List<FolderMetadata> MapChildFoldersResponse(IEnumerable<FolderMetadataResponse> folders)
@@ -132,7 +141,8 @@
                     f.Path,
                     f.FolderId,
                     f.AllowedFileLinkTypes,
-                    f.AllowedFolderLinkTypes))
+                    f.AllowedFolderLinkTypes,
+                    f.CustomMetadata))
                     .ToList();
         }
 

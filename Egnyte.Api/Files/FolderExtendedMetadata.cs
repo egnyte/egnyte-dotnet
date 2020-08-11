@@ -18,8 +18,9 @@
             string[] allowedFileLinkTypes,
             string[] allowedFolderLinkTypes,
             List<FolderMetadata> folders,
-            List<FileBasicMetadata> files)
-            : base(name, lastModified, path, folderId, allowedFileLinkTypes, allowedFolderLinkTypes)
+            List<FileBasicMetadata> files,
+            FileOrFolderCustomMetadata customMetadata)
+            : base(name, lastModified, path, folderId, allowedFileLinkTypes, allowedFolderLinkTypes, customMetadata)
         {
             Count = count;
             Offset = offset;

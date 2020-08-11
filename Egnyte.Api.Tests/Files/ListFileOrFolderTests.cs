@@ -1,3 +1,5 @@
+using System.Linq;
+
 namespace Egnyte.Api.Tests.Files
 {
     using System;
@@ -21,6 +23,14 @@ namespace Egnyte.Api.Tests.Files
             ""offset"": 2,
             ""path"": ""/Shared/Documents"",
             ""folder_id"": ""f3066c91-245c-446d-85ac-bfb88196e4e8"",
+            ""custom_metadata"": [
+                {
+                    ""custom attributes"": {
+                        ""reviewed"": true,
+                        ""visibility"": ""private"",
+                    }
+                }
+            ],
             ""total_count"": 18,
             ""is_folder"": true,
             ""public_links"": ""files_folders"",
@@ -40,6 +50,14 @@ namespace Egnyte.Api.Tests.Files
                     ""group_id"": ""f882c636-4a2b-49af-a29c-2ec6507a2a1f"",
                     ""last_modified"": ""Tue, 14 Apr 2015 09:25:21 GMT"",
                     ""uploaded_by"": ""mik"",
+                    ""custom_metadata"": [
+                        {
+                            ""custom attributes"": {
+                                ""reviewed"": true,
+                                ""contentType"": ""image/jpeg"",
+                            }
+                        }
+                    ],
                     ""num_versions"": 2
                 }],
             ""folders"":
@@ -61,7 +79,15 @@ namespace Egnyte.Api.Tests.Files
                     ""folder_id"": ""429b22bf-a111-4f7d-8460-58223db92817"",
                     ""is_folder"": true,
                     ""allowed_file_link_types"" : [""domain"", ""recipients""],
-                    ""allowed_folder_link_types"" : [""anyone"", ""password""]
+                    ""allowed_folder_link_types"" : [""anyone"", ""password""],
+                    ""custom_metadata"": [
+                        {
+                            ""custom attributes"": {
+                                ""reviewed"": false,
+                                ""visibility"": ""public"",
+                            }
+                        }
+                    ],
                 }]
             }";
 
@@ -95,6 +121,19 @@ namespace Egnyte.Api.Tests.Files
             ""group_id"": ""c0c01799-df8b-4859-bcb1-0fb6a80fc9ac"",
             ""last_modified"": ""Mon, 17 Aug 2015 10:28:55 GMT"",
             ""uploaded_by"": ""mik"",
+            ""custom_metadata"": [
+                {
+                    ""custom attributes"": {
+                        ""reviewed"": false,
+                        ""contentType"": ""application/vnd.openxmlformats-officedocument.wordprocessing"",
+                    }
+                },
+                {
+                    ""optional attributes"": {
+                        ""archived"": true,
+                    },
+                }
+            ],
             ""num_versions"": 3
         }";
 
@@ -141,7 +180,9 @@ namespace Egnyte.Api.Tests.Files
             Assert.AreEqual(2, folderMetadata.AllowedFolderLinkTypes.Length);
             Assert.AreEqual("anyone", folderMetadata.AllowedFolderLinkTypes[0]);
             Assert.AreEqual("password", folderMetadata.AllowedFolderLinkTypes[1]);
-            
+            Assert.AreEqual(true, folderMetadata.CustomMetadata["custom attributes"].Properties["reviewed"]);
+            Assert.AreEqual("private", folderMetadata.CustomMetadata["custom attributes"].Properties["visibility"]);
+
             Assert.AreEqual(1, folderMetadata.Files.Count);
             Assert.AreEqual("checksum1", folderMetadata.Files[0].Checksum);
             Assert.AreEqual("/Shared/Documents/nice_image.jpg", folderMetadata.Files[0].Path);
@@ -153,6 +194,8 @@ namespace Egnyte.Api.Tests.Files
             Assert.AreEqual(new DateTime(2015, 4, 14, 9, 20, 00), folderMetadata.Files[0].Uploaded);
             Assert.AreEqual("mik", folderMetadata.Files[0].UploadedBy);
             Assert.AreEqual(2, folderMetadata.Files[0].NumberOfVersions);
+            Assert.AreEqual(true, folderMetadata.Files[0].CustomMetadata["custom attributes"]?.Properties["reviewed"]);
+            Assert.AreEqual("image/jpeg", folderMetadata.Files[0].CustomMetadata["custom attributes"]?.Properties["contentType"]);
 
             Assert.AreEqual(2, folderMetadata.Folders.Count);
             Assert.AreEqual("Test", folderMetadata.Folders[0].Name);
@@ -176,10 +219,12 @@ namespace Egnyte.Api.Tests.Files
             Assert.AreEqual(2, folderMetadata.Folders[1].AllowedFolderLinkTypes.Length);
             Assert.AreEqual("anyone", folderMetadata.Folders[1].AllowedFolderLinkTypes[0]);
             Assert.AreEqual("password", folderMetadata.Folders[1].AllowedFolderLinkTypes[1]);
+            Assert.AreEqual(false, folderMetadata.Folders[1].CustomMetadata["custom attributes"].Properties["reviewed"]);
+            Assert.AreEqual("public", folderMetadata.Folders[1].CustomMetadata["custom attributes"].Properties["visibility"]);
 
             var requestMessage = httpHandlerMock.GetHttpRequestMessage();
             Assert.AreEqual(
-                "https://acme.egnyte.com/pubapi/v1/fs/path?list_content=True&allowed_link_types=False",
+                "https://acme.egnyte.com/pubapi/v1/fs/path?list_content=True&allowed_link_types=False&list_custom_metadata=True",
                 requestMessage.RequestUri.ToString());
         }
 
@@ -215,6 +260,9 @@ namespace Egnyte.Api.Tests.Files
             Assert.AreEqual(new DateTime(2015, 8, 17, 10, 20, 11), fileMetadata.Uploaded);
             Assert.AreEqual("mik", fileMetadata.UploadedBy);
             Assert.AreEqual(3, fileMetadata.NumberOfVersions);
+            Assert.AreEqual(false, fileMetadata.CustomMetadata["custom attributes"].Properties["reviewed"]);
+            Assert.AreEqual("application/vnd.openxmlformats-officedocument.wordprocessing", fileMetadata.CustomMetadata["custom attributes"].Properties["contentType"]);
+            Assert.AreEqual(true, fileMetadata.CustomMetadata["optional attributes"].Properties["archived"]);
 
             Assert.AreEqual(2, fileMetadata.Versions.Count);
             Assert.AreEqual("checksum2", fileMetadata.Versions[0].Checksum);

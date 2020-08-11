@@ -17,7 +17,8 @@
             DateTime uploaded,
             string uploadedBy,
             int numberOfVersions,
-            List<FileVersionMetadata> versions)
+            List<FileVersionMetadata> versions,
+            FileOrFolderCustomMetadata customMetadata)
             : base(
                 checksum,
                 size,
@@ -29,7 +30,8 @@
                 lastModified,
                 uploaded,
                 uploadedBy,
-                numberOfVersions)
+                numberOfVersions,
+                customMetadata)
         {
             Versions = versions;
         }
