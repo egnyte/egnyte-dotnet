@@ -208,13 +208,15 @@
         /// <param name="listContent">If false, then do not include contents of folder in response</param>
         /// <param name="allowedLinkTypes">If true, then show allowed_file_link_types,
         /// allowed_folder_link_types fields, and allow_upload_links fields</param>
+        /// <param name="listCustomMetadata">If true, the custom_metadata fields will be included</param>
         /// <returns>Metadata info about file or folder</returns>
         public async Task<FileOrFolderMetadata> ListFileOrFolder(
             string path,
             bool listContent = true,
-            bool allowedLinkTypes = false)
+            bool allowedLinkTypes = false,
+            bool listCustomMetadata = true)
         {
-            var listFilesUri = PrepareListFileOrFolderUri(path, listContent, allowedLinkTypes);
+            var listFilesUri = PrepareListFileOrFolderUri(path, listContent, allowedLinkTypes, listCustomMetadata);
             var httpRequest = new HttpRequestMessage(HttpMethod.Get, listFilesUri);
             var serviceHandler = new ServiceHandler<ListFileOrFolderResponse>(httpClient);
 
@@ -513,9 +515,9 @@
             return 0;
         }
 
-        Uri PrepareListFileOrFolderUri(string path, bool listContent, bool allowedLinkTypes)
+        Uri PrepareListFileOrFolderUri(string path, bool listContent, bool allowedLinkTypes, bool listCustomMetadata = true)
         {
-            var query = "list_content=" + listContent + "&allowed_link_types=" + allowedLinkTypes;
+            var query = "list_content=" + listContent + "&allowed_link_types=" + allowedLinkTypes + "&list_custom_metadata=" + listCustomMetadata;
             var uriBuilder = BuildUri(FilesMethod + "/" + path, query);
 
             return uriBuilder.Uri;

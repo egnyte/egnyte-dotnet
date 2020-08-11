@@ -58,6 +58,11 @@
     <Compile Include="EgnyteClientHelper.cs" />
     <Compile Include="Files\ChunkUploadedMetadata.cs" />
     <Compile Include="Files\DownloadedFileAsStream.cs" />
+    <Compile Include="Files\FileOrFolderBasicCustomMetadata.cs" />
+    <Compile Include="Files\FileOrFolderCustomMetadataResponse.cs" />
+    <Compile Include="Files\FileOrFolderCustomMetadataSectionResponse.cs" />
+    <Compile Include="Files\FileOrFolderCustomMetadata.cs" />
+    <Compile Include="Files\FileOrFolderCustomMetadataSection.cs" />
     <Compile Include="Files\FolderCreatedResponse.cs" />
     <Compile Include="Files\PublicLinksType.cs" />
     <Compile Include="Files\UpdateFolderMetadata.cs" />

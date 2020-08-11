@@ -86,7 +86,10 @@ namespace Egnyte.Api.Files
         public int NumberOfVersions { get; set; }
 
         [JsonProperty(PropertyName = "versions")]
-        public List<FileVersionMetadataResponse> Versions { get; set; } 
+        public List<FileVersionMetadataResponse> Versions { get; set; }
+
+        [JsonProperty(PropertyName = "custom_metadata")]
+        public FileOrFolderCustomMetadataResponse CustomMetadata { get; set; }
 
         #endregion
     }
