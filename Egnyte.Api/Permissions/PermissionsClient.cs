@@ -10,10 +10,52 @@ namespace Egnyte.Api.Permissions
 {
     public class PermissionsClient : BaseClient
     {
-        const string PermissionsMethodV1 = "/pubapi/v1/perms";
-        const string PermissionsMethod = "/pubapi/v2/perms";
+        const string PermissionsMethod = "/pubapi/v1/perms";
+        const string PermissionsMethodV2 = "/pubapi/v2/perms";
 
         internal PermissionsClient(HttpClient httpClient, string domain = "", string host = "") : base(httpClient, domain, host) { }
+
+        /// <summary>
+        /// Sets the effective permission level for specific users or groups on a given folder
+        /// </summary>
+        /// <param name="path">Required. Full path to the folder</param>
+        /// <param name="permission">Required. Type of permission: None, Viewer, Editor, Full, Owner</param>
+        /// <param name="users">List of usernames to set permissions for
+        /// At least one user or group must be specified</param>
+        /// <param name="groups">List of groupnames to set permissions for
+        /// At least one user or group must be specified</param>
+        /// <returns>True if operation succedes</returns>
+        [Obsolete]
+        public async Task<bool> SetFolderPermissions(
+            string path,
+            PermissionType permission,
+            List<string> users = null,
+            List<string> groups = null)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                throw new ArgumentNullException(nameof(path));
+            }
+
+            if ((users == null || users.Count == 0) && (groups == null || groups.Count == 0))
+            {
+                throw new ArgumentException("One of parameters: " + nameof(users) + " or " + nameof(groups) + " must be not empty.");
+            }
+
+            var uriBuilder = BuildUri(PermissionsMethod + "/folder/" + path);
+            var httpRequest = new HttpRequestMessage(HttpMethod.Post, uriBuilder.Uri)
+            {
+                Content = new StringContent(
+                    GetSetFolderPermissionsContent(permission, users, groups),
+                    Encoding.UTF8,
+                    "application/json")
+            };
+
+            var serviceHandler = new ServiceHandler<string>(httpClient);
+            await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
+
+            return true;
+        }
 
         /// <summary>
         /// Sets the effective permission level for specific users or groups on a given folder
@@ -27,7 +69,7 @@ namespace Egnyte.Api.Permissions
         /// <param name="keepParentPermissions">When disabling permissions inheritance with inheritsPermissions,
         /// this options determines whether previously inherited permissions from parent folders should be copied to this folder.</param>
         /// <returns>True if operation succedes</returns>
-        public async Task<bool> SetFolderPermissions(
+        public async Task<bool> SetFolderPermissionsV2(
             string path,
             List<GroupOrUserPermissions> userPerms = null,
             List<GroupOrUserPermissions> groupPerms = null,
@@ -44,7 +86,7 @@ namespace Egnyte.Api.Permissions
                 throw new ArgumentException("One of parameters: " + nameof(userPerms) + " or " + nameof(groupPerms) + " must be not empty.");
             }
 
-            var uriBuilder = BuildUri(PermissionsMethod + "/" + path);
+            var uriBuilder = BuildUri(PermissionsMethodV2 + "/" + path);
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, uriBuilder.Uri)
             {
                 Content = new StringContent(
@@ -68,6 +110,7 @@ namespace Egnyte.Api.Permissions
         /// <param name="groups">Optional. List of groups to report on
         /// If neither users nor groups is set then permissions for all subjects are returned</param>
         /// <returns></returns>
+        [Obsolete]
         public async Task<FolderPermissions> GetFolderPermissions(
             string path,
             List<string> users = null,
@@ -78,7 +121,36 @@ namespace Egnyte.Api.Permissions
                 throw new ArgumentNullException(nameof(path));
             }
 
-            var uriBuilder = BuildUri(PermissionsMethod + "/" + path);
+            var query = GetGetFolderPermissionsQuery(users, groups);
+            var uriBuilder = BuildUri(PermissionsMethod + "/folder/" + path, query);
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, uriBuilder.Uri);
+
+            var serviceHandler = new ServiceHandler<FolderPermissionsResponse>(httpClient);
+            var response = await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
+
+            return MapFolderPermissions(response.Data);
+        }
+
+        /// <summary>
+        /// Gets the permissions for a given folder
+        /// </summary>
+        /// <param name="path">Required. Full path to the folder</param>
+        /// <param name="users">Optional. List of usernames to report on
+        /// If neither users nor groups is set then permissions for all subjects are returned</param>
+        /// <param name="groups">Optional. List of groups to report on
+        /// If neither users nor groups is set then permissions for all subjects are returned</param>
+        /// <returns></returns>
+        public async Task<FolderPermissions> GetFolderPermissionsV2(
+            string path,
+            List<string> users = null,
+            List<string> groups = null)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                throw new ArgumentNullException(nameof(path));
+            }
+
+            var uriBuilder = BuildUri(PermissionsMethodV2 + "/" + path);
             var httpRequest = new HttpRequestMessage(HttpMethod.Get, uriBuilder.Uri);
 
             var serviceHandler = new ServiceHandler<FolderPermissionsResponse>(httpClient);
@@ -114,13 +186,45 @@ namespace Egnyte.Api.Permissions
                 path = "/" + path;
             }
 
-            var uriBuilder = BuildUri(PermissionsMethodV1 + "/user/" + username, "folder=" + path);
+            var uriBuilder = BuildUri(PermissionsMethod + "/user/" + username, "folder=" + path);
             var httpRequest = new HttpRequestMessage(HttpMethod.Get, uriBuilder.Uri);
 
             var serviceHandler = new ServiceHandler<EffectivePermissionsResponse>(httpClient);
             var response = await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
 
             return ParsePermissionType(response.Data.Permission);
+        }
+
+        string GetGetFolderPermissionsQuery(List<string> users, List<string> groups)
+        {
+            var queryParams = new List<string>();
+
+            if (users != null && users.Count > 0)
+            {
+                queryParams.Add("users=" + string.Join("|", users));
+            }
+
+            if (groups != null && groups.Count > 0)
+            {
+                queryParams.Add("groups=" + string.Join("|", groups));
+            }
+
+            return string.Join("&", queryParams);
+        }
+
+        FolderPermissions MapFolderPermissions(FolderPermissionsResponse data)
+        {
+            return new FolderPermissions(
+                data.Users.Select(
+                    u => new GroupOrUserPermissions(
+                        u.Subject,
+                        ParsePermissionType(u.Permission)))
+                    .ToList(),
+                data.Groups.Select(
+                    g => new GroupOrUserPermissions(
+                        g.Subject,
+                        ParsePermissionType(g.Permission)))
+                    .ToList());
         }
 
         FolderPermissions MapFolderPermissions(FolderPermissionsResponse data, List<string> users, List<string> groups)
@@ -138,6 +242,31 @@ namespace Egnyte.Api.Permissions
                         g.Subject,
                         ParsePermissionType(g.Permission)))
                     .ToList());
+        }
+
+        string GetSetFolderPermissionsContent(PermissionType type, List<string> users, List<string> groups)
+        {
+            var builder = new StringBuilder();
+            builder
+                .Append("{");
+
+            if (users != null && users.Count > 0)
+            {
+                builder.Append("\"users\": [")
+                    .Append(string.Join(",", users.Select(u => "\"" + u + "\"")))
+                    .Append("],");
+            }
+
+            if (groups != null && groups.Count > 0)
+            {
+                builder.Append("\"groups\": [")
+                    .Append(string.Join(",", groups.Select(g => "\"" + g + "\"")))
+                    .Append("],");
+            }
+
+            builder.Append("\"permission\": \"" + GetPermissionName(type) + "\"")
+                .Append("}");
+            return builder.ToString();
         }
 
         string GetSetFolderPermissionsContent(List<GroupOrUserPermissions> users, List<GroupOrUserPermissions> groups, bool? inheritsPermissions, bool? keepParentPermissions)
