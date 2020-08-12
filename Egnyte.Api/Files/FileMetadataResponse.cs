@@ -1,4 +1,7 @@
-﻿namespace Egnyte.Api.Files
+﻿using System.Collections.Generic;
+using Egnyte.Api.Common;
+
+namespace Egnyte.Api.Files
 {
     using System;
 
@@ -33,10 +36,17 @@
         [JsonProperty(PropertyName = "last_modified")]
         public DateTime LastModified { get; set; }
 
+        [JsonProperty(PropertyName = "uploaded")]
+        [JsonConverter(typeof(UnixTimeConverter))]
+        public DateTime Uploaded { get; set; }
+
         [JsonProperty(PropertyName = "uploaded_by")]
         public string UploadedBy { get; set; }
 
         [JsonProperty(PropertyName = "num_versions")]
         public int NumberOfVersions { get; set; }
+
+        [JsonProperty(PropertyName = "custom_metadata")]
+        public FileOrFolderCustomMetadata CustomMetadata { get; set; }
     }
 }

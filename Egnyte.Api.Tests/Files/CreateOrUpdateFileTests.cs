@@ -70,7 +70,7 @@ namespace Egnyte.Api.Tests.Files
             var content = httpHandlerMock.GetRequestContentAsString();
             Assert.AreEqual(Checksum, result.Checksum);
             Assert.AreEqual("\"" + ETag + "\"", result.EntryId);
-            Assert.AreEqual(new DateTime(2012, 08, 26, 5, 55, 29), result.LastModified);
+            Assert.AreEqual(new DateTimeOffset(2012, 08, 26, 5, 55, 29, TimeSpan.Zero).ToLocalTime().DateTime, result.LastModified);
             Assert.AreEqual("https://acme.egnyte.com/pubapi/v1/fs-content/path", requestMessage.RequestUri.ToString());
             Assert.AreEqual("file", content);
         }
@@ -84,7 +84,7 @@ namespace Egnyte.Api.Tests.Files
             };
             responseMessage.Headers.Add("X-Sha512-Checksum", Checksum);
             responseMessage.Headers.ETag = new System.Net.Http.Headers.EntityTagHeaderValue("\"" + ETag + "\"");
-            responseMessage.Content.Headers.Add("Last-Modified", "Sun, 26 Aug 2012 03:55:29 GMT");
+            responseMessage.Content.Headers.Add("Last-Modified", "Sun, 26 Aug 2012 05:55:29 GMT");
 
             return responseMessage;
         }

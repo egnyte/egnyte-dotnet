@@ -24,5 +24,8 @@
 
         [JsonProperty(PropertyName = "allowed_folder_link_types")]
         public string[] AllowedFolderLinkTypes { get; set; }
+
+        [JsonProperty(PropertyName = "custom_metadata")]
+        public FileOrFolderCustomMetadata CustomMetadata { get; set; }
     }
 }

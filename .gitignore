@@ -32,4 +32,4 @@ packages
 **/.build/Reports
 **/.build/NuGetPackage
 *ncrunch*
-.vs/
+*.vs
