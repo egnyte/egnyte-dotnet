@@ -51,7 +51,7 @@ namespace Egnyte.Api.Tests.Files
 
             Assert.AreEqual("/Shared/MyDocument", response.Path);
             Assert.AreEqual("ApiTests2", response.Name);
-            Assert.AreEqual(new DateTime(2016, 1, 6, 21, 3, 30), response.LastModified);
+            Assert.AreEqual(new DateTime(2016, 1, 6, 20, 3, 30, DateTimeKind.Utc).ToLocalTime(), response.LastModified);
             Assert.AreEqual("b0330bd2-4290-47bc-a537-e5520dc7d320", response.FolderId);
             Assert.AreEqual("This is new description set up at: 2018-07-27 05:29:15", response.FolderDescription);
             Assert.True(response.IsFolder);

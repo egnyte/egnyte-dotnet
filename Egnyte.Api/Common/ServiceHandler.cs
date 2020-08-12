@@ -6,9 +6,9 @@
     using Newtonsoft.Json;
     using System.IO;
 
-    public class ServiceHandler<T> where T : class 
+    public class ServiceHandler<T> where T : class
     {
-        readonly HttpClient httpClient;
+        private readonly HttpClient httpClient;
 
         public ServiceHandler(HttpClient httpClient)
         {
@@ -19,7 +19,7 @@
         {
             request.RequestUri = ApplyAdditionalUrlMapping(request.RequestUri);
             var response = await httpClient.SendAsync(request).ConfigureAwait(false);
-            var rawContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            var rawContent = response.Content != null ? await response.Content.ReadAsStringAsync().ConfigureAwait(false) : null;
 
             if (response.IsSuccessStatusCode)
             {
@@ -35,9 +35,9 @@
                     }
 
                     return new ServiceResponse<T>
-                               {
-                                   Data = JsonConvert.DeserializeObject<T>(rawContent),
-                                   Headers = response.GetResponseHeaders()
+                    {
+                        Data = JsonConvert.DeserializeObject<T>(rawContent),
+                        Headers = response.GetResponseHeaders()
                     };
                 }
                 catch (Exception e)
@@ -60,10 +60,10 @@
             var response = await this.httpClient.SendAsync(request);
             var bytes = await response.Content.ReadAsByteArrayAsync();
             return new ServiceResponse<byte[]>
-                       {
-                           Data = bytes,
-                           Headers = response.GetResponseHeaders()
-                       };
+            {
+                Data = bytes,
+                Headers = response.GetResponseHeaders()
+            };
         }
 
         public async Task<ServiceResponse<Stream>> GetFileToDownloadAsStream(HttpRequestMessage request)
@@ -71,7 +71,7 @@
             request.RequestUri = ApplyAdditionalUrlMapping(request.RequestUri);
             var response = await this.httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
             var stream = await response.Content.ReadAsStreamAsync();
-            
+
             return new ServiceResponse<Stream>
             {
                 Data = stream,
@@ -79,7 +79,7 @@
             };
         }
 
-        Uri ApplyAdditionalUrlMapping(Uri requestUri)
+        private Uri ApplyAdditionalUrlMapping(Uri requestUri)
         {
             var url = requestUri.ToString();
             url = url.Replace("[", "%5B")
