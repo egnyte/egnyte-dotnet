@@ -1,4 +1,6 @@
-﻿namespace Egnyte.Api.Files
+﻿using Egnyte.Api.Common;
+
+namespace Egnyte.Api.Files
 {
     using System;
     using System.Collections.Generic;
@@ -73,6 +75,10 @@
         [JsonProperty(PropertyName = "last_modified")]
         public DateTime LastModifiedFile { get; set; }
 
+        [JsonProperty(PropertyName = "uploaded")]
+        [JsonConverter(typeof(UnixTimeConverter))]
+        public DateTime Uploaded { get; set; }
+
         [JsonProperty(PropertyName = "uploaded_by")]
         public string UploadedBy { get; set; }
 
@@ -80,7 +86,10 @@
         public int NumberOfVersions { get; set; }
 
         [JsonProperty(PropertyName = "versions")]
-        public List<FileVersionMetadataResponse> Versions { get; set; } 
+        public List<FileVersionMetadataResponse> Versions { get; set; }
+
+        [JsonProperty(PropertyName = "custom_metadata")]
+        public FileOrFolderCustomMetadataResponse CustomMetadata { get; set; }
 
         #endregion
     }

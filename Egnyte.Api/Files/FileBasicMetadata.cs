@@ -1,4 +1,6 @@
-﻿namespace Egnyte.Api.Files
+﻿using System.Collections.Generic;
+
+namespace Egnyte.Api.Files
 {
     using System;
 
@@ -13,8 +15,10 @@
             string entryId,
             string groupId,
             DateTime lastModified,
+            DateTime uploaded,
             string uploadedBy,
-            int numberOfVersions)
+            int numberOfVersions,
+            FileOrFolderCustomMetadata customMetadata)
         {
             Checksum = checksum;
             Size = size;
@@ -24,8 +28,10 @@
             EntryId = entryId;
             GroupId = groupId;
             LastModified = lastModified;
+            Uploaded = uploaded;
             UploadedBy = uploadedBy;
             NumberOfVersions = numberOfVersions;
+            CustomMetadata = customMetadata ?? new FileOrFolderCustomMetadata();
         }
 
         public string Checksum { get; private set; }
@@ -44,8 +50,12 @@
 
         public DateTime LastModified { get; private set; }
 
+        public DateTime Uploaded { get; private set; }
+
         public string UploadedBy { get; private set; }
 
         public int NumberOfVersions { get; private set; }
+
+        public FileOrFolderCustomMetadata CustomMetadata { get; private set; }
     }
 }
