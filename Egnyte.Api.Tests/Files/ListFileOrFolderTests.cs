@@ -158,7 +158,7 @@ namespace Egnyte.Api.Tests.Files
                 });
 
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
-            var result = await egnyteClient.Files.ListFileOrFolder("path");
+            var result = await egnyteClient.Files.ListFileOrFolder("path", listCustomMetadata: true);
 
             Assert.AreEqual(true, result.IsFolder);
             Assert.NotNull(result.AsFolder);
@@ -242,7 +242,7 @@ namespace Egnyte.Api.Tests.Files
                 });
 
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
-            var result = await egnyteClient.Files.ListFileOrFolder("path");
+            var result = await egnyteClient.Files.ListFileOrFolder("path", listCustomMetadata: true);
 
             Assert.AreEqual(false, result.IsFolder);
             Assert.NotNull(result.AsFile);
@@ -276,6 +276,45 @@ namespace Egnyte.Api.Tests.Files
             Assert.AreEqual("36502d58-c620-41d0-8821-b6c294555ebe", fileMetadata.Versions[1].EntryId);
             Assert.AreEqual(new DateTime(2015, 8, 17, 10, 27, 38), fileMetadata.Versions[1].LastModified);
             Assert.AreEqual("miki", fileMetadata.Versions[1].UploadedBy);
+        }
+
+        [Test]
+        public async Task ListFileOrFolder_InvokesCorrectUriForPaginationParameters()
+        {
+            var httpHandlerMock = new HttpMessageHandlerMock();
+            var httpClient = new HttpClient(httpHandlerMock);
+
+            httpHandlerMock.SendAsyncFunc = (request, cancellationToken) => Task.FromResult(
+                new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = new StringContent(ListFolderResponse)
+                });
+
+            var egnyteClient = new EgnyteClient("token", "acme", httpClient);
+            var result = await egnyteClient.Files.ListFileOrFolder(
+                "path", 
+                listCustomMetadata: true,
+                count: 1,
+                offset: 2,
+                sortBy: "last_modified",
+                sortDirection: "descending");
+
+            Assert.AreEqual(true, result.IsFolder);
+            Assert.NotNull(result.AsFolder);
+            Assert.AreEqual(null, result.AsFile);
+
+            var requestMessage = httpHandlerMock.GetHttpRequestMessage();
+            Assert.AreEqual(
+                "https://acme.egnyte.com/pubapi/v1/fs/path" +
+                "?list_content=True" +
+                "&allowed_link_types=False" +
+                "&list_custom_metadata=True" +
+                "&count=1" +
+                "&offset=2" +
+                "&sort_by=last_modified" +
+                "&sort_direction=descending",
+                requestMessage.RequestUri.ToString());
         }
 
         [Test]
