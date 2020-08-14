@@ -465,6 +465,55 @@
             return FilesHelper.MapFolderUpdateToMetadata(response.Data);
         }
 
+        /// <summary>
+        /// Uses Metadata API to update the custom metadata for a given file or folder
+        /// </summary>
+        /// <param name="path">Full path to file or folder</param>
+        /// <param name="sectionName">The custom metadata section name (aka namespace name)</param>
+        /// <param name="properties">The custom metadata properties (aka namespace keys)</param>
+        /// <returns></returns>
+        public async Task<bool> UpdateFileOrFolderCustomMetadata(
+            string path,
+            string sectionName,
+            FileOrFolderCustomMetadataProperties properties)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                throw new ArgumentException(nameof(path));
+            }
+
+            if (string.IsNullOrWhiteSpace(sectionName))
+            {
+                throw new ArgumentException(nameof(sectionName));
+            }
+
+            if (properties == null || properties.Count == 0)
+            {
+                throw new ArgumentException("None of the custom metadata properties were provided");
+            }
+
+            // retrieving file or folder metadata in order to get the entry id
+            // since the method to update custom metadata only works using id (path not supported)
+            var fileOrFolder = await ListFileOrFolder(path);
+
+            var fileOrFolderType = fileOrFolder.IsFolder ? "folder" : "file";
+            var groupOrEntryId = fileOrFolder.IsFolder ? fileOrFolder.AsFolder.FolderId : fileOrFolder.AsFile.GroupId;
+
+            var uriBuilder = BuildUri(FilesMethod + "/ids/" + fileOrFolderType + "/" + groupOrEntryId + "/properties/" + sectionName);
+            var httpRequest = new HttpRequestMessage(new HttpMethod("PUT"), uriBuilder.Uri)
+            {
+                Content = new StringContent(
+                    FilesHelper.MapUpdateFileOrFolderCustomMetadataRequest(properties),
+                    Encoding.UTF8,
+                    "application/json")
+            };
+
+            var serviceHandler = new ServiceHandler<string>(httpClient);
+            await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
+
+            return true;
+        }
+
         DownloadedFile MapResponseToDownloadedFile(ServiceResponse<byte[]> response)
         {
             return new DownloadedFile(
