@@ -60,6 +60,7 @@
     <Compile Include="Files\DownloadedFileAsStream.cs" />
     <Compile Include="Files\FileOrFolderBasicCustomMetadata.cs" />
     <Compile Include="Files\FileOrFolderCustomMetadataResponse.cs" />
+    <Compile Include="Files\FileOrFolderCustomMetadataProperties.cs" />
     <Compile Include="Files\FileOrFolderCustomMetadataSectionResponse.cs" />
     <Compile Include="Files\FileOrFolderCustomMetadata.cs" />
     <Compile Include="Files\FileOrFolderCustomMetadataSection.cs" />
