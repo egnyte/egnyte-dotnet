@@ -209,14 +209,22 @@
         /// <param name="allowedLinkTypes">If true, then show allowed_file_link_types,
         /// allowed_folder_link_types fields, and allow_upload_links fields</param>
         /// <param name="listCustomMetadata">If true, the custom_metadata fields will be included</param>
+        /// <param name="count">The maximum number of items to return</param>
+        /// <param name="offset">The zero-based index from which to start returning items. This is used for paginating the folder listing</param>
+        /// <param name="sortBy">The field that should be used for sorting</param>
+        /// <param name="sortDirection">The direction of the sort</param>
         /// <returns>Metadata info about file or folder</returns>
         public async Task<FileOrFolderMetadata> ListFileOrFolder(
             string path,
             bool listContent = true,
             bool allowedLinkTypes = false,
-            bool listCustomMetadata = true)
+            bool? listCustomMetadata = null,
+            int? count = null,
+            int? offset = null,
+            string sortBy = null,
+            string sortDirection = null)
         {
-            var listFilesUri = PrepareListFileOrFolderUri(path, listContent, allowedLinkTypes, listCustomMetadata);
+            var listFilesUri = PrepareListFileOrFolderUri(path, listContent, allowedLinkTypes, listCustomMetadata, count, offset, sortBy, sortDirection);
             var httpRequest = new HttpRequestMessage(HttpMethod.Get, listFilesUri);
             var serviceHandler = new ServiceHandler<ListFileOrFolderResponse>(httpClient);
 
@@ -457,6 +465,55 @@
             return FilesHelper.MapFolderUpdateToMetadata(response.Data);
         }
 
+        /// <summary>
+        /// Uses Metadata API to update the custom metadata for a given file or folder
+        /// </summary>
+        /// <param name="path">Full path to file or folder</param>
+        /// <param name="sectionName">The custom metadata section name (aka namespace name)</param>
+        /// <param name="properties">The custom metadata properties (aka namespace keys)</param>
+        /// <returns></returns>
+        public async Task<bool> UpdateFileOrFolderCustomMetadata(
+            string path,
+            string sectionName,
+            FileOrFolderCustomMetadataProperties properties)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                throw new ArgumentException(nameof(path));
+            }
+
+            if (string.IsNullOrWhiteSpace(sectionName))
+            {
+                throw new ArgumentException(nameof(sectionName));
+            }
+
+            if (properties == null || properties.Count == 0)
+            {
+                throw new ArgumentException("None of the custom metadata properties were provided");
+            }
+
+            // retrieving file or folder metadata in order to get the entry id
+            // since the method to update custom metadata only works using id (path not supported)
+            var fileOrFolder = await ListFileOrFolder(path);
+
+            var fileOrFolderType = fileOrFolder.IsFolder ? "folder" : "file";
+            var groupOrEntryId = fileOrFolder.IsFolder ? fileOrFolder.AsFolder.FolderId : fileOrFolder.AsFile.GroupId;
+
+            var uriBuilder = BuildUri(FilesMethod + "/ids/" + fileOrFolderType + "/" + groupOrEntryId + "/properties/" + sectionName);
+            var httpRequest = new HttpRequestMessage(new HttpMethod("PUT"), uriBuilder.Uri)
+            {
+                Content = new StringContent(
+                    FilesHelper.MapUpdateFileOrFolderCustomMetadataRequest(properties),
+                    Encoding.UTF8,
+                    "application/json")
+            };
+
+            var serviceHandler = new ServiceHandler<string>(httpClient);
+            await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
+
+            return true;
+        }
+
         DownloadedFile MapResponseToDownloadedFile(ServiceResponse<byte[]> response)
         {
             return new DownloadedFile(
@@ -515,10 +572,37 @@
             return 0;
         }
 
-        Uri PrepareListFileOrFolderUri(string path, bool listContent, bool allowedLinkTypes, bool listCustomMetadata = true)
+        Uri PrepareListFileOrFolderUri(string path, bool listContent, bool allowedLinkTypes, bool? listCustomMetadata = null,
+            int? count = 0, int? offset = 0, string sortBy = null, string sortDirection = null)
         {
-            var query = "list_content=" + listContent + "&allowed_link_types=" + allowedLinkTypes + "&list_custom_metadata=" + listCustomMetadata;
-            var uriBuilder = BuildUri(FilesMethod + "/" + path, query);
+            var query = new StringBuilder("list_content=" + listContent + "&allowed_link_types=" + allowedLinkTypes);
+
+            if (listCustomMetadata != null)
+            {
+                query.Append("&list_custom_metadata=" + listCustomMetadata);
+            }
+
+            if (count != null)
+            {
+                query.Append("&count=" + count);
+            }
+
+            if (offset != null)
+            {
+                query.Append("&offset=" + offset);
+            }
+
+            if (sortBy != null)
+            {
+                query.Append("&sort_by=" + sortBy);
+            }
+
+            if (sortDirection != null)
+            {
+                query.Append("&sort_direction=" + sortDirection);
+            }
+
+            var uriBuilder = BuildUri(FilesMethod + "/" + path, query.ToString());
 
             return uriBuilder.Uri;
         }

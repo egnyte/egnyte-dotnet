@@ -4,13 +4,13 @@ using Newtonsoft.Json;
 
 namespace Egnyte.Api.Files
 {
-    public class FileOrFolderCustomMetadataSection : Dictionary<string, Dictionary<string, object>>
+    public class FileOrFolderCustomMetadataSection : Dictionary<string, FileOrFolderCustomMetadataProperties>
     {
         [JsonConstructor]
         internal FileOrFolderCustomMetadataSection()
         {
         }
 
-        public Dictionary<string, object> Properties => Values.FirstOrDefault() ?? new Dictionary<string, object>();
+        public FileOrFolderCustomMetadataProperties Properties => Values.FirstOrDefault() ?? new FileOrFolderCustomMetadataProperties();
     }
 }
