@@ -88,6 +88,20 @@
             return content;
         }
 
+        internal static string MapUpdateFileOrFolderCustomMetadataRequest(FileOrFolderCustomMetadataProperties properties)
+        {
+            var jsonParams = new List<string>();
+
+            foreach (var kvp in properties)
+            {
+                jsonParams.Add("\"" + kvp.Key + "\" : \"" + kvp.Value + "\"");
+            }
+
+            var content = "{" + string.Join(",", jsonParams) + "}";
+
+            return content;
+        }
+
         internal static UpdateFolderMetadata MapFolderUpdateToMetadata(UpdateFolderResponse response)
         {
             return new UpdateFolderMetadata
