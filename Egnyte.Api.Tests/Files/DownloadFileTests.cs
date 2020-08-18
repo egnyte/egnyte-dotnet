@@ -83,7 +83,7 @@
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
 
             var exception = await AssertExtensions.ThrowsAsync<ArgumentOutOfRangeException>(
-                () => egnyteClient.Files.DownloadFile("myFile", new Range(1000, 0)));
+                () => egnyteClient.Files.DownloadFile("myFile", new Api.Files.Range(1000, 0)));
 
             Assert.IsTrue(exception.Message.Contains("'From' parameter must be less or equal to 'to'"));
             Assert.IsNull(exception.InnerException);
@@ -99,7 +99,7 @@
                 (request, cancellationToken) => Task.FromResult(GetResponseMessage());
 
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
-            var result = await egnyteClient.Files.DownloadFile("myFile", new Range(0, 100))
+            var result = await egnyteClient.Files.DownloadFile("myFile", new Api.Files.Range(0, 100))
                 .ConfigureAwait(false);
 
             var requestMessage = httpHandlerMock.GetHttpRequestMessage();
