@@ -54,7 +54,7 @@ namespace Egnyte.Api.Common
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-        {;
+        {
             var permissions = value as List<GroupOrUserPermissionsResponse> ?? new List<GroupOrUserPermissionsResponse>();
 
             var dictionary = new Dictionary<string, string>();
