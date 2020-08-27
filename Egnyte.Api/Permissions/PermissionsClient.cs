@@ -82,9 +82,18 @@ namespace Egnyte.Api.Permissions
                 throw new ArgumentNullException(nameof(path));
             }
 
-            if ((userPerms == null || userPerms.Count == 0) && (groupPerms == null || groupPerms.Count == 0))
+            // either userPerms or groupPerms parameters must be provided when inheritsPermissions is not provided
+            if (inheritsPermissions == null && 
+                (userPerms == null || userPerms.Count == 0) && (groupPerms == null || groupPerms.Count == 0))
             {
                 throw new ArgumentException("One of parameters: " + nameof(userPerms) + " or " + nameof(groupPerms) + " must be not empty.");
+            }
+
+            // the keepParentPermissions parameter should only be passed when passing inheritsPermissions as false
+            if (keepParentPermissions != null &&
+                (inheritsPermissions == null || inheritsPermissions == true))
+            {
+                throw new ArgumentException("Parameter: " + nameof(keepParentPermissions) + " should only be passed when " + nameof(inheritsPermissions) + " is " + false + ".");
             }
 
             var uriBuilder = BuildUri(PermissionsMethodV2 + "/" + path);
@@ -295,8 +304,7 @@ namespace Egnyte.Api.Permissions
         string GetSetFolderPermissionsContent(List<GroupOrUserPermissions> users, List<GroupOrUserPermissions> groups, bool? inheritsPermissions, bool? keepParentPermissions)
         {
             var builder = new StringBuilder();
-            builder
-                .Append("{");
+            builder.Append("{");
 
             if (users != null && users.Count > 0)
             {
@@ -315,10 +323,21 @@ namespace Egnyte.Api.Permissions
             }
 
             if (inheritsPermissions.HasValue)
-                builder.Append(",\"inheritsPermissions\": \"" + (inheritsPermissions.Value ? "true" : "false") + "\"");
-            
+            {
+                if ((users != null && users.Count > 0) ||
+                    (groups != null && groups.Count > 0))
+                    builder.Append(",");
+                builder.Append("\"inheritsPermissions\": \"" + (inheritsPermissions.Value ? "true" : "false") + "\"");
+            }
+
             if (keepParentPermissions.HasValue)
-                builder.Append(",\"keepParentPermissions\": \"" + (keepParentPermissions.Value ? "true" : "false") + "\"");
+            {
+                if ((users != null && users.Count > 0) ||
+                    (groups != null && groups.Count > 0) ||
+                    inheritsPermissions.HasValue)
+                    builder.Append(",");
+                builder.Append("\"keepParentPermissions\": \"" + (keepParentPermissions.Value ? "true" : "false") + "\"");
+            }
 
             builder.Append("}");
             return builder.ToString();
