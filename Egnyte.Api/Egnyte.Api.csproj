@@ -50,6 +50,7 @@
     <Compile Include="Audit\CreateLoginAuditReportResponse.cs" />
     <Compile Include="Common\BaseClient.cs" />
     <Compile Include="Common\EgnyteApiException.cs" />
+    <Compile Include="Common\GroupOrUserPermissionsResponseV2Converter.cs" />
     <Compile Include="Common\HttpResponseMessageExtensions.cs" />
     <Compile Include="Common\UnixTimeConverter.cs" />
     <Compile Include="Common\ServiceHandler.cs" />
@@ -107,6 +108,8 @@
     <Compile Include="Links\NewLink.cs" />
     <Compile Include="Links\ProtectionType.cs" />
     <Compile Include="OAuthHelper.cs" />
+    <Compile Include="Permissions\FolderPermissionsV2.cs" />
+    <Compile Include="Permissions\FolderPermissionsResponseV2.cs" />
     <Compile Include="Permissions\FolderPermissionsResponse.cs" />
     <Compile Include="Permissions\FolderPermissions.cs" />
     <Compile Include="Permissions\GroupOrUserPermissions.cs" />
