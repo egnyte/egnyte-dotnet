@@ -14,24 +14,24 @@ namespace Egnyte.Api.Tests.Permissions
     [TestFixture]
     public class GetFolderPermissionsTestsV2
     {
-        const string GetFolderPermissionsResponseContent = @"
+        const string GetFolderPermissionsResponseContentV2 = @"
             {
-                  ""users"": [
-                    {
-                        ""subject"": ""jsmith"",
-                        ""permission"": ""Full""
-                    },
-                    {
-                        ""subject"": ""ajones"",
-                        ""permission"": ""Viewer""
-                    }
-                  ],
-                  ""groups"": [
-                    {
-                        ""subject"": ""All Power Users"",
-                        ""permission"": ""Editor""
-                    }
-                  ]
+                ""userPerms"": {
+                    ""jsmith"": ""Full"",
+                    ""ajones"": ""Viewer""
+                },
+                ""groupPerms"": {
+                    ""All Power Users"": ""Editor""
+                },
+                ""inheritsPermissions"": true
+            }";
+
+        const string GetFolderPermissionsResponseContentV2_NoUsers = @"
+            {
+                ""groupPerms"": {
+                    ""All Administrators"": ""Owner""
+                },
+                ""inheritsPermissions"": true
             }";
 
         [Test]
@@ -46,7 +46,7 @@ namespace Egnyte.Api.Tests.Permissions
                     new HttpResponseMessage
                     {
                         StatusCode = HttpStatusCode.OK,
-                        Content = new StringContent(GetFolderPermissionsResponseContent)
+                        Content = new StringContent(GetFolderPermissionsResponseContentV2)
                     });
 
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
@@ -70,6 +70,42 @@ namespace Egnyte.Api.Tests.Permissions
             var group = folderPermissions.Groups.FirstOrDefault(g => g.Subject == "All Power Users");
             Assert.IsNotNull(group);
             Assert.AreEqual(PermissionType.Editor, group.Permission);
+
+            Assert.AreEqual(true, folderPermissions.InheritsPermissions);
+        }
+
+        [Test]
+        public async Task GetFolderPermissions_WhenResponseContainsNoUsers_ReturnsSuccess()
+        {
+            var httpHandlerMock = new HttpMessageHandlerMock();
+            var httpClient = new HttpClient(httpHandlerMock);
+
+            httpHandlerMock.SendAsyncFunc =
+                (request, cancellationToken) =>
+                    Task.FromResult(
+                        new HttpResponseMessage
+                        {
+                            StatusCode = HttpStatusCode.OK,
+                            Content = new StringContent(GetFolderPermissionsResponseContentV2_NoUsers)
+                        });
+
+            var egnyteClient = new EgnyteClient("token", "acme", httpClient);
+            var folderPermissions = await egnyteClient.Permissions.GetFolderPermissionsV2("Shared/myFolder");
+
+            var requestMessage = httpHandlerMock.GetHttpRequestMessage();
+            Assert.AreEqual(
+                "https://acme.egnyte.com/pubapi/v2/perms/Shared/myFolder",
+                requestMessage.RequestUri.ToString());
+            Assert.AreEqual(HttpMethod.Get, requestMessage.Method);
+
+            Assert.AreEqual(0, folderPermissions.Users.Count);
+
+            Assert.AreEqual(1, folderPermissions.Groups.Count);
+            var group = folderPermissions.Groups.FirstOrDefault(g => g.Subject == "All Administrators");
+            Assert.IsNotNull(group);
+            Assert.AreEqual(PermissionType.Owner, group.Permission);
+
+            Assert.AreEqual(true, folderPermissions.InheritsPermissions);
         }
 
         [Test]
@@ -84,7 +120,7 @@ namespace Egnyte.Api.Tests.Permissions
                     new HttpResponseMessage
                     {
                         StatusCode = HttpStatusCode.OK,
-                        Content = new StringContent(GetFolderPermissionsResponseContent)
+                        Content = new StringContent(GetFolderPermissionsResponseContentV2)
                     });
 
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
@@ -111,6 +147,8 @@ namespace Egnyte.Api.Tests.Permissions
             var group = folderPermissions.Groups.FirstOrDefault(g => g.Subject == "All Power Users");
             Assert.IsNotNull(group);
             Assert.AreEqual(PermissionType.Editor, group.Permission);
+
+            Assert.AreEqual(true, folderPermissions.InheritsPermissions);
         }
 
         [Test]
