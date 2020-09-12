@@ -11,10 +11,17 @@ To install `Egnyte.Api`, run the following command in the Package Manager Consol
 ```PM> Install-Package Egnyte.Api```
 
 ## Supported frameworks
+Version number 2 of the package was written in .Net Standard, to meet the latest technological trends and ease project development. .Net Standard 2.0 supports quite a lot of frameworks, details can be found here: https://docs.microsoft.com/pl-pl/dotnet/standard/net-standard
 
-* .Net Framework 4.5
-* Windows Phone 8.1
-* Xamarin
+Currently there are two versions available. However, version 0.1.* will not me maintained.
+* Version 2
+  * .Net Standard 2.0
+  * .Net Framework 4.6.1
+* Version 0.1.*
+  * .Net Framework 4.5
+  * Windows Phone 8.1
+  * Xamarin
+
 
 ## Creating an application
 
