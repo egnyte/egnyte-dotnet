@@ -237,23 +237,6 @@ namespace Egnyte.Api.Permissions
                     .ToList());
         }
 
-        FolderPermissions MapFolderPermissions(FolderPermissionsResponse data, List<string> users, List<string> groups)
-        {
-            return new FolderPermissions(
-                data.Users.Where(w => users == null || (users != null && users.Contains(w.Subject)))
-                .Select(
-                    u => new GroupOrUserPermissions(
-                        u.Subject,
-                        ParsePermissionType(u.Permission)))
-                    .ToList(),
-                data.Groups.Where(w => groups == null || (groups != null && groups.Contains(w.Subject)))
-                .Select(
-                    g => new GroupOrUserPermissions(
-                        g.Subject,
-                        ParsePermissionType(g.Permission)))
-                    .ToList());
-        }
-
         FolderPermissionsV2 MapFolderPermissions(FolderPermissionsResponseV2 data, List<string> users, List<string> groups)
         {
             return new FolderPermissionsV2(
