@@ -70,6 +70,16 @@ For more details, read methods descriptions or documentation.
 
 You can browse full documentation of Egnyte SDK here: https://developers.egnyte.com/docs.
 
+## Known issues
+
+When using Egnyte.Api package with .Net Framework older then 4.6, you might run into a securitu protocol issues. If you run into this error message:
+> An error occurred while making the HTTP request to https://<API endpoint>. This could be due to the fact that the server certificate is not configured properly with HTTP.SYS in the HTTPS case. This could also be caused by a mismatch of the security binding between the client and the server.
+
+you might need to add this line to your application:
+`ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12`
+
+and if that does not help, you might need to update your .Net Framework to 4.6 or higher. Please take a look at [this article](https://blogs.perficient.com/2016/04/28/tsl-1-2-and-net-support/) for more details.
+
 ## License
 
 MIT License
