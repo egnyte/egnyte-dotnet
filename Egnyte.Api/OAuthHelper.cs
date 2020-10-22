@@ -137,13 +137,19 @@ namespace Egnyte.Api
         /// E.g. "cba97f3apst9eqzdr5hskggx".
         /// </param>
         /// <param name="username">This is the Egnyte username of the user on whose behalf you are acting.</param>
-        /// <param name="password">his is the Egnyte password of the user.</param>
+        /// <param name="password">This is the Egnyte password of the user.</param>
+        /// <param name="clientSecret">
+        /// This is the secret key that was provided with your key to you when you registered your application.
+        /// E.g. "8WkD6YhXJDZrV7kWABQtr2bXBUY5GRTmuqBpRs4JDWHkNNhSK9".
+        /// Required if your application key was requested after January 2015 and has a secret.
+        /// </param>
         /// <returns>Uri to get a token</returns>
         public static TokenRequestParameters GetAuthorizationUriResourceOwnerFlow(
             string userDomain,
             string clientId,
             string username,
-            string password)
+            string password,
+            string clientSecret = null)
         {
             if (string.IsNullOrWhiteSpace(userDomain))
             {
@@ -172,6 +178,11 @@ namespace Egnyte.Api
                     { "password", password },
                     { "grant_type", "password" }
                 };
+
+            if (!string.IsNullOrWhiteSpace(clientSecret))
+            {
+                queryParameters.Add("client_secret", clientSecret);
+            }
 
             return new TokenRequestParameters
                 {

@@ -108,6 +108,24 @@
         }
 
         [Test]
+        public void GetAuthorizationUriResourceOwnerFlow_WithAllParametersSpecified_ReturnsUrl_WhenCorrectParameters()
+        {
+            var uri = OAuthHelper.GetAuthorizationUriResourceOwnerFlow(
+                "acme",
+                "Client123",
+                "user123",
+                "password123",
+                "8WkD6YhXJDZrV7kWABQtr2bXBUY5GRTmuqBpRs4JDWHkNNhSK9");
+
+            Assert.AreEqual("https://acme.egnyte.com/puboauth/token", uri.BaseAddress.ToString());
+            Assert.AreEqual("Client123", uri.QueryParameters["client_id"]);
+            Assert.AreEqual("user123", uri.QueryParameters["username"]);
+            Assert.AreEqual("password123", uri.QueryParameters["password"]);
+            Assert.AreEqual("password", uri.QueryParameters["grant_type"]);
+            Assert.AreEqual("8WkD6YhXJDZrV7kWABQtr2bXBUY5GRTmuqBpRs4JDWHkNNhSK9", uri.QueryParameters["client_secret"]);
+        }
+
+        [Test]
         public void GetAuthorizationUriResourceOwnerFlow_ThrowsArgumentNullException_WhenDomainIsEmpty()
         {
             var exception = Assert.Throws<ArgumentNullException>(

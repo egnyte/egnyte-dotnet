@@ -59,11 +59,23 @@
             }
         }
 
+        // kept to avoid breaking changes for existing dependent code
         public static async Task<TokenResponse> GetTokenResourceOwnerFlow(
             string userDomain,
             string clientId,
             string username,
             string password,
+            HttpClient httpClient = null)
+        {
+            return await GetTokenResourceOwnerFlow(userDomain, clientId, username, password, null, httpClient);
+        }
+
+        public static async Task<TokenResponse> GetTokenResourceOwnerFlow(
+            string userDomain,
+            string clientId,
+            string username,
+            string password,
+            string clientSecret,
             HttpClient httpClient = null)
         {
             var disposeClient = httpClient == null;
@@ -74,7 +86,8 @@
                     userDomain,
                     clientId,
                     username,
-                    password);
+                    password,
+                    clientSecret);
 
                 var content = new FormUrlEncodedContent(tokenRequesrUri.QueryParameters);
                 var result = await httpClient.PostAsync(tokenRequesrUri.BaseAddress, content).ConfigureAwait(false);
