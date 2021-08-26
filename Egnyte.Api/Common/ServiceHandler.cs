@@ -1,4 +1,7 @@
-﻿namespace Egnyte.Api.Common
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace Egnyte.Api.Common
 {
     using System;
     using System.Net.Http;
@@ -30,14 +33,14 @@
                         return new ServiceResponse<T>
                         {
                             Data = rawContent as T,
-                            Headers = response.GetResponseHeaders()
+                            Headers = GetLowercaseResponseHeaders(response)
                         };
                     }
 
                     return new ServiceResponse<T>
                     {
                         Data = JsonConvert.DeserializeObject<T>(rawContent),
-                        Headers = response.GetResponseHeaders()
+                        Headers = GetLowercaseResponseHeaders(response)
                     };
                 }
                 catch (Exception e)
@@ -62,7 +65,7 @@
             return new ServiceResponse<byte[]>
             {
                 Data = bytes,
-                Headers = response.GetResponseHeaders()
+                Headers = GetLowercaseResponseHeaders(response)
             };
         }
 
@@ -75,7 +78,7 @@
             return new ServiceResponse<Stream>
             {
                 Data = stream,
-                Headers = response.GetResponseHeaders()
+                Headers = GetLowercaseResponseHeaders(response)
             };
         }
 
@@ -85,6 +88,11 @@
             url = url.Replace("[", "%5B")
                      .Replace("]", "%5D");
             return new Uri(url);
+        }
+
+        private Dictionary<string, string> GetLowercaseResponseHeaders(HttpResponseMessage response)
+        {
+            return response.GetResponseHeaders().ToDictionary(k => k.Key.ToLower(), v => v.Value);
         }
     }
 }
