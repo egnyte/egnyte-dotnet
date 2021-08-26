@@ -8,6 +8,7 @@
 
     using Egnyte.Api.Common;
     using System.Collections.Generic;
+
     public class FilesClient : BaseClient
     {
         const string FilesMethod = "/pubapi/v1/fs";
@@ -71,14 +72,14 @@
             var response = await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
 
             return new UploadedFileMetadata(
-                response.Headers.ContainsKey("X-Sha512-Checksum")
-                    ? response.Headers["X-Sha512-Checksum"]
+                response.Headers.ContainsKey("x-sha512-checksum")
+                    ? response.Headers["x-sha512-checksum"]
                     : response.Data.Checksum,
-                response.Headers.ContainsKey("Last-Modified")
-                    ? DateTime.Parse(response.Headers["Last-Modified"])
+                response.Headers.ContainsKey("last-modified")
+                    ? DateTime.Parse(response.Headers["last-modified"])
                     : DateTime.Now,
-                response.Headers.ContainsKey("ETag")
-                    ? response.Headers["ETag"]
+                response.Headers.ContainsKey("etag")
+                    ? response.Headers["etag"]
                     : response.Data.EntryId);
         }
 
@@ -291,14 +292,14 @@
             var response = await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
 
             return new ChunkUploadedMetadata(
-                response.Headers.ContainsKey("X-Egnyte-Upload-Id")
-                    ? response.Headers["X-Egnyte-Upload-Id"]
+                response.Headers.ContainsKey("x-egnyte-upload-id")
+                    ? response.Headers["x-egnyte-upload-id"]
                     : string.Empty,
-                response.Headers.ContainsKey("X-Egnyte-Chunk-Num")
-                    ? int.Parse(response.Headers["X-Egnyte-Chunk-Num"])
+                response.Headers.ContainsKey("x-egnyte-chunk-num")
+                    ? int.Parse(response.Headers["x-egnyte-chunk-num"])
                     : -1,
-                response.Headers.ContainsKey("X-Egnyte-Chunk-Sha512-Checksum")
-                    ? response.Headers["X-Egnyte-Chunk-Sha512-Checksum"]
+                response.Headers.ContainsKey("x-egnyte-chunk-sha512-checksum")
+                    ? response.Headers["x-egnyte-chunk-sha512-checksum"]
                     : string.Empty);
         }
 
@@ -348,14 +349,14 @@
             var response = await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
 
             return new ChunkUploadedMetadata(
-                response.Headers.ContainsKey("X-Egnyte-Upload-Id")
-                    ? response.Headers["X-Egnyte-Upload-Id"]
+                response.Headers.ContainsKey("x-egnyte-upload-id")
+                    ? response.Headers["x-egnyte-upload-id"]
                     : string.Empty,
-                response.Headers.ContainsKey("X-Egnyte-Chunk-Num")
-                    ? int.Parse(response.Headers["X-Egnyte-Chunk-Num"])
+                response.Headers.ContainsKey("x-egnyte-chunk-num")
+                    ? int.Parse(response.Headers["x-egnyte-chunk-num"])
                     : -1,
-                response.Headers.ContainsKey("X-Egnyte-Chunk-Sha512-Checksum")
-                    ? response.Headers["X-Egnyte-Chunk-Sha512-Checksum"]
+                response.Headers.ContainsKey("x-egnyte-chunk-sha512-checksum")
+                    ? response.Headers["x-egnyte-chunk-sha512-checksum"]
                     : string.Empty);
         }
 
@@ -407,14 +408,14 @@
             var response = await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
 
             return new UploadedFileMetadata(
-                response.Headers.ContainsKey("X-Sha512-Checksum")
-                    ? response.Headers["X-Sha512-Checksum"]
+                response.Headers.ContainsKey("x-sha512-checksum")
+                    ? response.Headers["x-sha512-checksum"]
                     : response.Data.Checksum,
-                response.Headers.ContainsKey("Last-Modified")
-                    ? DateTime.Parse(response.Headers["Last-Modified"])
+                response.Headers.ContainsKey("last-modified")
+                    ? DateTime.Parse(response.Headers["last-modified"])
                     : DateTime.Now,
-                response.Headers.ContainsKey("ETag")
-                    ? response.Headers["ETag"]
+                response.Headers.ContainsKey("etag")
+                    ? response.Headers["etag"]
                     : response.Data.EntryId);
         }
 
@@ -517,52 +518,52 @@
         DownloadedFile MapResponseToDownloadedFile(ServiceResponse<byte[]> response)
         {
             return new DownloadedFile(
-                           response.Data,
-                           response.Headers.ContainsKey("X-Sha512-Checksum")
-                                   ? response.Headers["X-Sha512-Checksum"]
-                                   : string.Empty,
-                           response.Headers.ContainsKey("Last-Modified")
-                                   ? DateTime.Parse(response.Headers["Last-Modified"])
-                                   : DateTime.Now,
-                           response.Headers.ContainsKey("ETag")
-                                   ? response.Headers["ETag"]
-                                   : string.Empty,
-                           response.Headers.ContainsKey("Content-Type")
-                                   ? response.Headers["Content-Type"]
-                                   : string.Empty,
-                           response.Headers.ContainsKey("Content-Length")
-                                   ? long.Parse(response.Headers["Content-Length"])
-                                   : 0,
-                           GetFullFileLengthFromRange(response.Headers));
+                response.Data,
+                response.Headers.ContainsKey("x-sha512-checksum")
+                    ? response.Headers["x-sha512-checksum"]
+                    : string.Empty,
+                response.Headers.ContainsKey("last-modified")
+                        ? DateTime.Parse(response.Headers["last-modified"])
+                        : DateTime.Now,
+                response.Headers.ContainsKey("etag")
+                    ? response.Headers["etag"]
+                    : string.Empty,
+                response.Headers.ContainsKey("content-type")
+                    ? response.Headers["content-type"]
+                    : string.Empty,
+                response.Headers.ContainsKey("content-length")
+                        ? long.Parse(response.Headers["content-length"])
+                        : 0,
+                GetFullFileLengthFromRange(response.Headers));
         }
 
         DownloadedFileAsStream MapResponseToDownloadedFileAsStream(ServiceResponse<Stream> response)
         {
             return new DownloadedFileAsStream(
-                           response.Data,
-                           response.Headers.ContainsKey("X-Sha512-Checksum")
-                                   ? response.Headers["X-Sha512-Checksum"]
-                                   : string.Empty,
-                           response.Headers.ContainsKey("Last-Modified")
-                                   ? DateTime.Parse(response.Headers["Last-Modified"])
-                                   : DateTime.Now,
-                           response.Headers.ContainsKey("ETag")
-                                   ? response.Headers["ETag"]
-                                   : string.Empty,
-                           response.Headers.ContainsKey("Content-Type")
-                                   ? response.Headers["Content-Type"]
-                                   : string.Empty,
-                           response.Headers.ContainsKey("Content-Length")
-                                   ? long.Parse(response.Headers["Content-Length"])
-                                   : 0,
-                           GetFullFileLengthFromRange(response.Headers));
+                response.Data,
+                response.Headers.ContainsKey("x-sha512-checksum")
+                    ? response.Headers["x-sha512-checksum"]
+                    : string.Empty,
+                response.Headers.ContainsKey("last-modified")
+                    ? DateTime.Parse(response.Headers["last-modified"])
+                    : DateTime.Now,
+                response.Headers.ContainsKey("etag")
+                    ? response.Headers["etag"]
+                    : string.Empty,
+                response.Headers.ContainsKey("content-type")
+                    ? response.Headers["content-type"]
+                    : string.Empty,
+                response.Headers.ContainsKey("content-length")
+                    ? long.Parse(response.Headers["content-length"])
+                    : 0,
+                GetFullFileLengthFromRange(response.Headers));
         }
 
         long GetFullFileLengthFromRange(Dictionary<string, string> headers)
         {
-            if (headers.ContainsKey("Content-Range"))
+            if (headers.ContainsKey("content-range"))
             {
-                var rangeParts = headers["Content-Range"].Split('/');
+                var rangeParts = headers["content-range"].Split('/');
                 if (rangeParts.Length == 2)
                 {
                     return long.Parse(rangeParts[1]);
