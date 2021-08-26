@@ -74,6 +74,46 @@ namespace Egnyte.Api.Tests.Files
         }
 
         [Test]
+        public async Task ChunkedUploadFirstChunk_WithMissingResponseHeaders_ReturnsEmptyResponse()
+        {
+            var httpHandlerMock = new HttpMessageHandlerMock();
+            var httpClient = new HttpClient(httpHandlerMock);
+
+            httpHandlerMock.SendAsyncFunc = (request, cancellationToken) => Task.FromResult(GetResponseMessageWithMissingHeaders());
+
+            var egnyteClient = new EgnyteClient("token", "acme", httpClient);
+            var result = await egnyteClient.Files.ChunkedUploadFirstChunk(
+                "path",
+                new MemoryStream(Encoding.UTF8.GetBytes("file")));
+
+            var requestMessage = httpHandlerMock.GetHttpRequestMessage();
+            Assert.AreEqual(string.Empty, result.Checksum);
+            Assert.AreEqual(-1, result.ChunkNumber);
+            Assert.AreEqual(string.Empty, result.UploadId);
+            Assert.AreEqual("https://acme.egnyte.com/pubapi/v1/fs-content-chunked/path", requestMessage.RequestUri.ToString());
+        }
+
+        [Test]
+        public async Task ChunkedUploadFirstChunk_WithLowercaseResponseHeaders_ReturnsCorrectResponse()
+        {
+            var httpHandlerMock = new HttpMessageHandlerMock();
+            var httpClient = new HttpClient(httpHandlerMock);
+
+            httpHandlerMock.SendAsyncFunc = (request, cancellationToken) => Task.FromResult(GetResponseMessageWithLowercaseHeaders());
+
+            var egnyteClient = new EgnyteClient("token", "acme", httpClient);
+            var result = await egnyteClient.Files.ChunkedUploadFirstChunk(
+                "path",
+                new MemoryStream(Encoding.UTF8.GetBytes("file")));
+
+            var requestMessage = httpHandlerMock.GetHttpRequestMessage();
+            Assert.AreEqual(Checksum, result.Checksum);
+            Assert.AreEqual(1, result.ChunkNumber);
+            Assert.AreEqual(UploadId, result.UploadId);
+            Assert.AreEqual("https://acme.egnyte.com/pubapi/v1/fs-content-chunked/path", requestMessage.RequestUri.ToString());
+        }
+
+        [Test]
         public async Task ChunkedUploadNextChunk_ThrowsArgumentNullException_WhenNoPathSpecified()
         {
             var httpClient = new HttpClient(new HttpMessageHandlerMock());
@@ -267,6 +307,29 @@ namespace Egnyte.Api.Tests.Files
             responseMessage.Headers.Add("X-Egnyte-Chunk-Sha512-Checksum", Checksum);
             responseMessage.Headers.Add("X-Egnyte-Chunk-Num", "1");
             responseMessage.Headers.Add("X-Egnyte-Upload-Id", UploadId);
+
+            return responseMessage;
+        }
+
+        private HttpResponseMessage GetResponseMessageWithMissingHeaders()
+        {
+            return new HttpResponseMessage
+            {
+                StatusCode = HttpStatusCode.OK,
+                Content = new StringContent(string.Empty)
+            };
+        }
+
+        private HttpResponseMessage GetResponseMessageWithLowercaseHeaders()
+        {
+            var responseMessage = new HttpResponseMessage
+            {
+                StatusCode = HttpStatusCode.OK,
+                Content = new StringContent(string.Empty)
+            };
+            responseMessage.Headers.Add("X-Egnyte-Chunk-Sha512-Checksum", Checksum);
+            responseMessage.Headers.Add("x-egnyte-chunk-num", "1");
+            responseMessage.Headers.Add("x-egnyte-upload-id", UploadId);
 
             return responseMessage;
         }
