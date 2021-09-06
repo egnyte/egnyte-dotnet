@@ -1,4 +1,6 @@
-﻿namespace Egnyte.Api.Files
+﻿using System.Linq;
+
+namespace Egnyte.Api.Files
 {
     using System;
     using System.IO;
@@ -8,6 +10,7 @@
 
     using Egnyte.Api.Common;
     using System.Collections.Generic;
+    using Newtonsoft.Json;
 
     public class FilesClient : BaseClient
     {
@@ -288,8 +291,35 @@
             };
             httpRequest.Headers.Add("X-Egnyte-Chunk-Num", "1");
 
-            var serviceHandler = new ServiceHandler<CreateOrUpdateFileResponse>(httpClient);
-            var response = await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
+            // Experimental code to gather more information about failures
+            httpRequest.RequestUri = ApplyAdditionalUrlMapping(httpRequest.RequestUri);
+            var httpResponse = await httpClient.SendAsync(httpRequest).ConfigureAwait(false);
+            var rawContent = httpResponse.Content != null ? await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false) : null;
+
+            ServiceResponse<CreateOrUpdateFileResponse> response;
+            try
+            {
+                response = new ServiceResponse<CreateOrUpdateFileResponse>
+                {
+                    Data = JsonConvert.DeserializeObject<CreateOrUpdateFileResponse>(rawContent),
+                    Headers = httpResponse.GetResponseHeaders().ToDictionary(k => k.Key.ToLower(), v => v.Value)
+                };
+            }
+            catch (Exception e)
+            {
+                throw new EgnyteApiException(
+                    rawContent,
+                    httpResponse,
+                    e);
+            }
+
+            if (!response.Headers.ContainsKey("x-egnyte-chunk-num"))
+            {
+                var headerValues = string.Join(",", response.Headers.Select(h => $"{h.Key}:{h.Value}"));
+                var message = $"Missing first chunk number header. Headers: {headerValues}, Content: {rawContent}";
+
+                throw new EgnyteApiException(message);
+            }
 
             return new ChunkUploadedMetadata(
                 response.Headers.ContainsKey("x-egnyte-upload-id")
@@ -301,6 +331,14 @@
                 response.Headers.ContainsKey("x-egnyte-chunk-sha512-checksum")
                     ? response.Headers["x-egnyte-chunk-sha512-checksum"]
                     : string.Empty);
+        }
+
+        private Uri ApplyAdditionalUrlMapping(Uri requestUri)
+        {
+            var url = requestUri.ToString();
+            url = url.Replace("[", "%5B")
+                .Replace("]", "%5D");
+            return new Uri(url);
         }
 
         /// <summary>

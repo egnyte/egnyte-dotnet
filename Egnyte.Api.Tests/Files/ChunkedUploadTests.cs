@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using System.IO;
 using System.Net;
+using Egnyte.Api.Common;
 
 namespace Egnyte.Api.Tests.Files
 {
@@ -74,7 +75,7 @@ namespace Egnyte.Api.Tests.Files
         }
 
         [Test]
-        public async Task ChunkedUploadFirstChunk_WithMissingResponseHeaders_ReturnsEmptyResponse()
+        public async Task ChunkedUploadFirstChunk_WithMissingResponseHeaders_ThrowsException()
         {
             var httpHandlerMock = new HttpMessageHandlerMock();
             var httpClient = new HttpClient(httpHandlerMock);
@@ -82,15 +83,14 @@ namespace Egnyte.Api.Tests.Files
             httpHandlerMock.SendAsyncFunc = (request, cancellationToken) => Task.FromResult(GetResponseMessageWithMissingHeaders());
 
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
-            var result = await egnyteClient.Files.ChunkedUploadFirstChunk(
-                "path",
-                new MemoryStream(Encoding.UTF8.GetBytes("file")));
-
-            var requestMessage = httpHandlerMock.GetHttpRequestMessage();
-            Assert.AreEqual(string.Empty, result.Checksum);
-            Assert.AreEqual(-1, result.ChunkNumber);
-            Assert.AreEqual(string.Empty, result.UploadId);
-            Assert.AreEqual("https://acme.egnyte.com/pubapi/v1/fs-content-chunked/path", requestMessage.RequestUri.ToString());
+            var exception = await AssertExtensions.ThrowsAsync<EgnyteApiException>(
+                () => egnyteClient.Files.ChunkedUploadFirstChunk(
+                    "path",
+                    new MemoryStream(Encoding.UTF8.GetBytes("file"))));
+            
+            Assert.IsTrue(exception.Message.Contains("Headers"));
+            Assert.IsTrue(exception.Message.Contains("Content"));
+            Assert.IsTrue(exception.Message.Contains("x-egnyte-chunk-sha512-checksum"));
         }
 
         [Test]
@@ -313,11 +313,14 @@ namespace Egnyte.Api.Tests.Files
 
         private HttpResponseMessage GetResponseMessageWithMissingHeaders()
         {
-            return new HttpResponseMessage
+            var responseMessage = new HttpResponseMessage
             {
                 StatusCode = HttpStatusCode.OK,
                 Content = new StringContent(string.Empty)
             };
+            responseMessage.Headers.Add("X-Egnyte-Chunk-Sha512-Checksum", Checksum);
+
+            return responseMessage;
         }
 
         private HttpResponseMessage GetResponseMessageWithLowercaseHeaders()

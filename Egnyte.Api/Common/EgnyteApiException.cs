@@ -15,6 +15,11 @@ namespace Egnyte.Api.Common
             Headers = response.GetResponseHeaders();
         }
 
+        public EgnyteApiException(string message)
+            : base(message)
+        {
+        }
+
         /// <summary>
         /// Status code of response from Egnyte API
         /// </summary>
