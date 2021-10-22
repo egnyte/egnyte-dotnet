@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace Egnyte.Api.Common
+﻿namespace Egnyte.Api.Common
 {
     using System;
     using System.Net.Http;
@@ -24,48 +21,43 @@ namespace Egnyte.Api.Common
             var response = await httpClient.SendAsync(request).ConfigureAwait(false);
             var rawContent = response.Content != null ? await response.Content.ReadAsStringAsync().ConfigureAwait(false) : null;
 
-            if (response.IsSuccessStatusCode)
-            {
-                try
-                {
-                    if (typeof(T) == typeof(string))
-                    {
-                        return new ServiceResponse<T>
-                        {
-                            Data = rawContent as T,
-                            Headers = GetLowercaseResponseHeaders(response)
-                        };
-                    }
+            ExceptionHelper.CheckErrorStatusCode(response, rawContent);
 
+            try
+            {
+                if (typeof(T) == typeof(string))
+                {
                     return new ServiceResponse<T>
                     {
-                        Data = JsonConvert.DeserializeObject<T>(rawContent),
-                        Headers = GetLowercaseResponseHeaders(response)
+                        Data = rawContent as T,
+                        Headers = response.GetLowercaseResponseHeaders()
                     };
                 }
-                catch (Exception e)
-                {
-                    throw new EgnyteApiException(
-                        rawContent,
-                        response,
-                        e);
-                }
-            }
 
-            throw new EgnyteApiException(
-                    rawContent,
-                    response);
+                return new ServiceResponse<T>
+                {
+                    Data = JsonConvert.DeserializeObject<T>(rawContent),
+                    Headers = response.GetLowercaseResponseHeaders()
+                };
+            }
+            catch (Exception e)
+            {
+                throw new EgnyteApiException(rawContent, response, e);
+            }
         }
 
         public async Task<ServiceResponse<byte[]>> GetFileToDownload(HttpRequestMessage request)
         {
             request.RequestUri = ApplyAdditionalUrlMapping(request.RequestUri);
             var response = await this.httpClient.SendAsync(request);
+
+            ExceptionHelper.CheckErrorStatusCode(response);
+
             var bytes = await response.Content.ReadAsByteArrayAsync();
             return new ServiceResponse<byte[]>
             {
                 Data = bytes,
-                Headers = GetLowercaseResponseHeaders(response)
+                Headers = response.GetLowercaseResponseHeaders()
             };
         }
 
@@ -73,12 +65,15 @@ namespace Egnyte.Api.Common
         {
             request.RequestUri = ApplyAdditionalUrlMapping(request.RequestUri);
             var response = await this.httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+
+            ExceptionHelper.CheckErrorStatusCode(response);
+
             var stream = await response.Content.ReadAsStreamAsync();
 
             return new ServiceResponse<Stream>
             {
                 Data = stream,
-                Headers = GetLowercaseResponseHeaders(response)
+                Headers = response.GetLowercaseResponseHeaders()
             };
         }
 
@@ -88,11 +83,6 @@ namespace Egnyte.Api.Common
             url = url.Replace("[", "%5B")
                      .Replace("]", "%5D");
             return new Uri(url);
-        }
-
-        private Dictionary<string, string> GetLowercaseResponseHeaders(HttpResponseMessage response)
-        {
-            return response.GetResponseHeaders().ToDictionary(k => k.Key.ToLower(), v => v.Value);
         }
     }
 }

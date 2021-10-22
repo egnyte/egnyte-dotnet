@@ -296,13 +296,15 @@ namespace Egnyte.Api.Files
             var httpResponse = await httpClient.SendAsync(httpRequest).ConfigureAwait(false);
             var rawContent = httpResponse.Content != null ? await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false) : null;
 
+            ExceptionHelper.CheckErrorStatusCode(httpResponse, rawContent);
+
             ServiceResponse<CreateOrUpdateFileResponse> response;
             try
             {
                 response = new ServiceResponse<CreateOrUpdateFileResponse>
                 {
                     Data = JsonConvert.DeserializeObject<CreateOrUpdateFileResponse>(rawContent),
-                    Headers = httpResponse.GetResponseHeaders().ToDictionary(k => k.Key.ToLower(), v => v.Value)
+                    Headers = httpResponse.GetLowercaseResponseHeaders()
                 };
             }
             catch (Exception e)

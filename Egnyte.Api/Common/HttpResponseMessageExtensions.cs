@@ -6,6 +6,11 @@ namespace Egnyte.Api.Common
 {
     public static class HttpResponseMessageExtensions
     {
+        public static Dictionary<string, string> GetLowercaseResponseHeaders(this HttpResponseMessage response)
+        {
+            return response.GetResponseHeaders().ToDictionary(k => k.Key.ToLower(), v => v.Value);
+        }
+
         public static Dictionary<string, string> GetResponseHeaders(this HttpResponseMessage message)
         {
             if (message == null || message.Headers == null)
