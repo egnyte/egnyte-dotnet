@@ -16,6 +16,9 @@ namespace Egnyte.Api.Tests.Files
         private const string Checksum = "6cb2785692b05c5eff397109457031bde7ab236982364cc7b51e319c67c463d7721c82c024ef3f74b9dff d388be6dc8120edc214e7d0eadaaf2c5e0eb44845a3";
         private const string UploadId = "a18967e9-dea4-4508-aeca-a0ecd2c971f1";
         private const string ETag = "9c4c2443-5dbc-4afa-8d04-5620a778093c";
+        private const string RetryAfter = "20";
+        private const string Alloted = "100";
+        private const string Current = "101";
 
         private const string CreateFileResponse = @"
         {
@@ -53,7 +56,7 @@ namespace Egnyte.Api.Tests.Files
             Assert.IsTrue(exception.Message.Contains("file"));
             Assert.IsNull(exception.InnerException);
         }
-
+        
         [Test]
         public async Task ChunkedUploadFirstChunk_ReturnsCorrectResponse()
         {
@@ -92,7 +95,28 @@ namespace Egnyte.Api.Tests.Files
             Assert.IsTrue(exception.Message.Contains("Content"));
             Assert.IsTrue(exception.Message.Contains("x-egnyte-chunk-sha512-checksum"));
         }
+        
+        [Test]
+        public async Task ChunkedUploadFirstChunk_ThrowsQPSLimitExceededException_WhenAccountOverQPSLimit()
+        {
+            var httpHandlerMock = new HttpMessageHandlerMock();
+            var httpClient = new HttpClient(httpHandlerMock);
+            httpHandlerMock.SendAsyncFunc = (request, cancellationToken) => Task.FromResult(GetResponseMessageWithExceededQPS());
 
+            var egnyteClient = new EgnyteClient("token", "acme", httpClient);
+            var exception = await AssertExtensions.ThrowsAsync<QPSLimitExceededException>(
+                () => egnyteClient.Files.ChunkedUploadFirstChunk(
+                    "path",
+                    new MemoryStream(Encoding.UTF8.GetBytes("file"))));
+
+            Assert.IsNull(exception.InnerException);
+            Assert.AreEqual("Account over QPS limit", exception.Message);
+
+            Assert.AreEqual(RetryAfter, exception.RetryAfter);
+            Assert.AreEqual(Current, exception.Current);
+            Assert.AreEqual(Alloted, exception.Allotted);
+        }
+        
         [Test]
         public async Task ChunkedUploadFirstChunk_WithLowercaseResponseHeaders_ReturnsCorrectResponse()
         {
@@ -333,6 +357,22 @@ namespace Egnyte.Api.Tests.Files
             responseMessage.Headers.Add("X-Egnyte-Chunk-Sha512-Checksum", Checksum);
             responseMessage.Headers.Add("x-egnyte-chunk-num", "1");
             responseMessage.Headers.Add("x-egnyte-upload-id", UploadId);
+
+            return responseMessage;
+        }
+
+        private HttpResponseMessage GetResponseMessageWithExceededQPS()
+        {
+            var responseMessage = new HttpResponseMessage
+            {
+                StatusCode = HttpStatusCode.Forbidden,
+                Content = new StringContent("<h1>Developer Over Qps</h1>")
+            };
+
+            responseMessage.Headers.Add("retry-after", RetryAfter);
+            responseMessage.Headers.Add("x-mashery-error-code", "ERR_403_DEVELOPER_OVER_QPS");
+            responseMessage.Headers.Add("x-accesstoken-qps-allotted", Alloted);
+            responseMessage.Headers.Add("x-accesstoken-qps-current", Current);
 
             return responseMessage;
         }
