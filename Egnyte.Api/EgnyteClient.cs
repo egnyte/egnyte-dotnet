@@ -12,7 +12,7 @@
     using Search;
     using Audit;
     using Tasks;
-    using Egnyte.Api.ProjectFolders;
+    using ProjectFolders;
 
     public class EgnyteClient
     {
