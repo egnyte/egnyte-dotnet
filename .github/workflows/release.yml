@@ -21,7 +21,7 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release /p:Version=${VERSION}
       - name: Test
-        run: dotnet --roll-forward LatestMajor test --configuration Release /p:Version=${VERSION} --no-build 
+        run: dotnet test --configuration Release /p:Version=${VERSION} --no-build 
       - name: Pack 
         run: dotnet pack --configuration Release /p:Version=${VERSION} --no-build --output .
       - name: Push
