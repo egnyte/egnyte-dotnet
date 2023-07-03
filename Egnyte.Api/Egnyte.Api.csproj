@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net48</TargetFrameworks>
     <PackageId>Egnyte.Api</PackageId>
     <Version>2.0.1</Version>
     <Authors>Michał Białecki</Authors>
@@ -11,8 +11,8 @@
 	<RepositoryUrl>https://github.com/egnyte/egnyte-dotnet</RepositoryUrl>
   </PropertyGroup>
 
-  <!--Conditionally obtain references for the .NET Framework 4.6.1 target--> 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
+  <!--Conditionally obtain references for the .NET Framework 4.8.0 target--> 
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
