@@ -12,6 +12,7 @@
     using Search;
     using Audit;
     using Tasks;
+    using ProjectFolders;
 
     public class EgnyteClient
     {
@@ -58,6 +59,7 @@
             Links = new LinksClient(httpClient, domain, host);
             Groups = new GroupsClient(httpClient, domain, host);
             Permissions = new PermissionsClient(httpClient, domain, host);
+            ProjectFolders = new ProjectFoldersClient(httpClient, domain, host);
             Search = new SearchClient(httpClient, domain, host);
             Audit = new AuditClient(httpClient, domain, host);
             Tasks = new TasksClient(httpClient, domain, host);
@@ -95,6 +97,11 @@
         /// for details on our different permission levels
         /// </summary>
         public PermissionsClient Permissions { get; private set; }
+
+        /// <summary>
+        /// The Project Folder API allows you to search, create, modify, and delete Project folders
+        /// </summary>
+        public ProjectFoldersClient ProjectFolders { get; private set; }
 
         /// <summary>
         /// The Search API allows you to find content stored in Egnyte based on filenames,
