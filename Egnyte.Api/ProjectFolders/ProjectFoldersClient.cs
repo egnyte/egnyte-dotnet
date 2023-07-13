@@ -240,15 +240,8 @@ namespace Egnyte.Api.ProjectFolders
             var uriBuilder = BuildUri(ProjectFoldersMethodV2 + "/" + projectId);
             var httpRequest = new HttpRequestMessage(HttpMethod.Delete, uriBuilder.Uri);
 
-            try
-            {
-                var serviceHandler = new ServiceHandler<object>(httpClient);
-                var response = await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
-            }
-            catch
-            {
-                return false;
-            }
+            var serviceHandler = new ServiceHandler<object>(httpClient);
+            var response = await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
             return true;
         }
 
@@ -310,15 +303,9 @@ namespace Egnyte.Api.ProjectFolders
                     "application/json")
             };
 
-            try
-            {
-                var serviceHandler = new ServiceHandler<object>(httpClient);
-                var response = await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
-            }
-            catch
-            {
-                return false;
-            }
+
+            var serviceHandler = new ServiceHandler<object>(httpClient);
+            var response = await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
             return true;
         }
 
@@ -487,7 +474,7 @@ namespace Egnyte.Api.ProjectFolders
             var builder = new StringBuilder();
             builder
                 .Append("{")
-                .Append("\"parentFolderId\" : \"" + rootFolderId + "\"")
+                .Append("\"rootFolderId\" : \"" + rootFolderId + "\"")
                 .Append("}");
             return builder.ToString();
         }
@@ -497,27 +484,29 @@ namespace Egnyte.Api.ProjectFolders
             var builder = new StringBuilder();
             builder
                 .Append("{")
-                .Append("\"deleteLinks\" : " + deleteLinks + ",");
+                .Append("\"deleteLinks\" : " + deleteLinks.ToString().ToLower() + ",")
+                .Append("\"usersToDelete\" : [");
             if (usersToDelete != null && usersToDelete.Count > 0)
             {
-                builder.Append("\"usersToDelete\" : [");
                 foreach (var userToDelete in usersToDelete)
                 {
                     builder.Append(userToDelete).Append(",");
                 }
                 builder.Length -= 1;
-                builder.Append("],");
             }
+            builder
+                .Append("],")
+                .Append("\"usersToDisable\" : [");
+
             if (usersToDisable != null && usersToDisable.Count > 0)
             {
-                builder.Append("\"usersToDisable\" : [");
                 foreach (var userToDisable in usersToDisable)
                 {
                     builder.Append(userToDisable).Append(",");
                 }
                 builder.Length -= 1;
-                builder.Append("],");
             }
+            builder.Append("],");
             builder.Length -= 1;
             builder.Append("}");
             return builder.ToString().TrimEnd(',');
