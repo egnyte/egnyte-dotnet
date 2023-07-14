@@ -1,9 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Egnyte.Api.Tests.ProjectFolders
@@ -87,9 +85,9 @@ namespace Egnyte.Api.Tests.ProjectFolders
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
 
             var exception = await AssertExtensions.ThrowsAsync<ArgumentNullException>(
-                () => egnyteClient.ProjectFolders.FindProjectById(projectId: string.Empty));
+                () => egnyteClient.ProjectFolders.FindProjectById(id: string.Empty));
 
-            Assert.IsTrue(exception.Message.Contains("projectId"));
+            Assert.IsTrue(exception.Message.Contains("id"));
             Assert.IsNull(exception.InnerException);
         }
     }
