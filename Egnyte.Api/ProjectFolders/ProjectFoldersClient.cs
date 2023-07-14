@@ -94,17 +94,17 @@ namespace Egnyte.Api.ProjectFolders
         /// <summary>
         /// Retrieve a project based on its Id
         /// </summary>
-        /// <param name="projectId">Project Id</param>
+        /// <param name="id">Project Id</param>
         /// <returns>Project details</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public async Task<ProjectDetails> FindProjectById(string projectId)
+        public async Task<ProjectDetails> FindProjectById(string id)
         {
-            if (string.IsNullOrWhiteSpace(projectId))
+            if (string.IsNullOrWhiteSpace(id))
             {
-                throw new ArgumentNullException(nameof(projectId));
+                throw new ArgumentNullException(nameof(id));
             }
 
-            var uriBuilder = BuildUri(ProjectFoldersMethodV2 + "/" + projectId);
+            var uriBuilder = BuildUri(ProjectFoldersMethodV2 + "/" + id);
             var httpRequest = new HttpRequestMessage(HttpMethod.Get, uriBuilder.Uri);
 
             var serviceHandler = new ServiceHandler<ProjectDetails>(httpClient);
@@ -227,17 +227,17 @@ namespace Egnyte.Api.ProjectFolders
         /// <summary>
         /// Remove a project
         /// </summary>
-        /// <param name="projectId">Project Id</param>
+        /// <param name="id">Project Id</param>
         /// <returns>True if succeeded, False otherwise</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public async Task<bool> RemoveProject(string projectId)
+        public async Task<bool> RemoveProject(string id)
         {
-            if (string.IsNullOrWhiteSpace(projectId))
+            if (string.IsNullOrWhiteSpace(id))
             {
-                throw new ArgumentNullException(nameof(projectId));
+                throw new ArgumentNullException(nameof(id));
             }
 
-            var uriBuilder = BuildUri(ProjectFoldersMethodV2 + "/" + projectId);
+            var uriBuilder = BuildUri(ProjectFoldersMethodV2 + "/" + id);
             var httpRequest = new HttpRequestMessage(HttpMethod.Delete, uriBuilder.Uri);
 
             var serviceHandler = new ServiceHandler<object>(httpClient);
@@ -248,8 +248,9 @@ namespace Egnyte.Api.ProjectFolders
         /// <summary>
         /// Update existing project
         /// </summary>
+        /// <param name="id">Id of the project</param>
         /// <param name="name">The name of the project</param>
-        /// <param name="projectId">ID of the project</param>
+        /// <param name="projectId">id</param>
         /// <param name="status">Status of the project. Possible values: pending, in-progress, or on-hold</param>
         /// <param name="description">Optional. Folder description</param>
         /// <param name="customerName">Optional. The customer associated with the project</param>
@@ -260,6 +261,7 @@ namespace Egnyte.Api.ProjectFolders
         /// <exception cref="ArgumentNullException"></exception>
         public async Task<bool> UpdateProject(
             string name,
+            string id,
             string projectId,
             string status,
             string description = null,
@@ -283,7 +285,7 @@ namespace Egnyte.Api.ProjectFolders
                 throw new ArgumentNullException(nameof(status));
             }
 
-            var uriBuilder = BuildUri(ProjectFoldersMethodV2 + "/" + projectId);
+            var uriBuilder = BuildUri(ProjectFoldersMethodV2 + "/" + id);
             var httpRequest = new HttpRequestMessage(new HttpMethod("PATCH"), uriBuilder.Uri)
             {
                 Content = new StringContent(
@@ -312,24 +314,24 @@ namespace Egnyte.Api.ProjectFolders
         /// <summary>
         /// Clean up a project
         /// </summary>
-        /// <param name="projectId">Project Id</param>
+        /// <param name="id">Project Id</param>
         /// <param name="deleteLinks">If set to true, all existing active links in the project will be deleted</param>
         /// <param name="usersToDelete">List of User Ids to be deleted</param>
         /// <param name="usersToDisable">List of User Ids to be disabled</param>
         /// <returns>True if succeeded</returns>
         /// <exception cref="ArgumentNullException"></exception>
         public async Task<bool> CleanUpProject(
-            string projectId,
+            string id,
             bool deleteLinks,
             List<long> usersToDelete = null,
             List<long> usersToDisable = null)
         {
-            if (string.IsNullOrWhiteSpace(projectId))
+            if (string.IsNullOrWhiteSpace(id))
             {
-                throw new ArgumentNullException(nameof(projectId));
+                throw new ArgumentNullException(nameof(id));
             }
 
-            var uriBuilder = BuildUri(ProjectFoldersMethod + "/" + projectId + "/cleanup");
+            var uriBuilder = BuildUri(ProjectFoldersMethod + "/" + id + "/cleanup");
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, uriBuilder.Uri)
             {
                 Content = new StringContent(
@@ -384,7 +386,7 @@ namespace Egnyte.Api.ProjectFolders
             }
             if (!string.IsNullOrWhiteSpace(projectId))
             {
-                builder.Append("\"projectId\" : \"" + projectId + "\",");
+                builder.Append("\"id\" : \"" + projectId + "\",");
             }
             if (!string.IsNullOrWhiteSpace(customerName))
             {

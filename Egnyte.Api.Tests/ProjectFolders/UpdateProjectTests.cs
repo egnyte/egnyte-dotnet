@@ -27,6 +27,7 @@ namespace Egnyte.Api.Tests.ProjectFolders
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
             var updateProjectResponse = await egnyteClient.ProjectFolders.UpdateProject(
                 name: "Acme Widgets HQ",
+                id: "P123",
                 status: "pending",
                 projectId: "ABC123",
                 customerName: "Acme Widgets",
@@ -43,7 +44,7 @@ namespace Egnyte.Api.Tests.ProjectFolders
 
             var requestMessage = httpHandlerMock.GetHttpRequestMessage();
             Assert.AreEqual(
-                "https://acme.egnyte.com/pubapi/v2/project-folders/ABC123",
+                "https://acme.egnyte.com/pubapi/v2/project-folders/P123",
                 requestMessage.RequestUri.ToString());
             Assert.AreEqual(HttpMethod.Patch, requestMessage.Method);
             Assert.IsTrue(updateProjectResponse);
@@ -58,6 +59,7 @@ namespace Egnyte.Api.Tests.ProjectFolders
             var exception = await AssertExtensions.ThrowsAsync<ArgumentNullException>(
                 () => egnyteClient.ProjectFolders.UpdateProject(
                     name: string.Empty,
+                    id: "P123",
                     status: "pending",
                     projectId: "ABC123"));
 
@@ -74,6 +76,7 @@ namespace Egnyte.Api.Tests.ProjectFolders
             var exception = await AssertExtensions.ThrowsAsync<ArgumentNullException>(
                 () => egnyteClient.ProjectFolders.UpdateProject(
                     name: "Acme Widgets HQ",
+                    id: "P123",
                     status: string.Empty,
                     projectId: "ABC123"));
 
@@ -90,6 +93,7 @@ namespace Egnyte.Api.Tests.ProjectFolders
             var exception = await AssertExtensions.ThrowsAsync<ArgumentNullException>(
                 () => egnyteClient.ProjectFolders.UpdateProject(
                     name: "Acme Widgets HQ",
+                    id: "P123",
                     status: "pending",
                     projectId: string.Empty));
 

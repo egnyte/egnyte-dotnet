@@ -25,7 +25,7 @@ namespace Egnyte.Api.Tests.ProjectFolders
                         });
 
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
-            var cleanupProjectResponse = await egnyteClient.ProjectFolders.CleanUpProject(projectId: "ABC123", true);
+            var cleanupProjectResponse = await egnyteClient.ProjectFolders.CleanUpProject(id: "ABC123", true);
 
             var requestMessage = httpHandlerMock.GetHttpRequestMessage();
             Assert.AreEqual(
@@ -42,9 +42,9 @@ namespace Egnyte.Api.Tests.ProjectFolders
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
 
             var exception = await AssertExtensions.ThrowsAsync<ArgumentNullException>(
-                () => egnyteClient.ProjectFolders.CleanUpProject(projectId: string.Empty, true));
+                () => egnyteClient.ProjectFolders.CleanUpProject(id: string.Empty, true));
 
-            Assert.IsTrue(exception.Message.Contains("projectId"));
+            Assert.IsTrue(exception.Message.Contains("id"));
             Assert.IsNull(exception.InnerException);
         }
     }
