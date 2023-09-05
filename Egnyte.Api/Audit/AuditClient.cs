@@ -12,8 +12,92 @@
     public class AuditClient : BaseClient
     {
         const string AuditReportMethod = "/pubapi/v1/audit";
+        const string AuditStreamingMethod = "/pubapi/v2/audit/stream";
 
         internal AuditClient(HttpClient httpClient, string domain = "", string host = "") : base(httpClient, domain, host) { }
+
+        /// <summary>
+        /// Access streaming version of audit reporting.
+        /// </summary>
+        /// <param name="startDate">Required if nextCursor not specified. Start of date range for the initial set of audit events. The start date should be within the last 7 days (from now). To retrieve past audit events outside of the 7 day window, it is needed to use Audit Reporting API v1.</param>
+        /// <param name="endDate">Optional. End of date range for the initial set of audit events.</param>
+        /// <param name="auditTypes">Allows to receive only specific types of audit events. If multiple types of events are required, it is recommended to receive all the required types (specifying the list of types in this filter) and then process them on the client as required. Allows filtering audit events by type based on the list of audit event types.</param>
+        /// <param name="nextCursor">Iteration pointer for a following (not the initial) request. A cursor is returned in response to the initial request and then every following request generates a new cursor to be used in the next request.</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        public async Task<AuditV2ReportResponse> GetAuditV2Report(
+            DateTime? startDate = null,
+            DateTime? endDate = null,
+            List<AuditV2Type> auditTypes = null,
+            string nextCursor = null)
+        {
+            if (startDate == null && nextCursor == null)
+            {
+                throw new ArgumentException("Either 'startDate' or 'nextCursor' must be specified.", nameof(nextCursor));
+            }
+
+            var uriBuilder = BuildUri(AuditStreamingMethod);
+            var httpRequest = new HttpRequestMessage(HttpMethod.Post, uriBuilder.Uri)
+            {
+                Content = new StringContent(
+                    GetAuditV2ReportContent(
+                        startDate,
+                        endDate,
+                        auditTypes,
+                        nextCursor),
+                    Encoding.UTF8,
+                    "application/json")
+            };
+
+            var serviceHandler = new ServiceHandler<AuditV2ReportResponse>(httpClient);
+            var response = await serviceHandler.SendRequestAsync(httpRequest).ConfigureAwait(false);
+
+            return response.Data;
+        }
+
+        string GetAuditV2ReportContent(
+            DateTime? startDate = null,
+            DateTime? endDate = null,
+            List<AuditV2Type> auditTypes = null,
+            string nextCursor = null)
+        {
+            var builder = new StringBuilder();
+
+            if (nextCursor != null)
+            {
+                builder
+                    .Append("{")
+                    .Append(string.Format("\"nextCursor\": \"{0}\"", nextCursor))
+                    .Append("}");
+            }
+            else
+            {
+                builder
+                    .Append("{")
+                    .Append(string.Format("\"startDate\": \"{0:yyyy-MM-ddTHH:mm:ssZ}\"", startDate));
+
+                if (endDate != null)
+                {
+                    builder
+                        .Append(",")
+                        .Append(string.Format("\"endDate\": \"{0:yyyy-MM-ddTHH:mm:ssZ}\"", endDate));
+                }
+
+                if (auditTypes != null)
+                {
+                    string auditsContent = "["
+                        + string.Join(",", auditTypes.Select(e => "\"" + e.ToString() + "\""))
+                        + "]";
+                    builder
+                        .Append(",")
+                        .Append("\"auditType\": " + auditsContent);
+                }
+
+                builder.Append("}");
+            }
+
+            return builder.ToString();
+        }
 
         /// <summary>
         /// Creates login audit report
@@ -44,7 +128,7 @@
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, uriBuilder.Uri)
             {
                 Content = new StringContent(
-                    GetCrateLoginAuditReportContent(
+                    GetCreateLoginAuditReportContent(
                         format,
                         startDate,
                         endDate,
@@ -61,7 +145,7 @@
             return response.Data.Id;
         }
 
-        string GetCrateLoginAuditReportContent(
+        string GetCreateLoginAuditReportContent(
             AuditReportFormat format,
             DateTime startDate,
             DateTime endDate,
