@@ -76,7 +76,7 @@ namespace Egnyte.Api.Tests.Search
         }
 
         [Test]
-        public async Task CreateLoginAuditReport_WhenEventsAreEMpty_ThrowsException()
+        public async Task CreateLoginAuditReport_WhenEventsAreEmpty_ThrowsException()
         {
             var httpClient = new HttpClient(new HttpMessageHandlerMock());
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);

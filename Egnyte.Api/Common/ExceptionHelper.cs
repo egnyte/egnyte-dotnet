@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Egnyte.Api.Audit;
+using System;
+using System.Net;
 using System.Net.Http;
 
 namespace Egnyte.Api.Common
@@ -23,6 +25,13 @@ namespace Egnyte.Api.Common
                 if (headers["x-mashery-error-code"] == "ERR_403_DEVELOPER_OVER_RATE")
                 {
                     throw new RateLimitExceededException(headers);
+                }
+            }
+            else
+            {
+                if ( (response.StatusCode == (HttpStatusCode)429) && (headers.ContainsKey("retry-after")) )
+                {
+                    throw new AuditV2RateLimitExceededException(headers);
                 }
             }
 
