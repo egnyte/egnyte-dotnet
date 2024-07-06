@@ -4,7 +4,7 @@
 
     public class Range
     {
-        public Range(int from, int to)
+        public Range(long from, long to)
         {
             if (from > to)
             {
@@ -15,8 +15,8 @@
             To = to;
         }
 
-        public int From { get; private set; }
+        public long From { get; private set; }
 
-        public int To { get; private set; }
+        public long To { get; private set; }
     }
 }
