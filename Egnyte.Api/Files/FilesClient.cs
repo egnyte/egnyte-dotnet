@@ -50,10 +50,10 @@ namespace Egnyte.Api.Files
         /// Creates or updates a file. To upload files larger than 100 MB, use the ChunkedUpload method
         /// </summary>
         /// <param name="path">Full path to the file</param>
-        /// <param name="file">Content of a file in a memory stream</param>
+        /// <param name="file">Content of a file in a stream</param>
         /// <returns>Response with checksum and ids.
         /// Checksum is a SHA512 hash of entire file that can be used for validating upload integrity</returns>
-        public async Task<UploadedFileMetadata> CreateOrUpdateFile(string path, MemoryStream file)
+        public async Task<UploadedFileMetadata> CreateOrUpdateFile(string path, Stream file)
         {
             if (string.IsNullOrWhiteSpace(path))
             {
@@ -272,7 +272,7 @@ namespace Egnyte.Api.Files
         /// <param name="path">Full path to file</param>
         /// <param name="file">Stream with the file content</param>
         /// <returns>Uploaded chunk metadata</returns>
-        public async Task<ChunkUploadedMetadata> ChunkedUploadFirstChunk(string path, MemoryStream file)
+        public async Task<ChunkUploadedMetadata> ChunkedUploadFirstChunk(string path, Stream file)
         {
             if (string.IsNullOrWhiteSpace(path))
             {
@@ -355,7 +355,7 @@ namespace Egnyte.Api.Files
             string path,
             int chunkNumber,
             string chunkUploadId,
-            MemoryStream file)
+            Stream file)
         {
             if (string.IsNullOrWhiteSpace(path))
             {
@@ -413,7 +413,7 @@ namespace Egnyte.Api.Files
             string path,
             int chunkNumber,
             string chunkUploadId,
-            MemoryStream file)
+            Stream file)
         {
             if (string.IsNullOrWhiteSpace(path))
             {
