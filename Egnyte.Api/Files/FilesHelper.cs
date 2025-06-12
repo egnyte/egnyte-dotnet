@@ -24,6 +24,7 @@
                         response.Offset,
                         response.Path,
                         response.FolderId,
+                        response.FolderDescription,
                         response.TotalCount,
                         ConvertFromUnixTimestamp(response.LastModifiedFolder),
                         response.RestrictMoveDelete,
