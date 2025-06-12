@@ -11,6 +11,7 @@
             int offset,
             string path,
             string folderId,
+            string folderDescription,
             int totalCount,
             DateTime lastModified,
             bool restrictMoveDelete,
@@ -24,6 +25,7 @@
         {
             Count = count;
             Offset = offset;
+            FolderDescription = folderDescription;
             TotalCount = totalCount;
             RestrictMoveDelete = restrictMoveDelete;
             PublicLinks = publicLinks;
@@ -34,6 +36,8 @@
         public int Count { get; private set; }
 
         public int Offset { get; private set; }
+
+        public string FolderDescription { get; private set; }
 
         public int TotalCount { get; private set; }
 

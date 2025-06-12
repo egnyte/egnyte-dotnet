@@ -29,6 +29,9 @@ namespace Egnyte.Api.Files
         [JsonProperty(PropertyName = "folder_id")]
         public string FolderId { get; set; }
 
+        [JsonProperty(PropertyName = "folder_description")]
+        public string FolderDescription { get; set; }
+
         [JsonProperty(PropertyName = "total_count")]
         public int TotalCount { get; set; }
 
