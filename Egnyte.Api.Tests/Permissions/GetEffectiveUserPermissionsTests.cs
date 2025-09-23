@@ -32,11 +32,38 @@ namespace Egnyte.Api.Tests.Permissions
 
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
             var permissions = await egnyteClient.Permissions.GetEffectivePermissionsForUser(
-                "mjones", "Shared/myFolder");
+                "mjones", "/Shared/myFolder");
 
             var requestMessage = httpHandlerMock.GetHttpRequestMessage();
             Assert.AreEqual(
                 "https://acme.egnyte.com/pubapi/v1/perms/user/mjones?folder=/Shared/myFolder",
+                requestMessage.RequestUri.ToString());
+            Assert.AreEqual(HttpMethod.Get, requestMessage.Method);
+
+            Assert.AreEqual(PermissionType.Owner, permissions);
+        }
+        [Test]
+        public async Task GetEffectiveUserPermissions_WithSpecialChars()
+        {
+            var httpHandlerMock = new HttpMessageHandlerMock();
+            var httpClient = new HttpClient(httpHandlerMock);
+
+            httpHandlerMock.SendAsyncFunc =
+                (request, cancellationToken) =>
+                Task.FromResult(
+                    new HttpResponseMessage
+                    {
+                        StatusCode = HttpStatusCode.OK,
+                        Content = new StringContent("{ \"permission\": \"Owner\" }")
+                    });
+
+            var egnyteClient = new EgnyteClient("token", "acme", httpClient);
+            var permissions = await egnyteClient.Permissions.GetEffectivePermissionsForUser(
+                "mjones", "/Shared/myFolder + anotherFolder");
+
+            var requestMessage = httpHandlerMock.GetHttpRequestMessage();
+            Assert.AreEqual(
+                "https://acme.egnyte.com/pubapi/v1/perms/user/mjones?folder=/Shared/myFolder %2B anotherFolder",
                 requestMessage.RequestUri.ToString());
             Assert.AreEqual(HttpMethod.Get, requestMessage.Method);
 

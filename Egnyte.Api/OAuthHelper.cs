@@ -23,7 +23,16 @@ namespace Egnyte.Api
 
     public static class OAuthHelper
     {
-        private const string EgnyteBaseUrl = "https://{0}.egnyte.com/puboauth/token";
+        private const string EgnyteDefaultHostSuffix = ".egnyte.com";
+
+        private static Uri BuildOAuthBaseUri(string userDomain)
+        {
+            var host = userDomain.Contains(".")
+                ? userDomain
+                : userDomain + EgnyteDefaultHostSuffix;
+
+            return new Uri($"https://{host}/puboauth/token");
+        }
 
         /// <summary>
         /// Gets the URI used to initiate the OAuth2.0 authorization flow.
@@ -118,7 +127,7 @@ namespace Egnyte.Api
                 queryBuilder.Append("&mobile=").Append(mobile.Value ? "1" : "0");
             }
 
-            var baseUri = new Uri(string.Format(EgnyteBaseUrl, userDomain));
+            var baseUri = BuildOAuthBaseUri(userDomain);
             var uriBuilder = new UriBuilder(baseUri) { Query = queryBuilder.ToString() };
 
             return uriBuilder.Uri;
@@ -186,7 +195,7 @@ namespace Egnyte.Api
 
             return new TokenRequestParameters
                 {
-                    BaseAddress = new Uri(string.Format(EgnyteBaseUrl, userDomain)),
+                    BaseAddress = BuildOAuthBaseUri(userDomain),
                     QueryParameters = queryParameters
                 };
         }
@@ -250,7 +259,7 @@ namespace Egnyte.Api
 
             return new TokenRequestParameters
                 {
-                    BaseAddress = new Uri(string.Format(EgnyteBaseUrl, userDomain)),
+                    BaseAddress = BuildOAuthBaseUri(userDomain),
                     QueryParameters = queryParameters
                 };
         }

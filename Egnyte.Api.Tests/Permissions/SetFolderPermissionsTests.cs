@@ -53,13 +53,13 @@ namespace Egnyte.Api.Tests.Permissions
 
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
             var userList = await egnyteClient.Permissions.SetFolderPermissions(
-                "Shared/myFolder/",
+                "Shared/myFolder",
                 PermissionType.Viewer,
                 new List<string> { "jsmith", "ajones" });
 
             var requestMessage = httpHandlerMock.GetHttpRequestMessage();
             Assert.AreEqual(
-                "https://acme.egnyte.com/pubapi/v1/perms/folder/Shared/myFolder/",
+                "https://acme.egnyte.com/pubapi/v1/perms/folder/Shared/myFolder",
                 requestMessage.RequestUri.ToString());
             Assert.AreEqual(HttpMethod.Post, requestMessage.Method);
 
@@ -86,13 +86,13 @@ namespace Egnyte.Api.Tests.Permissions
 
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
             var userList = await egnyteClient.Permissions.SetFolderPermissions(
-                "Shared/myFolder with ##/",
+                "/Shared/myFolder with ##",
                 PermissionType.Viewer,
                 new List<string> { "jsmith", "ajones" });
 
             var requestMessage = httpHandlerMock.GetHttpRequestMessage();
             Assert.AreEqual(
-                "https://acme.egnyte.com/pubapi/v1/perms/folder/Shared/myFolder with %23%23/",
+                "https://acme.egnyte.com/pubapi/v1/perms/folder/Shared/myFolder with %23%23",
                 requestMessage.RequestUri.ToString());
             Assert.AreEqual(HttpMethod.Post, requestMessage.Method);
 
@@ -119,14 +119,14 @@ namespace Egnyte.Api.Tests.Permissions
 
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
             var userList = await egnyteClient.Permissions.SetFolderPermissions(
-                "Shared/myFolder/",
+                "/Shared/myFolder/",
                 PermissionType.Full,
                 new List<string> { "jsmith", "ajones" },
                 new List<string> { "admins", "it_support" });
 
             var requestMessage = httpHandlerMock.GetHttpRequestMessage();
             Assert.AreEqual(
-                "https://acme.egnyte.com/pubapi/v1/perms/folder/Shared/myFolder/",
+                "https://acme.egnyte.com/pubapi/v1/perms/folder/Shared/myFolder",
                 requestMessage.RequestUri.ToString());
             Assert.AreEqual(HttpMethod.Post, requestMessage.Method);
 

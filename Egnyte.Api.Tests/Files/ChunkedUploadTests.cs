@@ -321,6 +321,26 @@ namespace Egnyte.Api.Tests.Files
             Assert.AreEqual("file", content);
         }
 
+        [Test]
+        public async Task ChunkedUploadFirstChunk_HandlesSpecialCharactersInPath()
+        {
+            var httpHandlerMock = new HttpMessageHandlerMock();
+            var httpClient = new HttpClient(httpHandlerMock);
+        
+            httpHandlerMock.SendAsyncFunc = (request, cancellationToken) => Task.FromResult(GetResponseMessage());
+        
+            var egnyteClient = new EgnyteClient("token", "acme", httpClient);
+            var result = await egnyteClient.Files.ChunkedUploadFirstChunk(
+                "folder + another % and something",
+                new MemoryStream(Encoding.UTF8.GetBytes("file")));
+        
+            var requestMessage = httpHandlerMock.GetHttpRequestMessage();
+            Assert.AreEqual(Checksum, result.Checksum);
+            Assert.AreEqual(1, result.ChunkNumber);
+            Assert.AreEqual(UploadId, result.UploadId);
+            Assert.AreEqual("https://acme.egnyte.com/pubapi/v1/fs-content-chunked/folder %2B another %25 and something", requestMessage.RequestUri.ToString());
+        }
+
         private HttpResponseMessage GetResponseMessage()
         {
             var responseMessage = new HttpResponseMessage

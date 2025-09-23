@@ -34,7 +34,7 @@ namespace Egnyte.Api.Files
                 throw new ArgumentNullException(nameof(path));
             }
 
-            var uriBuilder = BuildUri(FilesMethod + "/" + path);
+            var uriBuilder = BuildUri(FilesMethod + "/" + EncodePathSegments(path));
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, uriBuilder.Uri)
             {
                 Content = new StringContent(@"{""action"": ""add_folder""}", Encoding.UTF8, "application/json")
@@ -65,7 +65,7 @@ namespace Egnyte.Api.Files
                 throw new ArgumentNullException(nameof(file));
             }
 
-            var uriBuilder = BuildUri(FilesContentMethod + "/" + path);
+            var uriBuilder = BuildUri(FilesContentMethod + "/" + EncodePathSegments(path));
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, uriBuilder.Uri)
             {
                 Content = new StreamContent(file)
@@ -109,7 +109,7 @@ namespace Egnyte.Api.Files
                 destination = "/" + destination;
             }
 
-            var uriBuilder = BuildUri(FilesMethod + "/" + path);
+            var uriBuilder = BuildUri(FilesMethod + "/" + EncodePathSegments(path));
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, uriBuilder.Uri)
             {
                 Content = new StringContent(
@@ -147,7 +147,7 @@ namespace Egnyte.Api.Files
                 destination = "/" + destination;
             }
 
-            var uriBuilder = BuildUri(FilesMethod + "/" + path);
+            var uriBuilder = BuildUri(FilesMethod + "/" + EncodePathSegments(path));
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, uriBuilder.Uri)
             {
                 Content = new StringContent(
@@ -256,7 +256,7 @@ namespace Egnyte.Api.Files
                 query = "entry_id=" + entryId;
             }
 
-            var uriBuilder = BuildUri(FilesMethod + "/" + path, query);
+            var uriBuilder = BuildUri(FilesMethod + "/" + EncodePathSegments(path), query);
             var httpRequest = new HttpRequestMessage(HttpMethod.Delete, uriBuilder.Uri);
 
             var serviceHandler = new ServiceHandler<string>(httpClient);
@@ -284,7 +284,7 @@ namespace Egnyte.Api.Files
                 throw new ArgumentNullException(nameof(file));
             }
 
-            var uriBuilder = BuildUri(FilesChunkedContentMethod + "/" + path);
+            var uriBuilder = BuildUri(FilesChunkedContentMethod + "/" + EncodePathSegments(path));
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, uriBuilder.Uri)
             {
                 Content = new StreamContent(file)
@@ -377,7 +377,7 @@ namespace Egnyte.Api.Files
                 throw new ArgumentNullException(nameof(file));
             }
             
-            var uriBuilder = BuildUri(FilesChunkedContentMethod + "/" + path);
+            var uriBuilder = BuildUri(FilesChunkedContentMethod + "/" + EncodePathSegments(path));
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, uriBuilder.Uri)
             {
                 Content = new StreamContent(file)
@@ -435,7 +435,7 @@ namespace Egnyte.Api.Files
                 throw new ArgumentNullException(nameof(file));
             }
 
-            var uriBuilder = BuildUri(FilesChunkedContentMethod + "/" + path);
+            var uriBuilder = BuildUri(FilesChunkedContentMethod + "/" + EncodePathSegments(path));
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, uriBuilder.Uri)
             {
                 Content = new StreamContent(file)
@@ -491,7 +491,7 @@ namespace Egnyte.Api.Files
                 throw new ArgumentException("None of the optional parameters were provided");
             }
             
-            var uriBuilder = BuildUri(FilesMethod + "/" + path);
+            var uriBuilder = BuildUri(FilesMethod + "/" + EncodePathSegments(path));
             var httpRequest = new HttpRequestMessage(new HttpMethod("PATCH"), uriBuilder.Uri)
             {
                 Content = new StringContent(
@@ -540,7 +540,7 @@ namespace Egnyte.Api.Files
             var fileOrFolderType = fileOrFolder.IsFolder ? "folder" : "file";
             var groupOrEntryId = fileOrFolder.IsFolder ? fileOrFolder.AsFolder.FolderId : fileOrFolder.AsFile.GroupId;
 
-            var uriBuilder = BuildUri(FilesMethod + "/ids/" + fileOrFolderType + "/" + groupOrEntryId + "/properties/" + sectionName);
+            var uriBuilder = BuildUri(FilesMethod + "/ids/" + fileOrFolderType + "/" + Uri.EscapeDataString(groupOrEntryId) + "/properties/" + Uri.EscapeDataString(sectionName));
             var httpRequest = new HttpRequestMessage(new HttpMethod("PUT"), uriBuilder.Uri)
             {
                 Content = new StringContent(
@@ -643,7 +643,7 @@ namespace Egnyte.Api.Files
                 query.Append("&sort_direction=" + sortDirection);
             }
 
-            var uriBuilder = BuildUri(FilesMethod + "/" + path, query.ToString());
+            var uriBuilder = BuildUri(FilesMethod + "/" + EncodePathSegments(path), query.ToString());
 
             return uriBuilder.Uri;
         }
@@ -657,7 +657,7 @@ namespace Egnyte.Api.Files
                 query += "entry_id=" + entryId;
             }
             
-            var uriBuilder = BuildUri(FilesContentMethod + "/" + path, query);
+            var uriBuilder = BuildUri(FilesContentMethod + "/" + EncodePathSegments(path), query);
 
             return uriBuilder.Uri;
         }

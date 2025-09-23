@@ -43,7 +43,7 @@ namespace Egnyte.Api.Permissions
                 throw new ArgumentException("One of parameters: " + nameof(users) + " or " + nameof(groups) + " must be not empty.");
             }
 
-            var uriBuilder = BuildUri(PermissionsMethod + "/folder/" + path);
+            var uriBuilder = BuildUri(PermissionsMethod + "/folder/" + EncodePathSegments(path));
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, uriBuilder.Uri)
             {
                 Content = new StringContent(
@@ -96,7 +96,7 @@ namespace Egnyte.Api.Permissions
                 throw new ArgumentException("Parameter: " + nameof(keepParentPermissions) + " should only be passed when " + nameof(inheritsPermissions) + " is " + false + ".");
             }
 
-            var uriBuilder = BuildUri(PermissionsMethodV2 + "/" + path);
+            var uriBuilder = BuildUri(PermissionsMethodV2 + "/" + EncodePathSegments(path));
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, uriBuilder.Uri)
             {
                 Content = new StringContent(
@@ -132,7 +132,7 @@ namespace Egnyte.Api.Permissions
             }
 
             var query = GetGetFolderPermissionsQuery(users, groups);
-            var uriBuilder = BuildUri(PermissionsMethod + "/folder/" + path, query);
+            var uriBuilder = BuildUri(PermissionsMethod + "/folder/" + EncodePathSegments(path), query);
             var httpRequest = new HttpRequestMessage(HttpMethod.Get, uriBuilder.Uri);
 
             var serviceHandler = new ServiceHandler<FolderPermissionsResponse>(httpClient);
@@ -160,7 +160,7 @@ namespace Egnyte.Api.Permissions
                 throw new ArgumentNullException(nameof(path));
             }
 
-            var uriBuilder = BuildUri(PermissionsMethodV2 + "/" + path);
+            var uriBuilder = BuildUri(PermissionsMethodV2 + "/" + EncodePathSegments(path));
             var httpRequest = new HttpRequestMessage(HttpMethod.Get, uriBuilder.Uri);
 
             var serviceHandler = new ServiceHandler<FolderPermissionsResponseV2>(httpClient);
@@ -191,12 +191,13 @@ namespace Egnyte.Api.Permissions
                 throw new ArgumentNullException(nameof(path));
             }
 
-            if (!path.StartsWith("/", StringComparison.Ordinal))
+            var encodedPath = EncodePathSegments(path);
+            if (!encodedPath.StartsWith("/", StringComparison.Ordinal))
             {
-                path = "/" + path;
+                encodedPath = "/" + encodedPath;
             }
 
-            var uriBuilder = BuildUri(PermissionsMethod + "/user/" + username, "folder=" + path);
+            var uriBuilder = BuildUri(PermissionsMethod + "/user/" + username, "folder=" + encodedPath);
             var httpRequest = new HttpRequestMessage(HttpMethod.Get, uriBuilder.Uri);
 
             var serviceHandler = new ServiceHandler<EffectivePermissionsResponse>(httpClient);

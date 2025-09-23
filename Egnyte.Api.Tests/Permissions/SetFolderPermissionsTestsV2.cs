@@ -63,12 +63,12 @@ namespace Egnyte.Api.Tests.Permissions
 
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
             var userList = await egnyteClient.Permissions.SetFolderPermissionsV2(
-                "Shared/myFolder/",
+                "/Shared/myFolder/",
                 new List<GroupOrUserPermissions> { new GroupOrUserPermissions("jsmith", PermissionType.Viewer), new GroupOrUserPermissions("ajones", PermissionType.Viewer) });
 
             var requestMessage = httpHandlerMock.GetHttpRequestMessage();
             Assert.AreEqual(
-                "https://acme.egnyte.com/pubapi/v2/perms/Shared/myFolder/",
+                "https://acme.egnyte.com/pubapi/v2/perms/Shared/myFolder",
                 requestMessage.RequestUri.ToString());
             Assert.AreEqual(HttpMethod.Post, requestMessage.Method);
 
@@ -95,12 +95,12 @@ namespace Egnyte.Api.Tests.Permissions
 
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
             var userList = await egnyteClient.Permissions.SetFolderPermissionsV2(
-                "Shared/myFolder with ##/",
+                "/Shared/myFolder with ##",
                 new List<GroupOrUserPermissions> { new GroupOrUserPermissions("jsmith", PermissionType.Viewer), new GroupOrUserPermissions("ajones", PermissionType.Viewer) });
 
             var requestMessage = httpHandlerMock.GetHttpRequestMessage();
             Assert.AreEqual(
-                "https://acme.egnyte.com/pubapi/v2/perms/Shared/myFolder with %23%23/",
+                "https://acme.egnyte.com/pubapi/v2/perms/Shared/myFolder with %23%23",
                 requestMessage.RequestUri.ToString());
             Assert.AreEqual(HttpMethod.Post, requestMessage.Method);
 
@@ -127,13 +127,13 @@ namespace Egnyte.Api.Tests.Permissions
 
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
             var userList = await egnyteClient.Permissions.SetFolderPermissionsV2(
-                "Shared/myFolder/",
+                "/Shared/myFolder/",
                 new List<GroupOrUserPermissions> { new GroupOrUserPermissions("jsmith", PermissionType.Full), new GroupOrUserPermissions("ajones", PermissionType.Full) },
                 new List<GroupOrUserPermissions> { new GroupOrUserPermissions("admins", PermissionType.Full), new GroupOrUserPermissions("it_support", PermissionType.Full) });
 
             var requestMessage = httpHandlerMock.GetHttpRequestMessage();
             Assert.AreEqual(
-                "https://acme.egnyte.com/pubapi/v2/perms/Shared/myFolder/",
+                "https://acme.egnyte.com/pubapi/v2/perms/Shared/myFolder",
                 requestMessage.RequestUri.ToString());
             Assert.AreEqual(HttpMethod.Post, requestMessage.Method);
 
@@ -160,12 +160,12 @@ namespace Egnyte.Api.Tests.Permissions
 
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
             var userList = await egnyteClient.Permissions.SetFolderPermissionsV2(
-                "Shared/myFolder/",
+                "/Shared/myFolder/",
                 inheritsPermissions: true);
 
             var requestMessage = httpHandlerMock.GetHttpRequestMessage();
             Assert.AreEqual(
-                "https://acme.egnyte.com/pubapi/v2/perms/Shared/myFolder/",
+                "https://acme.egnyte.com/pubapi/v2/perms/Shared/myFolder",
                 requestMessage.RequestUri.ToString());
             Assert.AreEqual(HttpMethod.Post, requestMessage.Method);
 
@@ -192,13 +192,13 @@ namespace Egnyte.Api.Tests.Permissions
 
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
             var userList = await egnyteClient.Permissions.SetFolderPermissionsV2(
-                "Shared/myFolder/",
+                "/Shared/myFolder/",
                 inheritsPermissions: false,
                 keepParentPermissions: true);
 
             var requestMessage = httpHandlerMock.GetHttpRequestMessage();
             Assert.AreEqual(
-                "https://acme.egnyte.com/pubapi/v2/perms/Shared/myFolder/",
+                "https://acme.egnyte.com/pubapi/v2/perms/Shared/myFolder",
                 requestMessage.RequestUri.ToString());
             Assert.AreEqual(HttpMethod.Post, requestMessage.Method);
 
