@@ -23,6 +23,7 @@ namespace Egnyte.Api.Tests.Files
             ""offset"": 2,
             ""path"": ""/Shared/Documents"",
             ""folder_id"": ""f3066c91-245c-446d-85ac-bfb88196e4e8"",
+            ""folder_description"": ""folder description"",
             ""custom_metadata"": [
                 {
                     ""custom attributes"": {
@@ -171,6 +172,7 @@ namespace Egnyte.Api.Tests.Files
             Assert.AreEqual(2, folderMetadata.Offset);
             Assert.AreEqual("/Shared/Documents", folderMetadata.Path);
             Assert.AreEqual("f3066c91-245c-446d-85ac-bfb88196e4e8", folderMetadata.FolderId);
+            Assert.AreEqual("folder description", folderMetadata.FolderDescription);
             Assert.AreEqual(18, folderMetadata.TotalCount);
             Assert.AreEqual("files_folders", folderMetadata.PublicLinks);
             Assert.AreEqual(true, folderMetadata.RestrictMoveDelete);
