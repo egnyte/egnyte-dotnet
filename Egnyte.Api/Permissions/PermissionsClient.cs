@@ -191,12 +191,8 @@ namespace Egnyte.Api.Permissions
                 throw new ArgumentNullException(nameof(path));
             }
 
-            if (!path.StartsWith("/", StringComparison.Ordinal))
-            {
-                path = "/" + path;
-            }
 
-            var uriBuilder = BuildUri(PermissionsMethod + "/user/" + username, "folder=" + path);
+            var uriBuilder = BuildUri(PermissionsMethod + "/user/" + username, "folder=" + EncodeQueryPath(path));
             var httpRequest = new HttpRequestMessage(HttpMethod.Get, uriBuilder.Uri);
 
             var serviceHandler = new ServiceHandler<EffectivePermissionsResponse>(httpClient);
