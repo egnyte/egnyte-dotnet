@@ -59,6 +59,34 @@ namespace Egnyte.Api.Tests.Permissions
         }
 
         [Test]
+        public async Task GetEffectiveUserPermissions_WithSpecialChars()
+        {
+            var httpHandlerMock = new HttpMessageHandlerMock();
+            var httpClient = new HttpClient(httpHandlerMock);
+
+            httpHandlerMock.SendAsyncFunc =
+                (request, cancellationToken) =>
+                Task.FromResult(
+                    new HttpResponseMessage
+                    {
+                        StatusCode = HttpStatusCode.OK,
+                        Content = new StringContent("{ \"permission\": \"Owner\" }")
+                    });
+
+            var egnyteClient = new EgnyteClient("token", "acme", httpClient);
+            var permissions = await egnyteClient.Permissions.GetEffectivePermissionsForUser(
+                "mjones", "/Shared/myFolder + anotherFolder");
+
+            var requestMessage = httpHandlerMock.GetHttpRequestMessage();
+            Assert.AreEqual(
+                "https://acme.egnyte.com/pubapi/v1/perms/user/mjones?folder=/Shared/myFolder%20%2B%20anotherFolder",
+                requestMessage.RequestUri.AbsoluteUri);
+            Assert.AreEqual(HttpMethod.Get, requestMessage.Method);
+
+            Assert.AreEqual(PermissionType.Owner, permissions);
+        }
+
+        [Test]
         public async Task GetEffectiveUserPermissions_WhenPathIsEmpty_ThrowsArgumentNullException()
         {
             var httpClient = new HttpClient(new HttpMessageHandlerMock());
