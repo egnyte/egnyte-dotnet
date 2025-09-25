@@ -331,14 +331,14 @@ namespace Egnyte.Api.Tests.Files
 
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
             var result = await egnyteClient.Files.ChunkedUploadFirstChunk(
-                "/folder + another % and something",
+                "Shared/folder + another % and something",
                 new MemoryStream(Encoding.UTF8.GetBytes("file")));
 
             var requestMessage = httpHandlerMock.GetHttpRequestMessage();
             Assert.AreEqual(Checksum, result.Checksum);
             Assert.AreEqual(1, result.ChunkNumber);
             Assert.AreEqual(UploadId, result.UploadId);
-            Assert.AreEqual("https://acme.egnyte.com/pubapi/v1/fs-content-chunked/folder%20%2B%20another%20%25%20and%20something", requestMessage.RequestUri.AbsoluteUri);
+            Assert.AreEqual("https://acme.egnyte.com/pubapi/v1/fs-content-chunked/Shared/folder%20+%20another%20%25%20and%20something", requestMessage.RequestUri.AbsoluteUri);
         }
 
         private HttpResponseMessage GetResponseMessage()

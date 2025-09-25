@@ -93,7 +93,7 @@ namespace Egnyte.Api.Tests.Links
 
             var requestMessage = httpHandlerMock.GetHttpRequestMessage();
             Assert.AreEqual(
-                @"https://acme.egnyte.com/pubapi/v1/links?path=shared/&username=johnd&created_before=2016-05-01&created_after=2016-01-01&type=folder&accessibility=recipients&offset=100&count=15",
+                @"https://acme.egnyte.com/pubapi/v1/links?path=/shared/&username=johnd&created_before=2016-05-01&created_after=2016-01-01&type=folder&accessibility=recipients&offset=100&count=15",
                 requestMessage.RequestUri.ToString());
         }
 
