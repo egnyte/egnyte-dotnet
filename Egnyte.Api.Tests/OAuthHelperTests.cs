@@ -92,6 +92,19 @@
         }
 
         [Test]
+        public void GetAuthorizeUri_WithGovDomain_ReturnsCorrectUri()
+        {
+            var uri = OAuthHelper.GetAuthorizeUri(
+                OAuthAuthorizationFlow.Code,
+                "acme.egnytegov.com",
+                "Client123",
+                new Uri("https://myapp.com/oauth"));
+
+            const string ExpectedUrl = "https://acme.egnytegov.com/puboauth/token?client_id=Client123&redirect_uri=https://myapp.com/oauth&response_type=code";
+            Assert.AreEqual(ExpectedUrl, uri.ToString());
+        }
+
+        [Test]
         public void GetAuthorizationUriResourceOwnerFlow_ReturnsUrl_WhenCorrectParameters()
         {
             var uri = OAuthHelper.GetAuthorizationUriResourceOwnerFlow(
@@ -182,6 +195,18 @@
         }
 
         [Test]
+        public void GetAuthorizationUriResourceOwnerFlow_WithGovDomain_UsesGovHost()
+        {
+            var uri = OAuthHelper.GetAuthorizationUriResourceOwnerFlow(
+                "acme.egnytegov.com",
+                "Client123",
+                "user123",
+                "password123");
+
+            Assert.AreEqual("https://acme.egnytegov.com/puboauth/token", uri.BaseAddress.ToString());
+        }
+
+        [Test]
         public void GetTokenUri_ThrowsArgumentNullException_WhenUserDomainIsEmpty()
         {
             var exception = Assert.Throws<ArgumentNullException>(
@@ -267,6 +292,19 @@
 
             Assert.AreEqual(ExpectedBaseUrl, uri.BaseAddress.ToString());
             Assert.AreEqual(ExpectedQueryParameters, uriQueryParametersSerialized);
+        }
+
+        [Test]
+        public void GetTokenUri_WithGovDomain_UsesGovHost()
+        {
+            var uri = OAuthHelper.GetTokenRequestParameters(
+                "acme.egnytegov.com",
+                "Client123",
+                "MyOwnSecret",
+                new Uri("https://myapp.com/oauth"),
+                "code");
+
+            Assert.AreEqual("https://acme.egnytegov.com/puboauth/token", uri.BaseAddress.ToString());
         }
 
         [Test]

@@ -25,7 +25,9 @@ namespace Egnyte.Api.Common
         internal UriBuilder BuildUri(string method, string query = null)
         {
             var userHost = string.IsNullOrWhiteSpace(host)
-                ? string.Format(basePath, domain)
+                ? (string.IsNullOrWhiteSpace(domain)
+                    ? string.Empty
+                    : (domain.Contains(".") ? domain : string.Format(basePath, domain)))
                 : host;
 
             UriBuilder ub = new UriBuilder(baseSchema, userHost, basePort, method);
@@ -33,6 +35,32 @@ namespace Egnyte.Api.Common
                 ub.Query = query;
 
             return ub;
+        }
+
+        protected string EncodeQueryPath(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                return path;
+            }
+
+            // Ensure leading slash
+            var normalizedPath = path.StartsWith("/") ? path : "/" + path;
+
+            // Encode each segment but preserve slashes
+            var segments = normalizedPath.Split('/');
+            for (int i = 0; i < segments.Length; i++)
+            {
+                // Keep the leading empty segment for root
+                if (i == 0 && segments[i].Length == 0)
+                {
+                    continue;
+                }
+
+                segments[i] = Uri.EscapeDataString(segments[i]);
+            }
+
+            return string.Join("/", segments);
         }
     }
 }

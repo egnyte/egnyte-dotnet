@@ -269,7 +269,7 @@ namespace Egnyte.Api.Links
             var queryParams = new List<string>();
             if (!string.IsNullOrWhiteSpace(path))
             {
-                queryParams.Add("path=" + path);
+                queryParams.Add("path=" + EncodeQueryPath(path));
             }
 
             if (!string.IsNullOrWhiteSpace(userName))

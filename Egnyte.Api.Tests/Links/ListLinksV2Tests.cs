@@ -142,5 +142,34 @@ namespace Egnyte.Api.Tests.Links
                 @"https://acme.egnyte.com/pubapi/v2/links?path=shared/&username=johnd&created_before=2016-05-01&created_after=2016-01-01&type=folder&accessibility=recipients&offset=100&count=15",
                 requestMessage.RequestUri.ToString());
         }
+
+        [Test]
+        public async Task ListLinksV2_WithSpecialCharsInPath_EncodesPathInQuery()
+        {
+            var httpHandlerMock = new HttpMessageHandlerMock();
+            var httpClient = new HttpClient(httpHandlerMock);
+
+            httpHandlerMock.SendAsyncFunc =
+                (request, cancellationToken) =>
+                Task.FromResult(
+                    new HttpResponseMessage
+                    {
+                        StatusCode = HttpStatusCode.OK,
+                        Content = new StringContent(
+                                ListLinksResponseContent,
+                                Encoding.UTF8,
+                                "application/json")
+                    });
+
+            var egnyteClient = new EgnyteClient("token", "acme", httpClient);
+            var linksList = await egnyteClient.Links.ListLinksV2(
+                "/Shared/myFolder + anotherFolder");
+
+            var requestMessage = httpHandlerMock.GetHttpRequestMessage();
+            Assert.AreEqual(
+                "https://acme.egnyte.com/pubapi/v2/links?path=/Shared/myFolder%20%2B%20anotherFolder",
+                requestMessage.RequestUri.AbsoluteUri);
+            Assert.AreEqual(HttpMethod.Get, requestMessage.Method);
+        }
     }
 }
