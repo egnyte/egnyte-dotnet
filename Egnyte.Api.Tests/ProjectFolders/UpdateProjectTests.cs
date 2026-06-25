@@ -85,7 +85,7 @@ namespace Egnyte.Api.Tests.ProjectFolders
         }
 
         [Test]
-        public async Task UpdateProject_WhenProjectIdIsEmpty_ThrowsArgumentNullException()
+        public async Task UpdateProject_WhenIdIsEmpty_ThrowsArgumentNullException()
         {
             var httpClient = new HttpClient(new HttpMessageHandlerMock());
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
@@ -93,12 +93,37 @@ namespace Egnyte.Api.Tests.ProjectFolders
             var exception = await AssertExtensions.ThrowsAsync<ArgumentNullException>(
                 () => egnyteClient.ProjectFolders.UpdateProject(
                     name: "Acme Widgets HQ",
-                    id: "P123",
+                    id: string.Empty,
                     status: "pending",
-                    projectId: string.Empty));
+                    projectId: "ABC123"));
 
-            Assert.IsTrue(exception.Message.Contains("projectId"));
+            Assert.IsTrue(exception.Message.Contains("id"));
             Assert.IsNull(exception.InnerException);
+        }
+
+        [Test]
+        public async Task UpdateProject_WhenProjectIdIsEmpty_ReturnsSuccess()
+        {
+            var httpHandlerMock = new HttpMessageHandlerMock();
+            var httpClient = new HttpClient(httpHandlerMock);
+
+            httpHandlerMock.SendAsyncFunc =
+                (request, cancellationToken) =>
+                    Task.FromResult(
+                        new HttpResponseMessage
+                        {
+                            StatusCode = HttpStatusCode.OK,
+                            Content = new StringContent(string.Empty)
+                        });
+
+            var egnyteClient = new EgnyteClient("token", "acme", httpClient);
+            var updateProjectResponse = await egnyteClient.ProjectFolders.UpdateProject(
+                name: "Acme Widgets HQ",
+                id: "P123",
+                status: "pending",
+                projectId: string.Empty);
+
+            Assert.IsTrue(updateProjectResponse);
         }
     }
 }
