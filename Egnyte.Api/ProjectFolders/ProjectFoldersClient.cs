@@ -376,46 +376,46 @@ namespace Egnyte.Api.ProjectFolders
             {
                 builder.Append("\"name\" : \"" + name + "\",");
             }
-            if (status != null)//if (!string.IsNullOrWhiteSpace(status))//should be able to clear the field
+            if (status != null)
             {
                 builder.Append("\"status\" : \"" + status + "\",");
             }
-            if (description != null)//if (!string.IsNullOrWhiteSpace(description))//should be able to clear the field
+            if (description != null)
             {
                 builder.Append("\"description\" : \"" + description + "\",");
             }
             if (!string.IsNullOrWhiteSpace(projectId))
             {
-                builder.Append("\"projectId\" : \"" + projectId + "\",");//this was the id which should have been a guid identifier and is already mapped from part of the URL
+                builder.Append("\"projectId\" : \"" + projectId + "\","); // this was the id which should have been a guid identifier and is already mapped from part of the URL
             }
-            if (customerName != null)//if (!string.IsNullOrWhiteSpace(customerName))//should be able to clear the field
+            if (customerName != null)
             {
                 builder.Append("\"customerName\" : \"" + customerName + "\",");
             }
             if (location != null)
             {
                 builder.Append("\"location\" : {");
-                if (location.StreetAddress1 != null)//if (!string.IsNullOrWhiteSpace(location.StreetAddress1))
+                if (location.StreetAddress1 != null)
                 {
                     builder.Append("\"streetAddress1\" : \"" + location.StreetAddress1 + "\",");
                 }
-                if (location.StreetAddress2 != null)//if (!string.IsNullOrWhiteSpace(location.StreetAddress2))
+                if (location.StreetAddress2 != null)
                 {
                     builder.Append("\"streetAddress2\" : \"" + location.StreetAddress2 + "\",");
                 }
-                if (location.City != null)//if (!string.IsNullOrWhiteSpace(location.City))
+                if (location.City != null)
                 {
                     builder.Append("\"city\" : \"" + location.City + "\",");
                 }
-                if (location.State != null)//if (!string.IsNullOrWhiteSpace(location.State))
+                if (location.State != null)
                 {
                     builder.Append("\"state\" : \"" + location.State + "\",");
                 }
-                if (location.PostalCode != null)//if (!string.IsNullOrWhiteSpace(location.PostalCode))
+                if (location.PostalCode != null)
                 {
                     builder.Append("\"postalCode\" : \"" + location.PostalCode + "\",");
                 }
-                if (location.Country != null)//if (!string.IsNullOrWhiteSpace(location.Country))
+                if (location.Country != null)
                 {
                     builder.Append("\"country\" : \"" + location.Country + "\",");
                 }
@@ -437,7 +437,8 @@ namespace Egnyte.Api.ProjectFolders
             if (completionDate.HasValue)
             {
                 if (completionDate.Value != DateTime.MinValue)
-                {                     builder.Append("\"completionDate\" : \"" + completionDate.Value.ToUniversalTime().ToString("yyyy-MM-dd") + "\",");
+                {
+                    builder.Append("\"completionDate\" : \"" + completionDate.Value.ToUniversalTime().ToString("yyyy-MM-dd") + "\",");
                 }
                 else
                 {
