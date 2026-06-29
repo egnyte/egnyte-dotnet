@@ -275,9 +275,9 @@ namespace Egnyte.Api.ProjectFolders
                 throw new ArgumentNullException(nameof(name));
             }
 
-            if (string.IsNullOrWhiteSpace(projectId))
+            if (string.IsNullOrWhiteSpace(id))//id is a required field but projectId is an optional field.
             {
-                throw new ArgumentNullException(nameof(projectId));
+                throw new ArgumentNullException(nameof(id));
             }
 
             if (string.IsNullOrWhiteSpace(status))
@@ -376,56 +376,74 @@ namespace Egnyte.Api.ProjectFolders
             {
                 builder.Append("\"name\" : \"" + name + "\",");
             }
-            if (!string.IsNullOrWhiteSpace(status))
+            if (status != null)
             {
                 builder.Append("\"status\" : \"" + status + "\",");
             }
-            if (!string.IsNullOrWhiteSpace(description))
+            if (description != null)
             {
                 builder.Append("\"description\" : \"" + description + "\",");
             }
             if (!string.IsNullOrWhiteSpace(projectId))
             {
-                builder.Append("\"id\" : \"" + projectId + "\",");
+                builder.Append("\"projectId\" : \"" + projectId + "\","); // this was the id which should have been a guid identifier and is already mapped from part of the URL
             }
-            if (!string.IsNullOrWhiteSpace(customerName))
+            if (customerName != null)
             {
                 builder.Append("\"customerName\" : \"" + customerName + "\",");
             }
             if (location != null)
             {
-                if (!string.IsNullOrWhiteSpace(location.StreetAddress1))
+                builder.Append("\"location\" : {");
+                if (location.StreetAddress1 != null)
                 {
-                    builder.Append("\"location.streetAddress1\" : \"" + location.StreetAddress1 + "\",");
+                    builder.Append("\"streetAddress1\" : \"" + location.StreetAddress1 + "\",");
                 }
-                if (!string.IsNullOrWhiteSpace(location.StreetAddress2))
+                if (location.StreetAddress2 != null)
                 {
-                    builder.Append("\"location.streetAddress2\" : \"" + location.StreetAddress2 + "\",");
+                    builder.Append("\"streetAddress2\" : \"" + location.StreetAddress2 + "\",");
                 }
-                if (!string.IsNullOrWhiteSpace(location.City))
+                if (location.City != null)
                 {
-                    builder.Append("\"location.city\" : \"" + location.City + "\",");
+                    builder.Append("\"city\" : \"" + location.City + "\",");
                 }
-                if (!string.IsNullOrWhiteSpace(location.State))
+                if (location.State != null)
                 {
-                    builder.Append("\"location.state\" : \"" + location.State + "\",");
+                    builder.Append("\"state\" : \"" + location.State + "\",");
                 }
-                if (!string.IsNullOrWhiteSpace(location.PostalCode))
+                if (location.PostalCode != null)
                 {
-                    builder.Append("\"location.postalCode\" : \"" + location.PostalCode + "\",");
+                    builder.Append("\"postalCode\" : \"" + location.PostalCode + "\",");
                 }
-                if (!string.IsNullOrWhiteSpace(location.Country))
+                if (location.Country != null)
                 {
-                    builder.Append("\"location.country\" : \"" + location.Country + "\",");
+                    builder.Append("\"country\" : \"" + location.Country + "\",");
                 }
+                if(builder[builder.Length-1]==',')builder.Length -= 1;
+                builder.Append("},");
             }
             if (startDate.HasValue)
             {
-                builder.Append("\"startDate\" : \"" + startDate.Value.ToUniversalTime().ToString("yyyy-MM-ddThh:mm:ss.000+0000") + "\",");
+                if (startDate.Value != DateTime.MinValue)
+                {
+                    builder.Append("\"startDate\" : \"" + startDate.Value.ToUniversalTime().ToString("yyyy-MM-dd") + "\",");
+                }
+                else
+                {
+                    builder.Append("\"startDate\" : \"\",");//sending a blank value doesn't seem to clear the information through Egnyte's API so this change is ineffective but may be supported in the future.
+                }
+               
             }
             if (completionDate.HasValue)
             {
-                builder.Append("\"completionDate\" : \"" + completionDate.Value.ToUniversalTime().ToString("yyyy-MM-ddThh:mm:ss.000+0000") + "\",");
+                if (completionDate.Value != DateTime.MinValue)
+                {
+                    builder.Append("\"completionDate\" : \"" + completionDate.Value.ToUniversalTime().ToString("yyyy-MM-dd") + "\",");
+                }
+                else
+                {
+                    builder.Append("\"completionDate\" : \"\",");//sending a blank value doesn't seem to clear the information through Egnyte's API so this change is ineffective but may be supported in the future.
+                }
             }
             builder.Length -= 1;
             builder.Append("}");
@@ -460,11 +478,11 @@ namespace Egnyte.Api.ProjectFolders
             }
             if (startDate.HasValue)
             {
-                builder.Append("\"startDate\" : \"" + startDate.Value.ToUniversalTime().ToString("yyyy-MM-ddThh:mm:ss.000+0000") + "\",");
+                builder.Append("\"startDate\" : \"" + startDate.Value.ToUniversalTime().ToString("yyyy-MM-dd") + "\",");//documentation and testing indicate that only a Date value is supported
             }
             if (completionDate.HasValue)
             {
-                builder.Append("\"completionDate\" : \"" + completionDate.Value.ToUniversalTime().ToString("yyyy-MM-ddThh:mm:ss.000+0000") + "\",");
+                builder.Append("\"completionDate\" : \"" + completionDate.Value.ToUniversalTime().ToString("yyyy-MM-dd") + "\",");//documentation and testing indicate that only a Date value is supported
             }
             builder.Length -= 1;
             builder.Append("}");
